@@ -1,0 +1,105 @@
+#settings-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2rem;
+  margin: 0.5rem 0.5rem;
+  opacity: 0.9;
+}
+
+#settings-icon:hover {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.settings-container {
+  margin-top: 1rem;
+}
+
+.settings-container h3 {
+  padding-top: 1rem;
+  font-size: 1rem;
+}
+
+.settings {
+  position: fixed;
+  top: 0;
+  text-align: center;
+  width: 0rem;
+  height: 100vh;
+  z-index: 1;
+  overflow-y: auto;
+  background-color: silver;
+  opacity: 1;
+  transition: 0.5s;
+}
+
+.layout-options {
+  margin-left: 1rem;
+  width: 10rem;
+  outline: none;
+}
+
+.layout-option {
+  background-color: coral;
+}
+
+.layout-option:hover {
+  cursor: pointer;
+}
+
+.window-settings {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 3.5rem;
+  height: 1.5rem;
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: grey;
+  transition: 0.5s;
+  border-radius: 1rem;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.2rem;
+  width: 1.2rem;
+  left: 5%;
+  bottom: 12%;
+  background-color: white;
+  transition: .5s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(1.9rem);
+}
+
+.radio {
+  margin-left: 2.5rem;
+  text-align: left;
+}
+
+.restore-defaults {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}

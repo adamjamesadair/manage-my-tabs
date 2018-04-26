@@ -1,0 +1,148 @@
+.container {
+  position: relative;
+  background-color: grey;
+  min-width: 40rem;
+  box-shadow: 0 1vw 1.5vw 0 rgba(0, 0, 0, 0.3), 0 1.5vw 3vw 0 rgba(0, 0, 0, 0.20);
+  margin-bottom: 3rem;
+}
+
+.row {
+  min-height: 50%;
+  overflow: hidden;
+}
+
+.tab-group {
+  border: 1px solid black;
+  padding-bottom: 0.5rem;
+  background-color: #fcfcfc;
+  max-height: 10rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.tab-group:hover .closeGroupBtn {
+  visibility: visible;
+}
+
+.closeGroupBtn{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.75;
+  z-index: 1;
+  border-right-width: 0;
+  border-top-width: 0;
+  visibility: hidden;
+}
+
+.closeGroupBtn:hover {
+  background-color: #ff1a1a;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.icon {
+  position: absolute;
+  left: 0.5rem;
+  top: 0rem;
+  float: left;
+  margin-top: 0.3rem;
+  width: 1.5rem;
+}
+
+.tab-title {
+  margin: auto;
+  margin-left: 1.25rem;
+  width: 80%;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.tab-title::after {
+  content:"";
+  position:absolute;
+  top: 0.45rem;
+  left: 66%;
+  height:1.5rem;
+  width:30%;
+  background: linear-gradient(to right, rgba(0,0,0,0), #fcfcfc);
+}
+
+.tabContainer {
+  position: relative;
+  height: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.tabContainer:hover .closeBtn {
+  visibility: visible;
+}
+
+.tab {
+  width: 100%;
+  position: relative;
+  background-color: #f2f2f2;
+  color: black;
+  font-weight: 450;
+  display: inline-block;
+  border: 1px solid black;
+  padding: 0 6% 0 6%;
+  opacity: 1;
+  transition: 0.1s;
+}
+
+.tab:hover {
+  background-color: var(--tab-hover-color);
+  cursor: pointer;
+}
+
+.tab::after {
+  content:"";
+  position:absolute;
+  top: 15%;
+  left:66%;
+  height:75%;
+  width:30%;
+  background: linear-gradient(to right, rgba(0,0,0,0), #f2f2f2);
+}
+
+.tab:hover:after{
+  background: linear-gradient(to right, rgba(0,0,0,0), var(--tab-hover-color));
+  transition: none;
+}
+
+.tabDescription {
+  margin-bottom: 0;
+  font-size: 1rem;
+  text-align: left;
+  white-space: nowrap;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.closeBtn {
+  background-color: var(--tab-hover-color);
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 1px solid black;
+  border-left-style: none;
+  opacity: 1;
+  visibility: hidden;
+}
+
+.closeBtn:hover {
+  background-color: #ff1a1a;
+  cursor: pointer;
+  opacity: 1;
+}

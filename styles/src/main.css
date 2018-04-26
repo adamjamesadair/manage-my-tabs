@@ -1,0 +1,113 @@
+:root {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  --tab-hover-color: #47c2eb;
+}
+
+body {
+  background-color: white;
+}
+
+header {
+  margin-bottom: 5.5rem;
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.title {
+  position: relative;
+  margin: auto;
+  width: 25rem;
+}
+
+#tabs-icon {
+  position: absolute;
+  left: 1rem;
+  top: -0.2rem;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+.main-content {
+    position: relative;
+    transition: 0.5s;
+}
+
+#undo-btn {
+  position: absolute;
+  width: 10%;
+  font-size: 0.8rem;
+  top: -1.6rem;
+  left: 0;
+}
+
+#undo-btn:hover {
+  cursor: pointer;
+}
+
+.window-selection h2 {
+  display: inline-block;
+  padding-top: 0.25rem;
+  margin-right: 0.25rem;
+  font-weight: 300;
+}
+
+.window-selection {
+  position: absolute;
+  display: inline-block;
+  padding-top: 0.25rem;
+  height: 3.5rem;
+  display: inline-block;
+  top: -2.4rem;
+  left: 8rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 45%;
+}
+
+.window-select-btn {
+  outline: none;
+  background-color: coral;
+}
+
+.window-select-btn:hover {
+  cursor: pointer;
+}
+
+#no-match-search {
+  position: absolute;
+  left:0rem;
+  top: 2rem;
+  text-align: center;
+  font-size: 1rem;
+  z-index: -1;
+}
+
+.search {
+  position: absolute;
+  top: -4rem;
+  right: -1rem;
+  margin-right: 1rem;
+  text-align: center;
+}
+
+#search-input {
+  padding-left: 1.5rem;
+  font-size: 0.8rem;
+  width: 12rem;
+}
+
+#search-icon {
+  position: absolute;
+  top: 2.3rem;
+  left: 0.4rem;
+  width: 8%;
+}
