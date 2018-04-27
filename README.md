@@ -23,7 +23,7 @@ Thank you for your interest in the development of Manage My Tabs!
 
 Please look at the [project boards](https://github.com/adamjamesadair/manage-my-tabs/projects) and specifically the [Main Development](https://github.com/adamjamesadair/manage-my-tabs/projects/4) project to see our plans for future releases.
 
-Please work from and submit all pull requests to the `dev` branch. The `master` branch is reserved for public releases and will often be several commits behind the `dev` branch.
+Please work from and submit all pull requests to the `develop` branch. The `master` branch is reserved for public releases and will often be several commits behind the `develop` branch.
 
 ## License
 [MIT](http://opensource.org/licenses/MIT)
