@@ -24,17 +24,11 @@ document.addEventListener("DOMContentLoaded", function(e) {
   });
 
   // Add listner for creating tabs
-  chrome.tabs.onCreated.addListener(() => {
-    tabManager.reloadPage();
-  });
-
-  // Add listener for changing tab focus
-  chrome.tabs.onActivated.addListener((activeInfo) => {
-    if (tabManager.managerTab.windowId == activeInfo.windowId) {
+  chrome.tabs.onCreated.addListener((tab) => {
+    if (tab.url.startsWith("chrome-extension://") && tab.url.endsWith("/tabPage.html")){
       chrome.tabs.remove(tabManager.managerTab.id);
-    } else {
-      tabManager.reloadPage();
     }
+    tabManager.reloadPage();
   });
 
   // Add listener for window closing
