@@ -63,9 +63,10 @@ class TabManager {
   }
 
   createHTMLContent(windows, tabGroups, extensionTab) {
-    chrome.storage.local.get(['col', 'tabCount'], (settings) => {
+    chrome.storage.local.get(['winSrc', 'col', 'tabCount'], (settings) => {
 
       let col = settings['col'] ? settings['col'] : 3;
+      let winSrc = settings['winSrc'];
 
       // Generate button for switching windows
       let winSection = document.getElementsByClassName("window-selection")[0];
@@ -74,6 +75,12 @@ class TabManager {
         let winBtn = document.createElement('button');
         winBtn.innerHTML = i;
         winBtn.setAttribute('class', 'window-select-btn');
+
+        if (typeof winSrc === 'number'){
+          if (i == winSrc + 1) {
+            winBtn.setAttribute('class', 'window-select-active');
+          }
+        }
 
         // Add event listener
         winBtn.addEventListener('click', () => {
