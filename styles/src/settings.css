@@ -61,11 +61,6 @@
   cursor: pointer;
 }
 
-.window-settings {
-  display: inline-block;
-  margin-top: 1rem;
-}
-
 .switch {
   position: relative;
   display: inline-block;

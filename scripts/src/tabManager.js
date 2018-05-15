@@ -71,11 +71,29 @@ class TabManager {
       // Generate button for switching windows
       let winSection = document.getElementsByClassName("window-selection")[0];
       winSection.innerHTML = 'Select Window: ';
+
+      // Create 'All' button
+      let winBtn = document.createElement('button');
+      winBtn.innerHTML = 'All';
+      winBtn.setAttribute('class', 'window-select-btn');
+      if (winSrc == 'all') {
+        winBtn.setAttribute('class', 'window-select-active');
+      }
+      // Add event listener
+      winBtn.addEventListener('click', () => {
+        chrome.storage.local.set({'winSrc':'all'});
+        document.getElementById("search-input").value = "";
+        this.reloadPage();
+      });
+      winSection.appendChild(winBtn);
+
+      // Generate the rest of the buttons
       for (let i=1; i <= windows.length; i++){
         let winBtn = document.createElement('button');
         winBtn.innerHTML = i;
         winBtn.setAttribute('class', 'window-select-btn');
 
+        // Set the active button
         if (typeof winSrc === 'number'){
           if (i == winSrc + 1) {
             winBtn.setAttribute('class', 'window-select-active');
@@ -247,7 +265,6 @@ class TabManager {
         document.getElementById(sortMethod).checked = true;
         document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
         document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
-        document.getElementById("toggle-window-settings").checked = winSource === 'all';
         let querySettings = {'currentWindow': true};
         if (winSource === 'all'){
           querySettings = {};

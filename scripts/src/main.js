@@ -67,14 +67,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
   });
 
-  // Add listener for the window settings
-  let togglewin = document.getElementById("toggle-window-settings");
-  togglewin.addEventListener('click', () => {
-    let winSrc = togglewin.checked ? 'all' : 0;
-    chrome.storage.local.set({'winSrc':winSrc});
-    tabManager.reloadPage();
-  });
-
   // Add listener for tab count settings
   let toggleTabCount = document.getElementById("toggle-tab-count-settings");
   toggleTabCount.addEventListener('click', () => {
@@ -126,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
   let restoreBtn = document.getElementById("restore-Btn");
   restoreBtn.addEventListener('click', () => {
     chrome.storage.local.set({'col':3,
-                              'winSrc':false,
+                              'winSrc':'all',
                               'tabCount':true,
                               'includeManager':false,
                               'sortMethod': 'alphabetically',
