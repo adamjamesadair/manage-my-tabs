@@ -46,7 +46,6 @@ class TabManager {
           tab.url.hostname = tab.url.hostname.replace(/^www\./,'');
         } else {
           tab.url.hostname = tab.title.replace(/ /g, '_');
-          console.log(tab.title)
         }
 
         let added = false;
