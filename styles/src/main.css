@@ -40,14 +40,17 @@ h2 {
 }
 
 #undo-btn {
+  border: 1px solid black;
   position: absolute;
   width: 10%;
-  font-size: 0.8rem;
-  top: -1.6rem;
+  font-size: 0.9rem;
+  top: -1.9rem;
   left: 0;
+  transition: 0.2s;
 }
 
 #undo-btn:hover {
+  background-color: #ddd;
   cursor: pointer;
 }
 
@@ -74,11 +77,23 @@ h2 {
 }
 
 .window-select-btn {
+  margin-left: 1px;
   outline: none;
-  background-color: coral;
+  text-decoration: none;
+  border: none;
+  background-color: white;
+  transition-duration: 0.2s;
+}
+
+.window-select-active {
+  outline: none;
+  border: none;
+  color: white;
+  background-color: #2a9606;
 }
 
 .window-select-btn:hover {
+  background-color: #ddd;
   cursor: pointer;
 }
 
