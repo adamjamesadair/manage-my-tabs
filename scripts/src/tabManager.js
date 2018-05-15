@@ -42,7 +42,13 @@ class TabManager {
     for (let tab of tabs) {
       if (tab.url !== extensionTab.url || includeExtensionTab) {
         tab.url = new URL(tab.url);
-        tab.url.hostname = tab.url.hostname.replace(/^www\./,'');
+        if (tab.url.hostname.includes('.')){
+          tab.url.hostname = tab.url.hostname.replace(/^www\./,'');
+        } else {
+          tab.url.hostname = tab.title.replace(/ /g, '_');
+          console.log(tab.title)
+        }
+
         let added = false;
         for (let tabGroup of tabGroups){
           if (tabGroup.hostname == tab.url.hostname){
