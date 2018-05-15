@@ -1,6 +1,17 @@
 document.addEventListener("DOMContentLoaded", function(e) {
   let tabManager = new TabManager();
 
+  // Set the starting active button for column layout settings
+  chrome.storage.local.get(['col'], (settings) => {
+    let col = 12/settings['col'];
+    let layoutOptions = document.getElementsByClassName("layout-option");
+    for(layoutOption of layoutOptions){
+      if (layoutOption.id == col) {
+        layoutOption.setAttribute('class', 'layout-option-active');
+      }
+    }
+  });
+
   // ----- Add listeners -----
 
   // Add listener for commands
@@ -81,7 +92,12 @@ document.addEventListener("DOMContentLoaded", function(e) {
   // Add listener for layout options
   let layoutOptions = document.getElementsByClassName("layout-option");
   for(layoutOption of layoutOptions){
-    layoutOption.addEventListener('click', (e) => {
+    layoutOption.addEventListener('click', function(e) {
+      let activeBtns = document.getElementsByClassName("layout-option-active");
+      for(activeBtn of activeBtns){
+        activeBtn.setAttribute('class', 'layout-option');
+      }
+      this.setAttribute('class', 'layout-option-active');
       let col = 12/e.target.id;
       chrome.storage.local.set({'col':col});
       tabManager.reloadPage();

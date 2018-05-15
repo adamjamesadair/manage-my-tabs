@@ -41,10 +41,23 @@
 }
 
 .layout-option {
-  background-color: coral;
+  margin-left: 1px;
+  outline: none;
+  text-decoration: none;
+  border: none;
+  background-color: white;
+  transition-duration: 0.2s;
+}
+
+.layout-option-active {
+  outline: none;
+  border: none;
+  color: white;
+  background-color: #2196F3;
 }
 
 .layout-option:hover {
+  background-color: #ddd;
   cursor: pointer;
 }
 
