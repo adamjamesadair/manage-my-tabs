@@ -20,6 +20,7 @@ class TabManager {
     this.managerTab = null;
     this.openTabs = [];
     this.closedTabs = [];
+    chrome.storage.local.set({'winSrc':'first'});
   }
 
   /*
@@ -269,11 +270,23 @@ class TabManager {
         if (winSource === 'all'){
           querySettings = {};
         }
+        // Default to the current window
+        else if (winSource === 'first'){
+            chrome.windows.getCurrent((current) => {
+              for (var i=0; i<windows.length; i++){
+                if (windows[i].id === current.id){
+                  chrome.storage.local.set({'winSrc':i});
+                }
+              }
+            });
+
+        }
         else if (typeof winSource === 'number') {
           if(windows.length - 1 >= winSource){
             querySettings = {'windowId': windows[winSource].id};
           }
         }
+
 
         chrome.tabs.query(querySettings, (tabs) => {
           chrome.tabs.getCurrent((extensionTab) => {
