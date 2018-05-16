@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
   }
 
   // Add listener for arrange tabs button
-  let arrangeTabsBtn = document.getElementsById("arrange-tabs-btn");
+  let arrangeTabsBtn = document.getElementById("arrange-tabs-btn");
   arrangeTabsBtn.addEventListener('click', () => {
     chrome.windows.getCurrent({populate: true}, (win) => {
       tabManager.arrangeWindowTabs(win);
