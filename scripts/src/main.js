@@ -114,6 +114,14 @@ document.addEventListener("DOMContentLoaded", function(e) {
     });
   }
 
+  // Add listener for arrange tabs button
+  let arrangeTabsBtn = document.getElementsById("arrange-tabs-btn");
+  arrangeTabsBtn.addEventListener('click', () => {
+    chrome.windows.getCurrent({populate: true}, (win) => {
+      tabManager.arrangeWindowTabs(win);
+    });
+  });
+
   // Add listener for restore defaults button
   let restoreBtn = document.getElementById("restore-Btn");
   restoreBtn.addEventListener('click', () => {

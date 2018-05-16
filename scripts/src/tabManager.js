@@ -42,10 +42,8 @@ class TabManager {
     let tabGroups = [];
     for (let tab of tabs) {
       if (tab.url !== extensionTab.url || includeExtensionTab) {
-        tab.url = new URL(tab.url);
-        if (tab.url.hostname.includes('.')){
-          tab.url.hostname = tab.url.hostname.replace(/^www\./,'');
-        } else {
+        tab.url = this.strToURL(tab.url);
+        if(!tab.url.hostname.includes('.')){
           tab.url.hostname = tab.title.replace(/ /g, '_');
         }
 
@@ -249,6 +247,48 @@ class TabManager {
         break;
       case "mostTabs":
         tabGroups.sort((a, b) => b.tabs.length - a.tabs.length);
+    }
+  }
+
+/*
+* Converts the string of a url to URL type.
+*
+* @param {string} str
+*   The string to convert.
+*
+* @param {bool} hostname
+*   true to remove the 'www.' from the url's hostname. Default: true.
+*
+* @return {URL} url
+*  The converted URL.
+*/
+strToURL(str, hostname=true){
+  let url = new URL(str);
+  if(hostname){
+    if (url.hostname.includes('.')){
+      url.hostname = url.hostname.replace(/^www\./,'');
+    }
+  }
+  return (url);
+}
+
+  /*
+  * Sorts and arranges the tabs of a given window.
+  *
+  * @param {chrome.window} win
+  *  The window to arrange.
+  */
+  arrangeWindowTabs(win){
+    let tabs = win.tabs;
+    for(let tab of tabs){
+      tab.url = this.strToURL(tab.url);
+    }
+    // Sort the tabs alphabetically
+    tabs.sort((a, b) => a.url.hostname.localeCompare(b.url.hostname, {sensitivity: 'base'}));
+
+    // Move the tabs to their proper locations
+    for(let i in tabs){
+      chrome.tabs.move(tabs[i].id, {index: parseInt(i)});
     }
   }
 
