@@ -12,6 +12,28 @@
   opacity: 1;
 }
 
+.settings-btn-container #settings-icon-tooltip {
+  transition: 0.5s;
+  visibility: hidden;
+  opacity: 0;
+  width: 5rem;
+  background-color: #2a9606;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  left: 45px;
+}
+
+.settings-btn-container:hover #settings-icon-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
 .settings-container {
   margin-top: 1rem;
 }
