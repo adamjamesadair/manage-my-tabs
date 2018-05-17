@@ -88,10 +88,11 @@
   width: 100%;
   position: relative;
   background-color: #f2f2f2;
+  border-left: 4px solid black;
+  border-radius: 2px;
   color: black;
   font-weight: 450;
   display: inline-block;
-  border: 1px solid black;
   padding: 0 6% 0 6%;
   opacity: 1;
   transition: 0.1s;
@@ -99,6 +100,8 @@
 
 .tab:hover {
   background-color: var(--tab-hover-color);
+  color: white;
+  border: none;
   cursor: pointer;
 }
 
@@ -132,11 +135,10 @@
   right: 0;
   top: 0;
   width: 1rem;
+  border-radius: 2px;
   text-align: center;
   font-size: 1rem;
   font-weight: 500;
-  border: 1px solid black;
-  border-left-style: none;
   opacity: 1;
   visibility: hidden;
 }

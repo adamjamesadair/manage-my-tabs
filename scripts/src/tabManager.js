@@ -20,6 +20,7 @@ class TabManager {
     this.managerTab = null;
     this.openTabs = [];
     this.closedTabs = [];
+    chrome.storage.local.set({'winSrc':'first'});
   }
 
   /*
@@ -41,8 +42,11 @@ class TabManager {
     let tabGroups = [];
     for (let tab of tabs) {
       if (tab.url !== extensionTab.url || includeExtensionTab) {
-        tab.url = new URL(tab.url);
-        tab.url.hostname = tab.url.hostname.replace(/^www\./,'');
+        tab.url = this.strToURL(tab.url);
+        if(!tab.url.hostname.includes('.')){
+          tab.url.hostname = tab.title.replace(/ /g, '_') + ' (' + tab.url.hostname + ')';
+        }
+
         let added = false;
         for (let tabGroup of tabGroups){
           if (tabGroup.hostname == tab.url.hostname){
@@ -58,17 +62,42 @@ class TabManager {
   }
 
   createHTMLContent(windows, tabGroups, extensionTab) {
-    chrome.storage.local.get(['col', 'tabCount'], (settings) => {
+    chrome.storage.local.get(['winSrc', 'col', 'tabCount'], (settings) => {
 
       let col = settings['col'] ? settings['col'] : 3;
+      let winSrc = settings['winSrc'];
 
       // Generate button for switching windows
       let winSection = document.getElementsByClassName("window-selection")[0];
       winSection.innerHTML = 'Select Window: ';
+
+      // Create 'All' button
+      let winBtn = document.createElement('button');
+      winBtn.innerHTML = 'All';
+      winBtn.setAttribute('class', 'window-select-btn');
+      if (winSrc == 'all') {
+        winBtn.setAttribute('class', 'window-select-active');
+      }
+      // Add event listener
+      winBtn.addEventListener('click', () => {
+        chrome.storage.local.set({'winSrc':'all'});
+        document.getElementById("search-input").value = "";
+        this.reloadPage();
+      });
+      winSection.appendChild(winBtn);
+
+      // Generate the rest of the buttons
       for (let i=1; i <= windows.length; i++){
         let winBtn = document.createElement('button');
         winBtn.innerHTML = i;
         winBtn.setAttribute('class', 'window-select-btn');
+
+        // Set the active button
+        if (typeof winSrc === 'number'){
+          if (i == winSrc + 1) {
+            winBtn.setAttribute('class', 'window-select-active');
+          }
+        }
 
         // Add event listener
         winBtn.addEventListener('click', () => {
@@ -99,6 +128,7 @@ class TabManager {
         group.setAttribute('class', 'tab-group ' + className);
         group.setAttribute('id', tabGroup.hostname);
 
+        tabGroup.hostname = decodeURI(tabGroup.hostname);
         title.innerText = settings['tabCount'] ? "(" + tabGroup.tabs.length + ")" + tabGroup.hostname.capitalize()
                                    : tabGroup.hostname.capitalize();
         group.appendChild(title);
@@ -221,6 +251,48 @@ class TabManager {
     }
   }
 
+/*
+* Converts the string of a url to URL type.
+*
+* @param {string} str
+*   The string to convert.
+*
+* @param {bool} hostname
+*   true to remove the 'www.' from the url's hostname. Default: true.
+*
+* @return {URL} url
+*  The converted URL.
+*/
+strToURL(str, hostname=true){
+  let url = new URL(str);
+  if(hostname){
+    if (url.hostname.includes('.')){
+      url.hostname = url.hostname.replace(/^www\./,'');
+    }
+  }
+  return (url);
+}
+
+  /*
+  * Sorts and arranges the tabs of a given window.
+  *
+  * @param {chrome.window} win
+  *  The window to arrange.
+  */
+  arrangeWindowTabs(win){
+    let tabs = win.tabs;
+    for(let tab of tabs){
+      tab.url = this.strToURL(tab.url);
+    }
+    // Sort the tabs alphabetically
+    tabs.sort((a, b) => a.url.hostname.localeCompare(b.url.hostname, {sensitivity: 'base'}));
+
+    // Move the tabs to their proper locations
+    for(let i in tabs){
+      chrome.tabs.move(tabs[i].id, {index: parseInt(i)});
+    }
+  }
+
   reloadPage() {
     chrome.windows.getAll({populate: true}, (windows) => {
       chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager'], (settings) => {
@@ -235,16 +307,27 @@ class TabManager {
         document.getElementById(sortMethod).checked = true;
         document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
         document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
-        document.getElementById("toggle-window-settings").checked = winSource === 'all';
         let querySettings = {'currentWindow': true};
         if (winSource === 'all'){
           querySettings = {};
+        }
+        // Default to the current window
+        else if (winSource === 'first'){
+            chrome.windows.getCurrent((current) => {
+              for (var i=0; i<windows.length; i++){
+                if (windows[i].id === current.id){
+                  chrome.storage.local.set({'winSrc':i});
+                }
+              }
+            });
+
         }
         else if (typeof winSource === 'number') {
           if(windows.length - 1 >= winSource){
             querySettings = {'windowId': windows[winSource].id};
           }
         }
+
 
         chrome.tabs.query(querySettings, (tabs) => {
           chrome.tabs.getCurrent((extensionTab) => {
@@ -308,6 +391,10 @@ class TabManager {
     let winExists = false;
     if (this.closedTabs.length > 0){
       tab = this.closedTabs.pop();
+      tab.url.hostname = decodeURI(tab.url.hostname);
+      if(decodeURI(tab.url.hostname).includes('(')){
+        tab.url.hostname = decodeURI(tab.url.hostname).match(/\(([^)]+)\)/)[1];
+      }
       chrome.windows.getAll((windows) => {
         // Check if the window the tab came from exsits
         for (let win of windows) {

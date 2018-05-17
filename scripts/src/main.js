@@ -1,6 +1,17 @@
 document.addEventListener("DOMContentLoaded", function(e) {
   let tabManager = new TabManager();
 
+  // Set the starting active button for column layout settings
+  chrome.storage.local.get(['col'], (settings) => {
+    let col = 12/settings['col'];
+    let layoutOptions = document.getElementsByClassName("layout-option");
+    for(layoutOption of layoutOptions){
+      if (layoutOption.id == col) {
+        layoutOption.setAttribute('class', 'layout-option-active');
+      }
+    }
+  });
+
   // ----- Add listeners -----
 
   // Add listener for commands
@@ -24,17 +35,11 @@ document.addEventListener("DOMContentLoaded", function(e) {
   });
 
   // Add listner for creating tabs
-  chrome.tabs.onCreated.addListener(() => {
-    tabManager.reloadPage();
-  });
-
-  // Add listener for changing tab focus
-  chrome.tabs.onActivated.addListener((activeInfo) => {
-    if (tabManager.managerTab.windowId == activeInfo.windowId) {
+  chrome.tabs.onCreated.addListener((tab) => {
+    if (tab.url.startsWith("chrome-extension://") && tab.url.endsWith("/tabPage.html")){
       chrome.tabs.remove(tabManager.managerTab.id);
-    } else {
-      tabManager.reloadPage();
     }
+    tabManager.reloadPage();
   });
 
   // Add listener for window closing
@@ -62,14 +67,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
     }
   });
 
-  // Add listener for the window settings
-  let togglewin = document.getElementById("toggle-window-settings");
-  togglewin.addEventListener('click', () => {
-    let winSrc = togglewin.checked ? 'all' : 0;
-    chrome.storage.local.set({'winSrc':winSrc});
-    tabManager.reloadPage();
-  });
-
   // Add listener for tab count settings
   let toggleTabCount = document.getElementById("toggle-tab-count-settings");
   toggleTabCount.addEventListener('click', () => {
@@ -87,7 +84,12 @@ document.addEventListener("DOMContentLoaded", function(e) {
   // Add listener for layout options
   let layoutOptions = document.getElementsByClassName("layout-option");
   for(layoutOption of layoutOptions){
-    layoutOption.addEventListener('click', (e) => {
+    layoutOption.addEventListener('click', function(e) {
+      let activeBtns = document.getElementsByClassName("layout-option-active");
+      for(activeBtn of activeBtns){
+        activeBtn.setAttribute('class', 'layout-option');
+      }
+      this.setAttribute('class', 'layout-option-active');
       let col = 12/e.target.id;
       chrome.storage.local.set({'col':col});
       tabManager.reloadPage();
@@ -112,11 +114,19 @@ document.addEventListener("DOMContentLoaded", function(e) {
     });
   }
 
+  // Add listener for arrange tabs button
+  let arrangeTabsBtn = document.getElementById("arrange-tabs-btn");
+  arrangeTabsBtn.addEventListener('click', () => {
+    chrome.windows.getCurrent({populate: true}, (win) => {
+      tabManager.arrangeWindowTabs(win);
+    });
+  });
+
   // Add listener for restore defaults button
   let restoreBtn = document.getElementById("restore-Btn");
   restoreBtn.addEventListener('click', () => {
     chrome.storage.local.set({'col':3,
-                              'winSrc':false,
+                              'winSrc':'all',
                               'tabCount':true,
                               'includeManager':false,
                               'sortMethod': 'alphabetically',

@@ -7,6 +7,7 @@
   <link rel="stylesheet" type="text/css" href="styles/src/main.css">
   <link rel="stylesheet" type="text/css" href="styles/src/settings.css">
   <link rel="stylesheet" type="text/css" href="styles/src/tabGroups.css">
+  <link rel="stylesheet" type="text/css" href="styles/src/arrangementOptions.css">
 
   <script src="scripts/lib/jquery/jquery-1.12.4.js"></script>
   <script src="scripts/lib/jquery/jquery-ui.js"></script>
@@ -14,7 +15,10 @@
 
 <body>
   <div class="main-content">
-    <img id="settings-icon" src="images/settings.svg" alt="Settings icon" width="25"/>
+    <div class="settings-btn-container">
+      <img id="settings-icon" src="images/settings.svg" alt="Settings icon" width="25"/>
+      <span id="settings-icon-tooltip">Settings</span>
+    </div>
     <header>
       <div class="title">
         <img id="tabs-icon" src="images/icons/icon.svg" alt="Manage My Tabs icon" width="50"/>
@@ -33,6 +37,12 @@
       <div class="row"></div>
     </div>
   </div>
+  <div class="arrangement-options">
+    <div class="arrange-tabs-container">
+      <img id="arrange-tabs-btn" src="images/arrange.svg" alt="Settings icon" width="30"/>
+      <span id="arrange-tabs-tooltip">Arrange tabs in current window</span>
+    </div>
+  </div>
   <div class= "settings">
     <div class="settings-container">
       <h2>Settings</h2>
@@ -43,13 +53,6 @@
         <button id="3" class="layout-option">3</button>
         <button id="4" class="layout-option">4</button>
         <button id="6" class="layout-option">6</button>
-      </div>
-      <div class="window-settings">
-        <h3>Get tabs from all windows:</h3>
-        <label class="switch">
-          <input type="checkbox" id="toggle-window-settings">
-          <span class="slider"></span>
-        </label>
       </div>
       <div class="tab-count-settings">
         <h3>Display number of tabs:</h3>
