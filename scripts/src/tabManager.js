@@ -44,7 +44,7 @@ class TabManager {
       if (tab.url !== extensionTab.url || includeExtensionTab) {
         tab.url = this.strToURL(tab.url);
         if(!tab.url.hostname.includes('.')){
-          tab.url.hostname = tab.title.replace(/ /g, '_');
+          tab.url.hostname = tab.title.replace(/ /g, '_') + ' (' + tab.url.hostname + ')';
         }
 
         let added = false;
@@ -128,6 +128,7 @@ class TabManager {
         group.setAttribute('class', 'tab-group ' + className);
         group.setAttribute('id', tabGroup.hostname);
 
+        tabGroup.hostname = decodeURI(tabGroup.hostname);
         title.innerText = settings['tabCount'] ? "(" + tabGroup.tabs.length + ")" + tabGroup.hostname.capitalize()
                                    : tabGroup.hostname.capitalize();
         group.appendChild(title);
@@ -390,6 +391,10 @@ strToURL(str, hostname=true){
     let winExists = false;
     if (this.closedTabs.length > 0){
       tab = this.closedTabs.pop();
+      tab.url.hostname = decodeURI(tab.url.hostname);
+      if(decodeURI(tab.url.hostname).includes('(')){
+        tab.url.hostname = decodeURI(tab.url.hostname).match(/\(([^)]+)\)/)[1];
+      }
       chrome.windows.getAll((windows) => {
         // Check if the window the tab came from exsits
         for (let win of windows) {
