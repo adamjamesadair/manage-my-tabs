@@ -1,3 +1,7 @@
+String.prototype.capitalize = function() {
+  return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
+};
+
 /*
 * @class A group of tabs which has hold the tabs and has a name.
 * @param {string} hostname
@@ -9,6 +13,8 @@
 class TabGroup {
   constructor(hostname, tabs=[]) {
     this.hostname = hostname;
+    this.title = hostname.capitalize();
+    this.id = hostname.split('.').join("");
     this.tabs = tabs;
   }
 
