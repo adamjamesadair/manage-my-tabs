@@ -2,6 +2,18 @@ String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
 
+function setTitle(hostname, tabCount, tabs){
+  let title = hostname.capitalize();
+  // Special pages includng extensions and newtab pages have no '.'
+  if (!hostname.includes('.')) {
+    title = tabs[0].title.replace(/ /g, '_');
+  }
+  if (tabCount)
+    title = "(" + tabs.length + ")" + title;
+
+  return title;
+}
+
 /*
 * @class A group of tabs which has hold the tabs and has a name.
 * @param {string} hostname
@@ -11,11 +23,12 @@ String.prototype.capitalize = function() {
 *   List of tabs to be held by the TabGroup.
 */
 class TabGroup {
-  constructor(hostname, tabs=[]) {
+  constructor(hostname, tabCount, tabs=[]) {
     this.hostname = hostname;
-    this.title = hostname.capitalize();
     this.id = hostname.split('.').join("");
     this.tabs = tabs;
+    this.tabCount = tabCount;
+    this.title = setTitle(hostname, tabCount, tabs);
   }
 
   /*

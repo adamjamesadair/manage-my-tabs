@@ -1,14 +1,5 @@
-/*
- * Checks if a DOM element is overflown
- *
- * @param element
- *   The element to check for overflow.
- *
- * @return {boolean}
- *   True if the element is overflown.
- */
 function isOverflown(element) {
-  return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+  return element.prop('scrollWidth') > element.width();
 }
 
 class TabManager {
@@ -18,88 +9,38 @@ class TabManager {
     this.openTabs = [];
     this.closedTabs = [];
     this.windows = [];
+    this.currentWin = {};
+    this.settings = {};
     chrome.storage.local.set({
       'winSrc': 'first'
     });
   }
 
-  /*
-   * Groups tabs into TabGroups.
-   *
-   * @param {array} tabs
-   *   List of chrome.tabs to be grouped.
-   *
-   * @param {chrome.tab} extensionTab
-   *   The tab manager extention tab.
-   *
-   * @param {boolean} IncludeExtensionTab
-   *   True if the extension tab should be included in the tabs.
-   *
-   * @return {array}
-   *   List of TabGroup objects.
-   */
-  getTabGroups(tabs, includeExtensionTab) {
+  getTabGroups() {
     this.tabGroups = [];
-    for (let tab of tabs) {
-      if (tab.url !== this.managerTab.url || includeExtensionTab) {
+    let tabGroupIDs = [];
+    for (let tab of this.openTabs) {
+      if (tab.url !== this.managerTab.url || this.settings['includeManagerTab']) {
         tab.url = strToURL(tab.url);
 
-        let added = false;
         for (let tabGroup of this.tabGroups) {
-          if (tabGroup.hostname == tab.url.hostname) {
+          if (tabGroup.hostname == tab.url.hostname)
             tabGroup.addTab(tab);
-            added = true;
-          }
         }
-        if (!added)
-          this.tabGroups.push(new TabGroup(tab.url.hostname, [tab]));
+        let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab]);
+        this.tabGroups.forEach((tabGroup)=>{tabGroupIDs.push(tabGroup.id)});
+        if (!tabGroupIDs.includes(tabGroup.id))
+          this.tabGroups.push(tabGroup);
       }
     }
   }
 
-  renderHTMLContent(windows, winSrc, col, tabCount) {
-    // Generate button for switching windows
-    let $winSection = $(".window-selection");
+  renderHTMLContent() {
+    let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
 
-    // Generate the rest of the buttons
-    $(".generated-win-btn").remove();
-    $("#win-btn-all").removeClass('window-select-btn');
-    $("#win-btn-all").removeClass('window-select-active').addClass('window-select-btn');
-
-    for (let i = 1; i <= windows.length; i++) {
-      $winSection.append($(`<button id="win-btn-${i}" class="window-select-btn win-btn generated-win-btn" type="button">${i}</button>`));
-
-      let winSection = document.getElementsByClassName("window-selection")[0];
-      let top = isOverflown(winSection) ? '-3.6' : '-2.4';
-      $winSection.css({
-        'top': top
-      });
-    }
-
-    $("#win-btn-" + winSrc).toggleClass('window-select-btn window-select-active');
-
-    // Generate tabGroups
-    let className = 'col-' + col;
-    let $tabGroupContainer = $('.tabgroup-container');
-    $tabGroupContainer.empty();
-    for (let tabGroup of this.tabGroups) {
-      // Special pages includng extensions and newtab pages have no '.'
-      if (!tabGroup.hostname.includes('.')) {
-        tabGroup.title = tabGroup.tabs[0].title.replace(/ /g, '_');
-      }
-
-      if (tabCount)
-        tabGroup.title = "(" + tabGroup.tabs.length + ")" + tabGroup.title;
-
-      $tabGroupContainer.append(renderTabGroup(tabGroup, className, tabGroup.tabs[0].favIconUrl));
-      addTabGroupListeners(tabGroup);
-
-      // Generate tabs
-      for (let tab of tabGroup.tabs) {
-        $('#' + tabGroup.id).append(renderTab(tab));
-        addTabListeners(tab);
-      }
-    }
+    generateWinSelectBtns(this.windows, this.settings['winSrc']);
+    generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    generateTabs(tabGroups);
   }
 
   /*
@@ -168,105 +109,37 @@ class TabManager {
   }
 
 
-
-
-
   reloadPage() {
     chrome.windows.getAll({
       populate: true
     }, (windows) => {
-      this.windows = windows;
-      chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'], (settings) => {
+      chrome.windows.getCurrent((current) => {
+        this.windows = windows;
+        this.currentWin = current;
+        chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'], (settings) => {
+          let [searchScope, sortMethod, winSrc, tabCount, includeManager, col, querySettings] = initSettings(this, settings);
 
-        let searchScope = settings['searchScope'] ? settings['searchScope'] : "both";
-        let sortMethod = settings['sortMethod'] ? settings['sortMethod'] : "alphabetically";
-        let winSource = settings['winSrc'];
-        let tabCount = settings['tabCount'];
-        let includeManager = settings['includeManager'];
-        let col = settings['col'] ? settings['col'] : 3;
+          chrome.tabs.query(querySettings, (tabs) => {
+            chrome.tabs.getCurrent((managerTab) => {
 
-        document.getElementById(searchScope).checked = true;
-        document.getElementById(sortMethod).checked = true;
-        document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
-        document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
-        let querySettings = {
-          'currentWindow': true
-        };
-        if (winSource === 'all') {
-          querySettings = {};
-        }
-        // Default to the current window
-        else if (winSource === 'first') {
-          chrome.windows.getCurrent((current) => {
-            for (var i = 0; i < windows.length; i++) {
-              if (windows[i].id === current.id) {
-                winSource = i + 1;
-                chrome.storage.local.set({
-                  'winSrc': winSource
-                });
-              }
-            }
-          });
-        } else {
-          let winSrc = parseInt(winSource);
-          querySettings = {
-            'windowId': windows[winSrc - 1].id
-          };
-        }
+              this.openTabs = tabs;
+              this.managerTab = managerTab;
 
+              // Array holding the tabGroups
+              this.getTabGroups();
 
-        chrome.tabs.query(querySettings, (tabs) => {
-          chrome.tabs.getCurrent((managerTab) => {
+              // If the manager tab is the last tab in all windows, close
+              if (windows.length == 1 && windows[0].tabs.length == 1 && windows[0].tabs[0].id === this.managerTab.id)
+                chrome.tabs.remove(this.managerTab.id);
 
-            this.managerTab = managerTab;
+              this.sortTabGroups(sortMethod);
 
-            // Array holding the tabGroups
-            this.getTabGroups(tabs, includeManager === true);
-
-            // If the manager tab is the last tab in all windows, close
-            if (windows.length == 1) {
-              if (windows[0].tabs.length == 1) {
-                if (windows[0].tabs[0].id === this.managerTab.id) {
-                  chrome.tabs.remove(this.managerTab.id);
-                }
-              }
-            }
-
-            // Sort the tabGroups alphabetically
-            this.sortTabGroups(sortMethod);
-
-            // Sort the tabs in each tabGroup
-            for (let tabGroup of this.tabGroups) {
-              tabGroup.sortTabs("alphabetically");
-            }
-
-            // Update open tabs
-            this.openTabs = [];
-            for (let tabGroup of this.tabGroups) {
-              for (let tab of tabGroup.tabs) {
-                this.openTabs.push(tab);
-              }
-            }
-
-            // Generate HTML content
-            this.renderHTMLContent(windows, winSource, col, tabCount);
-            addListeners(this);
-
-
-
-
-            // Add listener for seach bar
-            let searchBar = document.getElementById("search-input");
-            let upperContext = this;
-            searchBar.addEventListener('keyup', function() {
-              upperContext.getTabGroups(tabs, includeManager === true);
-              // Sort the tabGroups alphabetically
-              upperContext.sortTabGroups(sortMethod);
               // Sort the tabs in each tabGroup
-              for (let tabGroup of upperContext.tabGroups) {
+              for (let tabGroup of this.tabGroups) {
                 tabGroup.sortTabs("alphabetically");
               }
-              upperContext.renderHTMLContent(windows, upperContext.searchTabGroups(this.value, searchScope), winSource, col, tabCount);
+              this.renderHTMLContent();
+              addListeners(this);
             });
           });
         });
@@ -326,12 +199,42 @@ function renderTab(tab) {
     `;
 }
 
-function generateTabGroups() {
-
+function renderBtn(id){
+  return `<button id="win-btn-${id}" class="window-select-btn win-btn generated-win-btn" type="button">${id}</button>`;
 }
 
-function generateTabs() {
+function generateTabGroups(tabGroups, className, tabCount) {
+  let $tabGroupContainer = $('.tabgroup-container');
+  $tabGroupContainer.empty();
+  for (let tabGroup of tabGroups) {
+    $tabGroupContainer.append(renderTabGroup(tabGroup, className, tabGroup.tabs[0].favIconUrl));
+  }
+}
 
+function generateTabs(tabGroups) {
+  for (let tabGroup of tabGroups) {
+    for (let tab of tabGroup.tabs) {
+      $('#' + tabGroup.id).append(renderTab(tab));
+    }
+  }
+}
+
+function generateWinSelectBtns(windows, btnName){
+  let $winSection = $(".window-selection");
+
+  $(".generated-win-btn").remove();
+  $("#win-btn-all").removeClass('window-select-active').addClass('window-select-btn');
+
+  for (let i = 1; i <= windows.length; i++) {
+    $winSection.append($(renderBtn(i)));
+
+    let top = isOverflown($winSection) ? '-3.6rem' : '-2.4rem';
+    $winSection.css({
+      'top': top
+    });
+  }
+
+  $("#win-btn-" + btnName).toggleClass('window-select-btn window-select-active');
 }
 
 function addTabGroupListeners(tabGroup) {
@@ -352,7 +255,6 @@ function addTabListeners(tab) {
     chrome.tabs.update(tab.id, {
       highlighted: true
     });
-    chrome.tabs.remove(this.managerTab.id);
   });
 
   // Add event listener for close button
@@ -374,6 +276,21 @@ function addListeners(tabManager) {
       tabManager.reloadPage();
     });
   }
+
+  // Add listeners for tabGroups and tabs
+  for(tabGroup of tabManager.tabGroups){
+    addTabGroupListeners(tabGroup);
+    tabGroup.tabs.forEach(addTabListeners);
+  }
+
+  // Add listener for seach bar
+  $("#search-input").keyup(function() {
+    if($("#search-input").val() == ''){
+      tabManager.reloadPage();
+    }else {
+      tabManager.renderHTMLContent();
+    }
+  });
 }
 
 /*
@@ -420,4 +337,60 @@ function strToURL(str, hostname = true) {
     }
   }
   return (url);
+}
+
+function initSettings(tabManager, settings){
+  let searchScope = settings['searchScope'] ? settings['searchScope'] : "both";
+  let sortMethod = settings['sortMethod'] ? settings['sortMethod'] : "alphabetically";
+  let winSrc = settings['winSrc'];
+  let tabCount = settings['tabCount'];
+  let includeManager = settings['includeManager'];
+  let col = settings['col'] ? settings['col'] : 3;
+
+  document.getElementById(searchScope).checked = true;
+  document.getElementById(sortMethod).checked = true;
+  document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
+  document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
+
+  // Set the starting active button for column layout settings
+  let colNum = 12/settings['col'];
+  let layoutOptions = document.getElementsByClassName("layout-option");
+  for(layoutOption of layoutOptions){
+    if (layoutOption.id == colNum) {
+      layoutOption.setAttribute('class', 'layout-option-active');
+    }
+  }
+
+  let querySettings = {
+    'currentWindow': true
+  };
+  if (winSrc === 'all') {
+    querySettings = {};
+  }
+  // Default to the current window
+  else if (winSrc === 'first') {
+    for (var i = 0; i < tabManager.windows.length; i++) {
+      if (tabManager.windows[i].id === tabManager.currentWin.id) {
+        winSrc = i + 1;
+        chrome.storage.local.set({
+          'winSrc': winSrc
+        });
+      }
+    }
+  } else {
+    let winSource = parseInt(winSrc);
+    querySettings = {
+      'windowId': tabManager.windows[winSource - 1].id
+    };
+  }
+  tabManager.settings = {
+    'searchScope': searchScope,
+    'sortMethod': sortMethod,
+    'winSrc': winSrc,
+    'tabCount': tabCount,
+    'includeManager': includeManager,
+    'col': col
+  };
+
+  return [searchScope, sortMethod, winSrc, tabCount, includeManager, col, querySettings];
 }

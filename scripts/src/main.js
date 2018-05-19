@@ -1,17 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(e) {
   let tabManager = new TabManager();
 
-  // Set the starting active button for column layout settings
-  chrome.storage.local.get(['col'], (settings) => {
-    let col = 12/settings['col'];
-    let layoutOptions = document.getElementsByClassName("layout-option");
-    for(layoutOption of layoutOptions){
-      if (layoutOption.id == col) {
-        layoutOption.setAttribute('class', 'layout-option-active');
-      }
-    }
-  });
-
   // ----- Add listeners -----
 
   // Add listener for commands
