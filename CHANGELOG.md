@@ -1,7 +1,7 @@
 # Changelog
 All changes between releases of this project will be documented here.
 
-## [0.1.0] - 2018-05-17
+## [0.1.0](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.1.0) - 2018-05-17
 ### Added
 - Button to reorder tabs in current window.
 - Tooltip to settings icon.
