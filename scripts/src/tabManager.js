@@ -1,7 +1,3 @@
-function isOverflown(element) {
-  return element.prop('scrollWidth') > element.width();
-}
-
 class TabManager {
   constructor() {
     this.managerTab = null;
@@ -16,21 +12,38 @@ class TabManager {
     });
   }
 
+  reloadPage() {
+    this.loadBrowserData(function(tabManager){
+      tabManager.getTabGroups();
+      tabManager.sortTabGroups();
+      // Sort the tabs in each tabGroup
+      for (let tabGroup of tabManager.tabGroups) {
+        tabGroup.sortTabs("alphabetically");
+      }
+      tabManager.renderHTMLContent();
+      addTabManagerListeners(tabManager);
+    });
+  }
+
   getTabGroups() {
     this.tabGroups = [];
     let tabGroupIDs = [];
     for (let tab of this.openTabs) {
-      if (tab.url !== this.managerTab.url || this.settings['includeManagerTab']) {
+      if (tab.url !== this.managerTab.url || this.settings['includeManager']) {
         tab.url = strToURL(tab.url);
 
-        for (let tabGroup of this.tabGroups) {
-          if (tabGroup.hostname == tab.url.hostname)
-            tabGroup.addTab(tab);
-        }
-        let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab]);
-        this.tabGroups.forEach((tabGroup)=>{tabGroupIDs.push(tabGroup.id)});
-        if (!tabGroupIDs.includes(tabGroup.id))
-          this.tabGroups.push(tabGroup);
+          // If the tabGroup already exists, add the tab
+          for (let tabGroup of this.tabGroups) {
+            if (tabGroup.hostname == tab.url.hostname)
+              tabGroup.addTab(tab);
+          }
+          // Otherwise, make a new tabGroup
+          let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab]);
+          this.tabGroups.forEach((tabGroup) => {
+            tabGroupIDs.push(tabGroup.id)
+          });
+          if (!tabGroupIDs.includes(tabGroup.id))
+            this.tabGroups.push(tabGroup);
       }
     }
   }
@@ -84,16 +97,8 @@ class TabManager {
     return newTabGroups;
   }
 
-  /*
-   * Sorts a given list of TabGroups using the indicated method.
-   *
-   * @param {array} tabGroups
-   *   List of TabGroup objects to be sorted.
-   *
-   * @param {string} method
-   *   Method for sorting. Options: "alphabetically", "leastTabs", "mostTabs". Default: "alphabetically".
-   */
-  sortTabGroups(method = "alphabetically") {
+  sortTabGroups() {
+    let method = this.settings['sortMethod'];
     switch (method) {
       case "alphabetically":
         this.tabGroups.sort((a, b) => a.hostname.localeCompare(b.hostname, {
@@ -108,8 +113,7 @@ class TabManager {
     }
   }
 
-
-  reloadPage() {
+  loadBrowserData(callback) {
     chrome.windows.getAll({
       populate: true
     }, (windows) => {
@@ -117,29 +121,12 @@ class TabManager {
         this.windows = windows;
         this.currentWin = current;
         chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'], (settings) => {
-          let [searchScope, sortMethod, winSrc, tabCount, includeManager, col, querySettings] = initSettings(this, settings);
-
-          chrome.tabs.query(querySettings, (tabs) => {
+          initSettings(this, settings);
+          chrome.tabs.query(this.settings['querySettings'], (tabs) => {
             chrome.tabs.getCurrent((managerTab) => {
-
               this.openTabs = tabs;
               this.managerTab = managerTab;
-
-              // Array holding the tabGroups
-              this.getTabGroups();
-
-              // If the manager tab is the last tab in all windows, close
-              if (windows.length == 1 && windows[0].tabs.length == 1 && windows[0].tabs[0].id === this.managerTab.id)
-                chrome.tabs.remove(this.managerTab.id);
-
-              this.sortTabGroups(sortMethod);
-
-              // Sort the tabs in each tabGroup
-              for (let tabGroup of this.tabGroups) {
-                tabGroup.sortTabs("alphabetically");
-              }
-              this.renderHTMLContent();
-              addListeners(this);
+              callback(this);
             });
           });
         });
@@ -177,120 +164,8 @@ class TabManager {
   }
 }
 
-function renderTabGroup(tabGroup, className, favIconUrl) {
-  return `
-      <div id="${tabGroup.id}" class="tab-group ${className}">
-      <h1 class="tab-title">${tabGroup.title}
-      <img class="icon" src=${favIconUrl} />
-      </h1>
-      <div class="closeGroupBtn">X</div>
-      </div>
-    `;
-}
-
-function renderTab(tab) {
-  return `
-      <div id=${tab.id} class="tabContainer">
-      <div class="tab" title=${tab.title}>
-      <p class="tabDescription">${tab.title}</p>
-      </div>
-      <div class="closeBtn">X</div>
-      </div>
-    `;
-}
-
-function renderBtn(id){
-  return `<button id="win-btn-${id}" class="window-select-btn win-btn generated-win-btn" type="button">${id}</button>`;
-}
-
-function generateTabGroups(tabGroups, className, tabCount) {
-  let $tabGroupContainer = $('.tabgroup-container');
-  $tabGroupContainer.empty();
-  for (let tabGroup of tabGroups) {
-    $tabGroupContainer.append(renderTabGroup(tabGroup, className, tabGroup.tabs[0].favIconUrl));
-  }
-}
-
-function generateTabs(tabGroups) {
-  for (let tabGroup of tabGroups) {
-    for (let tab of tabGroup.tabs) {
-      $('#' + tabGroup.id).append(renderTab(tab));
-    }
-  }
-}
-
-function generateWinSelectBtns(windows, btnName){
-  let $winSection = $(".window-selection");
-
-  $(".generated-win-btn").remove();
-  $("#win-btn-all").removeClass('window-select-active').addClass('window-select-btn');
-
-  for (let i = 1; i <= windows.length; i++) {
-    $winSection.append($(renderBtn(i)));
-
-    let top = isOverflown($winSection) ? '-3.6rem' : '-2.4rem';
-    $winSection.css({
-      'top': top
-    });
-  }
-
-  $("#win-btn-" + btnName).toggleClass('window-select-btn window-select-active');
-}
-
-function addTabGroupListeners(tabGroup) {
-  $('#' + tabGroup.id + ' .closeGroupBtn').on('click', () => {
-    for (let i = 0; i < tabGroup.tabs.length; i++) {
-      chrome.tabs.remove(tabGroup.tabs[i].id);
-    }
-    $(tabGroup.hostname).remove();
-  });
-}
-
-function addTabListeners(tab) {
-  // Add event listener to tab
-  $('#' + tab.id + ' .tab').on('click', () => {
-    chrome.windows.update(tab.windowId, {
-      focused: true
-    });
-    chrome.tabs.update(tab.id, {
-      highlighted: true
-    });
-  });
-
-  // Add event listener for close button
-  $('#' + tab.id + ' .closeBtn').on('click', () => {
-    // Close the selected tab
-    chrome.tabs.remove(tab.id);
-  });
-}
-
-function addListeners(tabManager) {
-  // Add listeners for window select buttons
-  for ($winBtn of $(".win-btn")) {
-    let btnID = $winBtn.id.split('-')[2];
-    $('#win-btn-' + btnID).on('click', () => {
-      chrome.storage.local.set({
-        'winSrc': btnID
-      });
-      $("#search-input").val('');
-      tabManager.reloadPage();
-    });
-  }
-
-  // Add listeners for tabGroups and tabs
-  for(tabGroup of tabManager.tabGroups){
-    addTabGroupListeners(tabGroup);
-    tabGroup.tabs.forEach(addTabListeners);
-  }
-
-  // Add listener for seach bar
-  $("#search-input").keyup(function() {
-    if($("#search-input").val() == ''){
-      tabManager.reloadPage();
-    }else {
-      tabManager.renderHTMLContent();
-    }
-  });
+function isOverflown(element) {
+  return element.prop('scrollWidth') > element.width();
 }
 
 /*
@@ -339,12 +214,12 @@ function strToURL(str, hostname = true) {
   return (url);
 }
 
-function initSettings(tabManager, settings){
+function initSettings(tabManager, settings) {
   let searchScope = settings['searchScope'] ? settings['searchScope'] : "both";
   let sortMethod = settings['sortMethod'] ? settings['sortMethod'] : "alphabetically";
-  let winSrc = settings['winSrc'];
+  let winSrc = settings['winSrc'] ? settings['winSrc'] : 'all';
   let tabCount = settings['tabCount'];
-  let includeManager = settings['includeManager'];
+  let includeManager = settings['includeManager'] ? settings['includeManager'] : false;
   let col = settings['col'] ? settings['col'] : 3;
 
   document.getElementById(searchScope).checked = true;
@@ -353,9 +228,9 @@ function initSettings(tabManager, settings){
   document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
 
   // Set the starting active button for column layout settings
-  let colNum = 12/settings['col'];
+  let colNum = 12 / col;
   let layoutOptions = document.getElementsByClassName("layout-option");
-  for(layoutOption of layoutOptions){
+  for (layoutOption of layoutOptions) {
     if (layoutOption.id == colNum) {
       layoutOption.setAttribute('class', 'layout-option-active');
     }
@@ -389,8 +264,7 @@ function initSettings(tabManager, settings){
     'winSrc': winSrc,
     'tabCount': tabCount,
     'includeManager': includeManager,
-    'col': col
+    'col': col,
+    'querySettings': querySettings
   };
-
-  return [searchScope, sortMethod, winSrc, tabCount, includeManager, col, querySettings];
 }
