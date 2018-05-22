@@ -152,6 +152,7 @@ function addListeners(tabManager) {
       'winSrc': 'all',
       'tabCount': true,
       'includeManager': false,
+      'limitTabGroupSize': true,
       'sortMethod': 'alphabetically',
       'searchScope': 'both'
     });

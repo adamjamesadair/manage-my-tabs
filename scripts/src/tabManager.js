@@ -273,6 +273,7 @@ function initSettings(tabManager, settings) {
     'winSrc': winSrc,
     'tabCount': tabCount,
     'includeManager': includeManager,
+    'limitTabGroupSize': limitTabGroupSize,
     'col': col,
     'querySettings': querySettings
   };
