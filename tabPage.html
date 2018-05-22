@@ -27,14 +27,16 @@
     </header>
     <div class="container">
       <button id="undo-btn">Undo</button>
-      <div class="window-selection"></div>
+      <div class="window-selection">Select Window:
+        <button id="win-btn-all" class="win-btn window-select-btn" type="button">All</button>
+      </div>
       <div class="search">
         <h2>Search</h2>
         <input type="text" id="search-input" placeholder="Search...">
         <img id="search-icon" src="images/search.svg" alt="Magnifying glass"/>
       </div>
       <h3 id="no-match-search">No matches for your search term :(</h3>
-      <div class="row"></div>
+      <div class="row tabgroup-container"></div>
     </div>
   </div>
   <div class="arrangement-options">
@@ -100,6 +102,9 @@
       </div>
   </div>
   </div>
+  <script src="scripts/utils/utils.js"></script>
+  <script src="scripts/src/listeners.js"></script>
+  <script src="scripts/src/renderHTML.js"></script>
   <script src="scripts/src/tabGroup.js"></script>
   <script src="scripts/src/tabManager.js"></script>
   <script src="scripts/src/main.js"></script>

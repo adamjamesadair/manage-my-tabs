@@ -1,6 +1,12 @@
 # Changelog
 All changes between releases of this project will be documented here.
 
+### Changed
+- Manage My Tabs remains open when using it to navigate to a tab.
+
+### Fixed
+- Fixed changing the search settings not updating the search results.
+
 ## [0.1.0](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.1.0) - 2018-05-17
 ### Added
 - Button to reorder tabs in current window.
