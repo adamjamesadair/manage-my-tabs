@@ -72,6 +72,15 @@ function addListeners(tabManager) {
     tabManager.reloadPage();
   });
 
+  // Add listner for limiting tabGroup size setting
+  let $limitTabGroupSize = $("#toggle-limit-tabgroup-size");
+  $limitTabGroupSize.on('click', ()=>{
+    chrome.storage.local.set({
+      'limitTabGroupSize': $limitTabGroupSize.prop("checked")
+    });
+    tabManager.reloadPage();
+  });
+
   // Add listener for layout options
   $(".layout-option").each(function() {
     $(this).on('click', function(e) {
@@ -124,6 +133,7 @@ function addListeners(tabManager) {
       'winSrc': 'all',
       'tabCount': true,
       'includeManager': false,
+      'limitTabGroupSize': true,
       'sortMethod': 'alphabetically',
       'searchScope': 'both'
     });

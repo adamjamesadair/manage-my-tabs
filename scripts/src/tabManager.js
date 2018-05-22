@@ -128,7 +128,7 @@ class TabManager {
       chrome.windows.getCurrent((current) => {
         this.windows = windows;
         this.currentWin = current;
-        chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'], (settings) => {
+        chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'limitTabGroupSize', 'col'], (settings) => {
           initSettings(this, settings);
           chrome.tabs.query(this.settings['querySettings'], (tabs) => {
             chrome.tabs.getCurrent((managerTab) => {
@@ -201,8 +201,7 @@ function arrangeWindowTabs(win) {
 }
 
 function initSettings(tabManager, settings) {
-  // TODO: put this as a setting in the sidebar
-  let limitTabGroupSize = true;
+  let limitTabGroupSize = settings['limitTabGroupSize'] ? settings['limitTabGroupSize'] : false;
   let maxTabsPerGroup = 4;
   let searchScope = settings['searchScope'] ? settings['searchScope'] : "both";
   let sortMethod = settings['sortMethod'] ? settings['sortMethod'] : "alphabetically";
@@ -215,6 +214,7 @@ function initSettings(tabManager, settings) {
   document.getElementById(sortMethod).checked = true;
   document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
   document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
+  document.getElementById("toggle-limit-tabgroup-size").checked = limitTabGroupSize === true;
 
   // Set the starting active button for column layout settings
   let colNum = 12 / col;
@@ -255,6 +255,7 @@ function initSettings(tabManager, settings) {
     'winSrc': winSrc,
     'tabCount': tabCount,
     'includeManager': includeManager,
+    'limitTabGroupSize': limitTabGroupSize,
     'col': col,
     'querySettings': querySettings
   };
