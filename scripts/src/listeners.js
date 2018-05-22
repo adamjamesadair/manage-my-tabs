@@ -13,7 +13,7 @@ function addListeners(tabManager) {
   chrome.tabs.onRemoved.addListener((tabID, removedInfo) => {
     // If the manager tab is the last tab in all windows, close
     if (tabManager.windows.length == 1 && tabManager.windows[0].tabs.length <= 2 && tabManager.windows[0].tabs[0].id === tabManager.managerTab.id) {
-      chrome.tabs.remove(tabManager.managerTab.id);
+      tabManager.close();
     }
     // Add the closed tab to closed tab list
     for (tab of tabManager.openTabs) {
@@ -72,6 +72,33 @@ function addListeners(tabManager) {
     tabManager.reloadPage();
   });
 
+  // Add listener for manager display settings
+  let $toggleLimitTabGroupSize = $("#toggle-limit-tab-group-size");
+  $toggleLimitTabGroupSize.on('click', () => {
+    chrome.storage.local.set({
+      'limitTabGroupSize': $toggleLimitTabGroupSize.prop("checked")
+    });
+    tabManager.reloadPage();
+  });
+
+  // Add listener for manager display settings
+  let $sliderMaxTabsPerGroup = $("#max-tabs-per-group");
+  $sliderMaxTabsPerGroup.on('change', () => {
+    chrome.storage.local.set({
+      'maxTabsPerGroup': $sliderMaxTabsPerGroup.prop("valueAsNumber")
+    });
+    tabManager.reloadPage();
+  });
+
+  // Add listener for manager display settings
+  let $toggleCloseOnClickTab = $("#toggle-close-manager-on-click-tab");
+  $toggleCloseOnClickTab.on('click', () => {
+    chrome.storage.local.set({
+      'closeManagerWhenTabSelected': $toggleCloseOnClickTab.prop("checked")
+    });
+    tabManager.reloadPage();
+  });
+
   // Add listener for layout options
   $(".layout-option").each(function() {
     $(this).on('click', function(e) {
@@ -120,6 +147,7 @@ function addListeners(tabManager) {
   // Add listener for restore defaults button
   $("#restore-Btn").on('click', () => {
     chrome.storage.local.set({
+      'closeManagerWhenTabSelected' : true,
       'col': 3,
       'winSrc': 'all',
       'tabCount': true,
@@ -131,7 +159,7 @@ function addListeners(tabManager) {
   });
 }
 
-function addTabListeners(tab) {
+function addTabListeners(tab, tabManager) {
   // Add event listener to tab
   $('#' + tab.id + ' .tab').on('click', () => {
     chrome.windows.update(tab.windowId, {
@@ -140,6 +168,9 @@ function addTabListeners(tab) {
     chrome.tabs.update(tab.id, {
       highlighted: true
     });
+
+    tabManager.onTabClicked();
+
   });
 
   // Add event listener for close button
@@ -176,7 +207,7 @@ function addTabManagerListeners(tabManager) {
   // Add listeners for tabGroups and tabs
   for (tabGroup of tabManager.tabGroups) {
     addTabGroupListeners(tabGroup);
-    tabGroup.tabs.forEach(addTabListeners);
+    tabGroup.tabs.forEach((tab) => addTabListeners(tab, tabManager));
   }
 
   // Add listener for seach bar

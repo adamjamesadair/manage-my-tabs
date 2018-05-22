@@ -128,7 +128,7 @@ class TabManager {
       chrome.windows.getCurrent((current) => {
         this.windows = windows;
         this.currentWin = current;
-        chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'], (settings) => {
+        chrome.storage.local.get(['closeManagerWhenTabSelected', 'limitTabGroupSize', 'maxTabsPerGroup', 'sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'], (settings) => {
           initSettings(this, settings);
           chrome.tabs.query(this.settings['querySettings'], (tabs) => {
             chrome.tabs.getCurrent((managerTab) => {
@@ -170,6 +170,19 @@ class TabManager {
       }
     }
   }
+
+  onTabClicked() {
+    if (this.settings.closeManagerWhenTabSelected) {
+      this.close()
+    }
+  }
+
+  /*
+   * Close the tab manager tab
+   */
+  close() {
+    chrome.tabs.remove(this.managerTab.id);
+  }
 }
 
 function isOverflown(element) {
@@ -202,19 +215,23 @@ function arrangeWindowTabs(win) {
 
 function initSettings(tabManager, settings) {
   // TODO: put this as a setting in the sidebar
-  let limitTabGroupSize = true;
-  let maxTabsPerGroup = 4;
-  let searchScope = settings['searchScope'] ? settings['searchScope'] : "both";
-  let sortMethod = settings['sortMethod'] ? settings['sortMethod'] : "alphabetically";
-  let winSrc = settings['winSrc'] ? settings['winSrc'] : 'all';
+  let closeManagerWhenTabSelected = settings['closeManagerWhenTabSelected'];
+  let limitTabGroupSize = settings['limitTabGroupSize'];;
+  let maxTabsPerGroup = settings['maxTabsPerGroup'];
+  let searchScope = settings['searchScope'] || "both";
+  let sortMethod = settings['sortMethod'] || "alphabetically";
+  let winSrc = settings['winSrc'] || 'all';
   let tabCount = settings['tabCount'];
-  let includeManager = settings['includeManager'] ? settings['includeManager'] : false;
-  let col = settings['col'] ? settings['col'] : 3;
+  let includeManager = settings['includeManager'] || false;
+  let col = settings['col'] || 3;
 
   document.getElementById(searchScope).checked = true;
   document.getElementById(sortMethod).checked = true;
   document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
   document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
+  document.getElementById("toggle-close-manager-on-click-tab").checked = closeManagerWhenTabSelected === true;
+  document.getElementById("toggle-limit-tab-group-size").checked = limitTabGroupSize === true;
+  document.getElementById("max-tabs-per-group").valueAsNumber = maxTabsPerGroup;
 
   // Set the starting active button for column layout settings
   let colNum = 12 / col;
@@ -248,6 +265,7 @@ function initSettings(tabManager, settings) {
     };
   }
   tabManager.settings = {
+    'closeManagerWhenTabSelected': closeManagerWhenTabSelected,
     'limitTabGroupSize': limitTabGroupSize,
     'maxTabsPerGroup': maxTabsPerGroup,
     'searchScope': searchScope,
