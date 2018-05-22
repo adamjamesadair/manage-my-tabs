@@ -25,5 +25,8 @@ Please look at the [project boards](https://github.com/adamjamesadair/manage-my-
 
 Please work from and submit all pull requests to the `develop` branch. The `master` branch is reserved for public releases and will often be several commits behind the `develop` branch.
 
+### Pull Requests
+Please submit an issue describing the nature your changes before submitting a pull request. This helps us keep track of the development process. 
+
 ## License
 [MIT](http://opensource.org/licenses/MIT)
