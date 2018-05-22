@@ -13,7 +13,7 @@ class TabManager {
   }
 
   reloadPage() {
-    this.loadBrowserData(function(tabManager){
+    this.loadBrowserData(function(tabManager) {
       tabManager.getTabGroups();
       tabManager.sortTabGroups();
       // Sort the tabs in each tabGroup
@@ -27,23 +27,31 @@ class TabManager {
 
   getTabGroups() {
     this.tabGroups = [];
-    let tabGroupIDs = [];
+    // let tabGroupIDs = [];
     for (let tab of this.openTabs) {
       if (tab.url !== this.managerTab.url || this.settings['includeManager']) {
         tab.url = strToURL(tab.url);
 
-          // If the tabGroup already exists, add the tab
-          for (let tabGroup of this.tabGroups) {
-            if (tabGroup.hostname == tab.url.hostname)
+        let tabInGroup = false;
+        let urlHostnameTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
+
+        for (let tabGroup of urlHostnameTabGroups) {
+          if (tabGroup.hostname == tab.url.hostname) {
+            if (this.settings.limitTabGroupSize && tabGroup.nTabs >= this.settings.maxTabsPerGroup) {
+              continue;
+            }
+            else {
               tabGroup.addTab(tab);
+              tabInGroup = true;
+              break
+            }
           }
-          // Otherwise, make a new tabGroup
+        }
+
+        if (!tabInGroup) {
           let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab]);
-          this.tabGroups.forEach((tabGroup) => {
-            tabGroupIDs.push(tabGroup.id)
-          });
-          if (!tabGroupIDs.includes(tabGroup.id))
-            this.tabGroups.push(tabGroup);
+          this.tabGroups.push(tabGroup);
+        }
       }
     }
   }
@@ -193,6 +201,9 @@ function arrangeWindowTabs(win) {
 }
 
 function initSettings(tabManager, settings) {
+  // TODO: put this as a setting in the sidebar
+  let limitTabGroupSize = true;
+  let maxTabsPerGroup = 4;
   let searchScope = settings['searchScope'] ? settings['searchScope'] : "both";
   let sortMethod = settings['sortMethod'] ? settings['sortMethod'] : "alphabetically";
   let winSrc = settings['winSrc'] ? settings['winSrc'] : 'all';
@@ -237,6 +248,8 @@ function initSettings(tabManager, settings) {
     };
   }
   tabManager.settings = {
+    'limitTabGroupSize': limitTabGroupSize,
+    'maxTabsPerGroup': maxTabsPerGroup,
     'searchScope': searchScope,
     'sortMethod': sortMethod,
     'winSrc': winSrc,
