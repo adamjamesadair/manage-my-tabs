@@ -83,6 +83,14 @@
   cursor: pointer;
 }
 
+.sort-option:hover{
+  cursor: pointer;
+}
+
+.search-option:hover{
+  cursor: pointer;
+}
+
 .switch {
   position: relative;
   display: inline-block;
@@ -132,4 +140,8 @@ input:checked + .slider:before {
 .restore-defaults {
   margin-top: 2rem;
   margin-bottom: 2rem;
+}
+
+#restore-Btn:hover {
+  cursor: pointer;
 }
