@@ -1,225 +1,93 @@
-String.prototype.capitalize = function() {
-  return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
-};
-
-/*
-* Checks if a DOM element is overflown
-*
-* @param element
-*   The element to check for overflow.
-*
-* @return {boolean}
-*   True if the element is overflown.
-*/
-function isOverflown(element) {
-    return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
-}
-
 class TabManager {
   constructor() {
     this.managerTab = null;
+    this.tabGroups = [];
     this.openTabs = [];
     this.closedTabs = [];
-    chrome.storage.local.set({'winSrc':'first'});
-  }
-
-  /*
-  * Groups tabs into TabGroups.
-  *
-  * @param {array} tabs
-  *   List of chrome.tabs to be grouped.
-  *
-  * @param {chrome.tab} extensionTab
-  *   The tab manager extention tab.
-  *
-  * @param {boolean} IncludeExtensionTab
-  *   True if the extension tab should be included in the tabs.
-  *
-  * @return {array}
-  *   List of TabGroup objects.
-  */
-  getTabGroups(tabs, extensionTab, includeExtensionTab) {
-    let tabGroups = [];
-    for (let tab of tabs) {
-      if (tab.url !== extensionTab.url || includeExtensionTab) {
-        tab.url = this.strToURL(tab.url);
-        if(!tab.url.hostname.includes('.')){
-          tab.url.hostname = tab.title.replace(/ /g, '_') + ' (' + tab.url.hostname + ')';
-        }
-
-        let added = false;
-        for (let tabGroup of tabGroups){
-          if (tabGroup.hostname == tab.url.hostname){
-            tabGroup.addTab(tab);
-            added = true;
-          }
-        }
-        if (!added)
-          tabGroups.push(new TabGroup(tab.url.hostname, [tab]));
-      }
-    }
-    return tabGroups;
-  }
-
-  createHTMLContent(windows, tabGroups, extensionTab) {
-    chrome.storage.local.get(['winSrc', 'col', 'tabCount'], (settings) => {
-
-      let col = settings['col'] ? settings['col'] : 3;
-      let winSrc = settings['winSrc'];
-
-      // Generate button for switching windows
-      let winSection = document.getElementsByClassName("window-selection")[0];
-      winSection.innerHTML = 'Select Window: ';
-
-      // Create 'All' button
-      let winBtn = document.createElement('button');
-      winBtn.innerHTML = 'All';
-      winBtn.setAttribute('class', 'window-select-btn');
-      if (winSrc == 'all') {
-        winBtn.setAttribute('class', 'window-select-active');
-      }
-      // Add event listener
-      winBtn.addEventListener('click', () => {
-        chrome.storage.local.set({'winSrc':'all'});
-        document.getElementById("search-input").value = "";
-        this.reloadPage();
-      });
-      winSection.appendChild(winBtn);
-
-      // Generate the rest of the buttons
-      for (let i=1; i <= windows.length; i++){
-        let winBtn = document.createElement('button');
-        winBtn.innerHTML = i;
-        winBtn.setAttribute('class', 'window-select-btn');
-
-        // Set the active button
-        if (typeof winSrc === 'number'){
-          if (i == winSrc + 1) {
-            winBtn.setAttribute('class', 'window-select-active');
-          }
-        }
-
-        // Add event listener
-        winBtn.addEventListener('click', () => {
-          chrome.storage.local.set({'winSrc':i-1});
-          document.getElementById("search-input").value = "";
-          this.reloadPage();
-        });
-        winSection.appendChild(winBtn);
-        if (isOverflown(winSection)){
-          winSection.style.top = '-3.6rem';
-        } else {
-          winSection.style.top = '-2.4rem';
-        }
-      }
-
-      // Generate tabGroups
-      document.getElementsByClassName('row')[0].innerHTML = '';
-      for (let tabGroup of tabGroups){
-        let group = document.createElement('div');
-        let title = document.createElement('h1');
-        let closeGroupBtn = document.createElement('div');
-        closeGroupBtn.appendChild(document.createTextNode('X'));
-        closeGroupBtn.setAttribute('class', 'closeGroupBtn');
-        group.appendChild(closeGroupBtn);
-        let className = 'col-' + col;
-
-        title.setAttribute('class', 'tab-title');
-        group.setAttribute('class', 'tab-group ' + className);
-        group.setAttribute('id', tabGroup.hostname);
-
-        tabGroup.hostname = decodeURI(tabGroup.hostname);
-        title.innerText = settings['tabCount'] ? "(" + tabGroup.tabs.length + ")" + tabGroup.hostname.capitalize()
-                                   : tabGroup.hostname.capitalize();
-        group.appendChild(title);
-
-        let img = document.createElement('IMG');
-        img.setAttribute('class', 'icon');
-        img.src = tabGroup.tabs[0].favIconUrl;
-        title.appendChild(img);
-
-        // Add event listener for closing tab group button
-        closeGroupBtn.addEventListener('click', () => {
-          for (let i=0; i < tabGroup.tabs.length; i++) {
-            chrome.tabs.remove(tabGroup.tabs[i].id);
-          }
-          group.remove();
-        });
-
-        // Generate tabs
-        for (let i=0; i < tabGroup.tabs.length; i++) {
-          let currentTab = tabGroup.tabs[i];
-
-          let tab = document.createElement('div');
-          let tabContainer = document.createElement('div');
-
-          tab.setAttribute('class', 'tab');
-          tab.setAttribute('title', currentTab.title);
-          tabContainer.setAttribute('class', 'tabContainer');
-
-          let closeBtn = document.createElement('div');
-          closeBtn.appendChild(document.createTextNode('X'));
-          closeBtn.setAttribute('class', 'closeBtn');
-
-          let tabDescription = document.createElement('p');
-          tabDescription.setAttribute('class', 'tabDescription');
-          tabDescription.appendChild(document.createTextNode(currentTab.title));
-          tab.appendChild(tabDescription);
-
-          tabContainer.appendChild(tab);
-          tabContainer.appendChild(closeBtn);
-          group.appendChild(tabContainer);
-
-          // Add event listener for tab
-          tab.addEventListener('click', () => {
-            chrome.windows.update(currentTab.windowId, {focused: true});
-            chrome.tabs.update(currentTab.id, {highlighted: true});
-            chrome.tabs.remove(extensionTab.id);
-          });
-
-          // Add event listener for close button
-          closeBtn.addEventListener('click', () => {
-            // Close the selected tab
-            chrome.tabs.remove(currentTab.id);
-          });
-        }
-        document.getElementsByClassName('row')[0].appendChild(group);
-      }
+    this.windows = [];
+    this.currentWin = {};
+    this.settings = {};
+    chrome.storage.local.set({
+      'winSrc': 'first'
     });
   }
 
+  reloadPage() {
+    this.loadBrowserData(function(tabManager){
+      tabManager.getTabGroups();
+      tabManager.sortTabGroups();
+      // Sort the tabs in each tabGroup
+      for (let tabGroup of tabManager.tabGroups) {
+        tabGroup.sortTabs("alphabetically");
+      }
+      tabManager.renderHTMLContent();
+      addTabManagerListeners(tabManager);
+    });
+  }
+
+  getTabGroups() {
+    this.tabGroups = [];
+    let tabGroupIDs = [];
+    for (let tab of this.openTabs) {
+      if (tab.url !== this.managerTab.url || this.settings['includeManager']) {
+        tab.url = strToURL(tab.url);
+
+          // If the tabGroup already exists, add the tab
+          for (let tabGroup of this.tabGroups) {
+            if (tabGroup.hostname == tab.url.hostname)
+              tabGroup.addTab(tab);
+          }
+          // Otherwise, make a new tabGroup
+          let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab]);
+          this.tabGroups.forEach((tabGroup) => {
+            tabGroupIDs.push(tabGroup.id)
+          });
+          if (!tabGroupIDs.includes(tabGroup.id))
+            this.tabGroups.push(tabGroup);
+      }
+    }
+  }
+
+  renderHTMLContent() {
+    let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
+
+    generateWinSelectBtns(this.windows, this.settings['winSrc']);
+    generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    generateTabs(tabGroups);
+  }
+
   /*
-  * Searches the given tab groups and/or tabs for the search term.
-  *
-  * @param {array} tabGroups
-  *   List of TabGroup objects to search through.
-  *
-  * @param {string} term
-  *   The term to search for in the tabs and TabGroups.
-  *
-  * @param {string} scope
-  *   Scope to search. Options: "url", "tabs" or "both"
-  *
-  * @return {array}
-  *   List of TabGroups that match match the search.
-  */
-  searchTabGroups(tabGroups, term, scope="both") {
+   * Searches the given tab groups and/or tabs for the search term.
+   *
+   * @param {array} tabGroups
+   *   List of TabGroup objects to search through.
+   *
+   * @param {string} term
+   *   The term to search for in the tabs and TabGroups.
+   *
+   * @param {string} scope
+   *   Scope to search. Options: "url", "tabs" or "both"
+   *
+   * @return {array}
+   *   List of TabGroups that match match the search.
+   */
+  searchTabGroups(term, scope = "both") {
     let newTabGroups = [];
     let newTabGroupTabs = [];
-    for (let tabGroup of tabGroups){
+    for (let tabGroup of this.tabGroups) {
       // If website name matches search, add it to results
-      if(tabGroup.hostname.toLowerCase().includes(term.toLowerCase()) && scope != "tabs"){
+      if (tabGroup.hostname.toLowerCase().includes(term.toLowerCase()) && scope != "tabs") {
         newTabGroups.push(tabGroup);
       } else if (scope != "url") {
         // Else, check if any tabs match search. If so, add them.
         newTabGroupTabs = [];
-        for (let tab of tabGroup.tabs){
+        for (let tab of tabGroup.tabs) {
           // If tab matches search, add it to results
-          if(tab.title.toLowerCase().includes(term.toLowerCase()))
+          if (tab.title.toLowerCase().includes(term.toLowerCase()))
             newTabGroupTabs.push(tab);
         }
         // If at least 1 tab matches the results, add tabGroup to results
-        if(newTabGroupTabs.length > 0){
+        if (newTabGroupTabs.length > 0) {
           let newTabGroup = tabGroup;
           newTabGroup.tabs = newTabGroupTabs;
           newTabGroups.push(newTabGroup);
@@ -229,154 +97,36 @@ class TabManager {
     return newTabGroups;
   }
 
-  /*
-  * Sorts a given list of TabGroups using the indicated method.
-  *
-  * @param {array} tabGroups
-  *   List of TabGroup objects to be sorted.
-  *
-  * @param {string} method
-  *   Method for sorting. Options: "alphabetically", "leastTabs", "mostTabs". Default: "alphabetically".
-  */
-  sortTabGroups(tabGroups, method="alphabetically"){
-    switch (method){
+  sortTabGroups() {
+    let method = this.settings['sortMethod'];
+    switch (method) {
       case "alphabetically":
-        tabGroups.sort((a, b) => a.hostname.localeCompare(b.hostname, {sensitivity: 'base'}));
+        this.tabGroups.sort((a, b) => a.hostname.localeCompare(b.hostname, {
+          sensitivity: 'base'
+        }));
         break;
       case "leastTabs":
-        tabGroups.sort((a, b) => a.tabs.length - b.tabs.length);
+        this.tabGroups.sort((a, b) => a.tabs.length - b.tabs.length);
         break;
       case "mostTabs":
-        tabGroups.sort((a, b) => b.tabs.length - a.tabs.length);
+        this.tabGroups.sort((a, b) => b.tabs.length - a.tabs.length);
     }
   }
 
-/*
-* Converts the string of a url to URL type.
-*
-* @param {string} str
-*   The string to convert.
-*
-* @param {bool} hostname
-*   true to remove the 'www.' from the url's hostname. Default: true.
-*
-* @return {URL} url
-*  The converted URL.
-*/
-strToURL(str, hostname=true){
-  let url = new URL(str);
-  if(hostname){
-    if (url.hostname.includes('.')){
-      url.hostname = url.hostname.replace(/^www\./,'');
-    }
-  }
-  return (url);
-}
-
-  /*
-  * Sorts and arranges the tabs of a given window.
-  *
-  * @param {chrome.window} win
-  *  The window to arrange.
-  */
-  arrangeWindowTabs(win){
-    let tabs = win.tabs;
-    for(let tab of tabs){
-      tab.url = this.strToURL(tab.url);
-    }
-    // Sort the tabs alphabetically
-    tabs.sort((a, b) => a.url.hostname.localeCompare(b.url.hostname, {sensitivity: 'base'}));
-
-    // Move the tabs to their proper locations
-    for(let i in tabs){
-      chrome.tabs.move(tabs[i].id, {index: parseInt(i)});
-    }
-  }
-
-  reloadPage() {
-    chrome.windows.getAll({populate: true}, (windows) => {
-      chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager'], (settings) => {
-
-        let searchScope = settings['searchScope'] ? settings['searchScope'] : "both";
-        let sortMethod = settings['sortMethod'] ? settings['sortMethod'] : "alphabetically";
-        let winSource = settings['winSrc'];
-        let tabCount = settings['tabCount'];
-        let includeManager = settings['includeManager'];
-
-        document.getElementById(searchScope).checked = true;
-        document.getElementById(sortMethod).checked = true;
-        document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
-        document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
-        let querySettings = {'currentWindow': true};
-        if (winSource === 'all'){
-          querySettings = {};
-        }
-        // Default to the current window
-        else if (winSource === 'first'){
-            chrome.windows.getCurrent((current) => {
-              for (var i=0; i<windows.length; i++){
-                if (windows[i].id === current.id){
-                  chrome.storage.local.set({'winSrc':i});
-                }
-              }
-            });
-
-        }
-        else if (typeof winSource === 'number') {
-          if(windows.length - 1 >= winSource){
-            querySettings = {'windowId': windows[winSource].id};
-          }
-        }
-
-
-        chrome.tabs.query(querySettings, (tabs) => {
-          chrome.tabs.getCurrent((extensionTab) => {
-
-            this.managerTab = extensionTab;
-
-            // Array holding the tabGroups
-            let tabGroups = this.getTabGroups(tabs, extensionTab, includeManager === true);
-
-            // If the manager tab is the last tab in all windows, close
-            if (windows.length == 1){
-              if (windows[0].tabs.length == 1){
-                if (windows[0].tabs[0].id === this.managerTab.id){
-                  chrome.tabs.remove(this.managerTab.id);
-                }
-              }
-            }
-
-            // Sort the tabGroups alphabetically
-            this.sortTabGroups(tabGroups, sortMethod);
-
-            // Sort the tabs in each tabGroup
-            for (let tabGroup of tabGroups) {
-              tabGroup.sortTabs("alphabetically");
-            }
-
-            // Update open tabs
-            this.openTabs = [];
-            for (let tabGroup of tabGroups){
-              for (let tab of tabGroup.tabs){
-                this.openTabs.push(tab);
-              }
-            }
-
-            // Generate HTML content
-            this.createHTMLContent(windows, tabGroups, extensionTab);
-
-            // Add listener for seach bar
-            let searchBar = document.getElementById("search-input");
-            let upperContext = this;
-            searchBar.addEventListener('keyup', function() {
-              tabGroups = upperContext.getTabGroups(tabs, extensionTab, includeManager === true);
-              // Sort the tabGroups alphabetically
-              upperContext.sortTabGroups(tabGroups, sortMethod);
-              // Sort the tabs in each tabGroup
-              for (let tabGroup of tabGroups) {
-                tabGroup.sortTabs("alphabetically");
-              }
-              upperContext.createHTMLContent(windows, upperContext.searchTabGroups(tabGroups, this.value, searchScope), extensionTab);
+  loadBrowserData(callback) {
+    chrome.windows.getAll({
+      populate: true
+    }, (windows) => {
+      chrome.windows.getCurrent((current) => {
+        this.windows = windows;
+        this.currentWin = current;
+        chrome.storage.local.get(['sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'], (settings) => {
+          initSettings(this, settings);
+          chrome.tabs.query(this.settings['querySettings'], (tabs) => {
+            chrome.tabs.getCurrent((managerTab) => {
+              this.openTabs = tabs;
+              this.managerTab = managerTab;
+              callback(this);
             });
           });
         });
@@ -385,37 +135,114 @@ strToURL(str, hostname=true){
   }
 
   /*
-  * Reopens the most recently closed tab.
-  */
+   * Reopens the most recently closed tab.
+   */
   reopenLastClosed() {
     let winExists = false;
-    if (this.closedTabs.length > 0){
+    if (this.closedTabs.length > 0) {
       tab = this.closedTabs.pop();
-      tab.url.hostname = decodeURI(tab.url.hostname);
-      if(decodeURI(tab.url.hostname).includes('(')){
-        tab.url.hostname = decodeURI(tab.url.hostname).match(/\(([^)]+)\)/)[1];
+      // Check if the window the tab came from exsits
+      for (let win of this.windows) {
+        if (win.id === tab.windowId)
+          winExists = true;
       }
-      chrome.windows.getAll((windows) => {
-        // Check if the window the tab came from exsits
-        for (let win of windows) {
-          if (win.id === tab.windowId)
-            winExists = true;
-        }
-        // If the window no longer exists, make a new window with that tab
-        if (!winExists){
-          chrome.windows.create({
-            url: tab.url.href,
-            focused: true
-          });
-        } else {
-          // else make the tab in its original window
-          chrome.tabs.create({
-            windowId: tab.windowId,
-            url: tab.url.href,
-            active: false
-          });
-        }
-      });
+      // If the window no longer exists, make a new window with that tab
+      if (!winExists) {
+        chrome.windows.create({
+          url: tab.url.href,
+          focused: true
+        });
+      } else {
+        // else make the tab in its original window
+        chrome.tabs.create({
+          windowId: tab.windowId,
+          url: tab.url.href,
+          active: false
+        });
+      }
     }
   }
+}
+
+function isOverflown(element) {
+  return element.prop('scrollWidth') > element.width();
+}
+
+/*
+ * Sorts and arranges the tabs of a given window.
+ *
+ * @param {chrome.window} win
+ *  The window to arrange.
+ */
+function arrangeWindowTabs(win) {
+  let tabs = win.tabs;
+  for (let tab of tabs) {
+    tab.url = strToURL(tab.url);
+  }
+  // Sort the tabs alphabetically
+  tabs.sort((a, b) => a.url.hostname.localeCompare(b.url.hostname, {
+    sensitivity: 'base'
+  }));
+
+  // Move the tabs to their proper locations
+  for (let i in tabs) {
+    chrome.tabs.move(tabs[i].id, {
+      index: parseInt(i)
+    });
+  }
+}
+
+function initSettings(tabManager, settings) {
+  let searchScope = settings['searchScope'] ? settings['searchScope'] : "both";
+  let sortMethod = settings['sortMethod'] ? settings['sortMethod'] : "alphabetically";
+  let winSrc = settings['winSrc'] ? settings['winSrc'] : 'all';
+  let tabCount = settings['tabCount'];
+  let includeManager = settings['includeManager'] ? settings['includeManager'] : false;
+  let col = settings['col'] ? settings['col'] : 3;
+
+  document.getElementById(searchScope).checked = true;
+  document.getElementById(sortMethod).checked = true;
+  document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
+  document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
+
+  // Set the starting active button for column layout settings
+  let colNum = 12 / col;
+  let layoutOptions = document.getElementsByClassName("layout-option");
+  for (layoutOption of layoutOptions) {
+    if (layoutOption.id == colNum) {
+      layoutOption.setAttribute('class', 'layout-option-active');
+    }
+  }
+
+  let querySettings = {
+    'currentWindow': true
+  };
+  if (winSrc === 'all') {
+    querySettings = {};
+  }
+  // Default to the current window
+  else if (winSrc === 'first') {
+    for (var i = 0; i < tabManager.windows.length; i++) {
+      if (tabManager.windows[i].id === tabManager.currentWin.id) {
+        winSrc = i + 1;
+        chrome.storage.local.set({
+          'winSrc': winSrc
+        });
+      }
+    }
+  } else {
+    let winSource = parseInt(winSrc);
+    querySettings = {
+      'windowId': tabManager.windows[winSource - 1].id
+    };
+  }
+  tabManager.settings = {
+    'searchScope': searchScope,
+    'sortMethod': sortMethod,
+    'winSrc': winSrc,
+    'tabCount': tabCount,
+    'includeManager': includeManager,
+    'col': col,
+    'querySettings': querySettings
+  };
 }
