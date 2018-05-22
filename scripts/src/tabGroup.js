@@ -11,9 +11,11 @@ String.prototype.capitalize = function() {
 *   List of tabs to be held by the TabGroup.
 */
 class TabGroup {
+
   constructor(hostname, tabCount, tabs=[]) {
     this.hostname = hostname;
-    this.id = hostname.split('.').join("");
+    // this.id = hostname.split('.').join("");
+    this.id = TabGroup.n_instances++;
     this.tabs = tabs;
     this.tabCount = tabCount;
     this.setTitle();
@@ -27,6 +29,10 @@ class TabGroup {
     }
     if (this.tabCount)
       this.title = "(" + this.tabs.length + ")" + this.title;
+  }
+
+  get nTabs() {
+    return this.tabs.length;
   }
 
   /*
@@ -65,3 +71,5 @@ class TabGroup {
       this.tabs.splice(index, 1);
   }
 }
+
+TabGroup.n_instances = 0;
