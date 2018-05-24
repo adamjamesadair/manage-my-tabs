@@ -83,7 +83,7 @@ function addListeners(tabManager) {
 
   // Add listener for manager display settings
   let $sliderMaxTabsPerGroup = $("#max-tabs-per-group");
-  $sliderMaxTabsPerGroup.on('change', () => {
+  $sliderMaxTabsPerGroup.on('input', () => {
     chrome.storage.local.set({
       'maxTabsPerGroup': $sliderMaxTabsPerGroup.prop("valueAsNumber")
     });
