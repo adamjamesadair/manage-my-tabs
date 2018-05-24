@@ -3,7 +3,7 @@ class TabManager {
     this.managerTab = null;
     this.tabGroups = [];
     this.openTabs = [];
-    this.closedTabs = [];
+    this.closedElements = [];
     this.windows = [];
     this.currentWin = {};
     this.settings = {};
@@ -39,8 +39,7 @@ class TabManager {
           if (tabGroup.hostname == tab.url.hostname) {
             if (this.settings.limitTabGroupSize && tabGroup.nTabs >= this.settings.maxTabsPerGroup) {
               continue;
-            }
-            else {
+            } else {
               tabGroup.addTab(tab);
               tabInGroup = true;
               break
@@ -143,31 +142,59 @@ class TabManager {
   }
 
   /*
-   * Reopens the most recently closed tab.
+   * Adds the tab to the closedElements if it is not in a closed tab group
+   */
+  tryAddToClosedElements(tab) {
+    const last = _.last(this.closedElements);
+    if (last instanceof TabGroup) {
+      if (_.contains(last.tabs, tab))
+        return
+    }
+    this.closedElements.push(tab);
+  }
+
+  reopenTab(tab) {
+    let winExists = false;
+    // Check if the window the tab came from exsits
+    for (let win of this.windows) {
+      if (win.id === tab.windowId)
+        winExists = true;
+    }
+    // If the window no longer exists, make a new window with that tab
+    if (!winExists) {
+      chrome.windows.create({
+        url: tab.url.href,
+        focused: true
+      });
+    } else {
+      // else make the tab in its original window
+      chrome.tabs.create({
+        windowId: tab.windowId,
+        url: tab.url.href,
+        active: false
+      });
+    }
+  }
+
+  reopenTabGroup(tabGroup) {
+    for (let tab of tabGroup.tabs) {
+      this.reopenTab(tab);
+    }
+  }
+
+  /*
+   * Reopens the most recently closed element.
    */
   reopenLastClosed() {
-    let winExists = false;
-    if (this.closedTabs.length > 0) {
-      tab = this.closedTabs.pop();
-      // Check if the window the tab came from exsits
-      for (let win of this.windows) {
-        if (win.id === tab.windowId)
-          winExists = true;
-      }
-      // If the window no longer exists, make a new window with that tab
-      if (!winExists) {
-        chrome.windows.create({
-          url: tab.url.href,
-          focused: true
-        });
-      } else {
-        // else make the tab in its original window
-        chrome.tabs.create({
-          windowId: tab.windowId,
-          url: tab.url.href,
-          active: false
-        });
-      }
+    console.log(this.closedElements);
+    let element = this.closedElements.pop();
+    if (element === undefined) {
+      // TODO: give feedback: the stack is empty
+      return;
+    } else if (element instanceof TabGroup) {
+      this.reopenTabGroup(element);
+    } else { // isTab
+      this.reopenTab(element);
     }
   }
 
