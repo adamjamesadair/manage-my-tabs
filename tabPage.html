@@ -31,9 +31,21 @@
         <button id="win-btn-all" class="win-btn window-select-btn" type="button">All</button>
       </div>
       <div class="search">
-        <h2>Search</h2>
-        <input type="text" id="search-input" placeholder="Search...">
-        <img id="search-icon" src="images/search.svg" alt="Magnifying glass"/>
+        <div class="searchbar">
+          <input type="text" id="search-input" placeholder="Search...">
+          <img id="search-icon" src="images/search.svg" alt="Magnifying glass"/>
+        </div>
+        <div class="search-settings">
+          <div class="radio">
+            <label><input class="search-option" type="radio" name="searchradio" id="url"> URLs</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" class="search-option" name="searchradio" id="tabs"> Tabs</label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" class="search-option" name="searchradio" id="both"> Both</label>
+          </div>
+        </div>
       </div>
       <h3 id="no-match-search">No matches for your search term :(</h3>
       <div class="row tabgroup-container"></div>
@@ -101,18 +113,6 @@
         </div>
         <div class="radio">
           <label><input type="radio" class="sort-option" name="optradio" id="none"> None</label>
-        </div>
-      </div>
-      <div class="search-settings">
-        <h3>Search:</h3>
-        <div class="radio">
-          <label><input class="search-option" type="radio" name="searchradio" id="url"> URLs</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" class="search-option" name="searchradio" id="tabs"> Tabs</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" class="search-option" name="searchradio" id="both"> Both</label>
         </div>
       </div>
       <div class="restore-defaults">
