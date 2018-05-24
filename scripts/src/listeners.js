@@ -167,7 +167,7 @@ function addTabListeners(tab, tabManager) {
       focused: true
     });
     chrome.tabs.update(tab.id, {
-      highlighted: true
+      active: true
     });
 
     tabManager.onTabClicked();
