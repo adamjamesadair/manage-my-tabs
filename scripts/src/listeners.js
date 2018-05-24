@@ -166,10 +166,19 @@ function addTabListeners(tab, tabManager) {
     chrome.windows.update(tab.windowId, {
       focused: true
     });
-    chrome.tabs.update(tab.id, {
-      active: true
-    });
 
+    let updateProperties;
+    if (platform.name == "Firefox") {
+      updateProperties = {
+        active: true
+      };
+    } else {
+      updateProperties = {
+        highlighted: true
+      };
+    }
+
+    chrome.tabs.update(tab.id, updateProperties);
     tabManager.onTabClicked();
 
   });
