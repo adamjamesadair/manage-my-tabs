@@ -91,6 +91,21 @@
   cursor: pointer;
 }
 
+.search-settings{
+  margin-left: -2rem;
+}
+
+.search-settings label{
+  display: block;
+  top: 2rem;
+  margin: -0.75rem;
+  font-size: 0.75rem;
+}
+
+.search-settings .radio {
+  display: inline-block;
+}
+
 .switch {
   position: relative;
   display: inline-block;
