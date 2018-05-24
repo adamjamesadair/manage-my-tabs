@@ -18,7 +18,7 @@ function addListeners(tabManager) {
     // Add the closed tab to closed tab list
     for (tab of tabManager.openTabs) {
       if (tab.id == tabID) {
-        tabManager.closedTabs.push(tab);
+        tabManager.tryAddToClosedElements(tab);
       }
     }
     tabManager.reloadPage();
@@ -181,12 +181,14 @@ function addTabListeners(tab, tabManager) {
   });
 }
 
-function addTabGroupListeners(tabGroup) {
+function addTabGroupListeners(tabGroup, tabManager) {
   $('#' + tabGroup.id + ' .closeGroupBtn').on('click', () => {
     for (let i = 0; i < tabGroup.tabs.length; i++) {
       chrome.tabs.remove(tabGroup.tabs[i].id);
     }
     $(tabGroup.hostname).remove();
+    tabManager.closedElements = _.difference(tabManager.closedElements, tabGroup.tabs);
+    tabManager.closedElements.push(tabGroup);
   });
 }
 
@@ -207,7 +209,7 @@ function addTabManagerListeners(tabManager) {
 
   // Add listeners for tabGroups and tabs
   for (tabGroup of tabManager.tabGroups) {
-    addTabGroupListeners(tabGroup);
+    addTabGroupListeners(tabGroup, tabManager);
     tabGroup.tabs.forEach((tab) => addTabListeners(tab, tabManager));
   }
 
