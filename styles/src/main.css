@@ -45,23 +45,18 @@ header {
   margin-bottom: 3rem;
 }
 
-/* .window:before{
-  content:"";
-  position: absolute;
-  top: 10px;
-  z-index: 1;
-  border: 13px solid red;
-  border-radius: 5px;
-} */
-
 .window-title{
   position: absolute;
-  padding: 3px;
-  top: 5px;
+  z-index: 1;
+  padding: 3px 10px;
+  top: 10px;
   font-size: 20px;
-  border-radius: 5px;
-  color: white;
-  background-color: var(--main-active-color);
+  border: 1px solid black;
+  border-bottom: none;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  color: black;
+  background-color: #fcfcfc;
 }
 
 #tabs-icon {
