@@ -194,6 +194,23 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
+#max-tabs-per-group{
+  display: block;
+  margin: auto;
+  margin-top: 5px;
+}
+
+#max-tabs-per-group:hover{
+  cursor: pointer;
+}
+
+#slider-value{
+  padding: 0.25rem;
+  color: white;
+  background-color: var(--settings-active-color);
+  font-size: 1.1rem;
+}
+
 .restore-defaults {
   margin-top: 2rem;
   margin-bottom: 2rem;
