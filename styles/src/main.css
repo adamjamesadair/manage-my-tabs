@@ -22,6 +22,48 @@ header {
   width: 25rem;
 }
 
+.main-container{
+  position: relative;
+}
+
+.window-container{
+  position: relative;
+  background-color: grey;
+  min-width: 40rem;
+  box-shadow: 0 1vw 1.5vw 0 rgba(0, 0, 0, 0.3), 0 1.5vw 3vw 0 rgba(0, 0, 0, 0.20);
+}
+
+.window{
+  position: relative;
+  padding-top: 2.5rem;
+  margin: auto;
+  padding-bottom: 1rem;
+  background-color: silver;
+  border: 2px solid black;
+  border-radius: 10px;
+  box-shadow: 0 1vw 1.5vw 0 rgba(0, 0, 0, 0.3), 0 1.5vw 3vw 0 rgba(0, 0, 0, 0.20);
+  margin-bottom: 3rem;
+}
+
+/* .window:before{
+  content:"";
+  position: absolute;
+  top: 10px;
+  z-index: 1;
+  border: 13px solid red;
+  border-radius: 5px;
+} */
+
+.window-title{
+  position: absolute;
+  padding: 3px;
+  top: 5px;
+  font-size: 20px;
+  border-radius: 5px;
+  color: white;
+  background-color: var(--main-active-color);
+}
+
 #tabs-icon {
   position: absolute;
   left: 1rem;
