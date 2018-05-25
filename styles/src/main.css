@@ -22,6 +22,43 @@ header {
   width: 25rem;
 }
 
+.main-container{
+  position: relative;
+}
+
+.window-container{
+  position: relative;
+  background-color: grey;
+  min-width: 40rem;
+  box-shadow: 0 1vw 1.5vw 0 rgba(0, 0, 0, 0.3), 0 1.5vw 3vw 0 rgba(0, 0, 0, 0.20);
+}
+
+.window{
+  position: relative;
+  padding-top: 2.5rem;
+  margin: auto;
+  padding-bottom: 1rem;
+  background-color: silver;
+  border: 2px solid black;
+  border-radius: 10px;
+  box-shadow: 0 1vw 1.5vw 0 rgba(0, 0, 0, 0.3), 0 1.5vw 3vw 0 rgba(0, 0, 0, 0.20);
+  margin-bottom: 3rem;
+}
+
+.window-title{
+  position: absolute;
+  z-index: 1;
+  padding: 3px 10px;
+  top: 10px;
+  font-size: 20px;
+  border: 1px solid black;
+  border-bottom: none;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  color: black;
+  background-color: #fcfcfc;
+}
+
 #tabs-icon {
   position: absolute;
   left: 1rem;

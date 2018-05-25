@@ -1,9 +1,12 @@
 function renderWindow(windowId) {
   return `
-    <div id="windowWithTabGroups-${windowId}" class="row container">
-      Window ${windowId}
+    <div id="windowWithTabGroups-${windowId}" class="row container window">
     </div>
   `;
+}
+
+function renderWindowTitle(wid){
+  return `<h2 class="window-title">Window ${wid}</h2>`;
 }
 
 function renderTabGroup(tabGroup, className, favIconUrl) {
@@ -44,7 +47,7 @@ function generateWindows(tabGroups) {
 }
 
 function generateTabGroupsByWindow(tabGroups, className, tabCount) {
-  let $tabGroupContainer = $('.tabgroup-container');
+  let $tabGroupContainer = $('.window');
   $tabGroupContainer.empty();
 
   let tabGroupsByWindow = _.groupBy(tabGroups, (tg) => tg.windowId);
@@ -52,6 +55,7 @@ function generateTabGroupsByWindow(tabGroups, className, tabCount) {
     // $element = $('.tabgroup-container');
     $element = $( '#windowWithTabGroups-' + tgs);
     $element.empty();
+    $element.append(renderWindowTitle(tgs));
     for (let value of tabGroupsByWindow[tgs]) {
       $element.append(renderTabGroup(value, className, value.tabs[0].favIconUrl));
     }
