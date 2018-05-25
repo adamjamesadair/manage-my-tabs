@@ -1,3 +1,11 @@
+function renderWindow(windowId) {
+  return `
+    <div id="windowWithTabGroups-${windowId}" class="row container">
+      Window ${windowId}
+    </div>
+  `;
+}
+
 function renderTabGroup(tabGroup, className, favIconUrl) {
   return `
       <div id="${tabGroup.id}" class="tab-group ${className}">
@@ -24,9 +32,35 @@ function renderBtn(id) {
   return `<button id="win-btn-${id}" class="window-select-btn win-btn generated-win-btn" type="button">${id}</button>`;
 }
 
-function generateTabGroups(tabGroups, className, tabCount) {
+function generateWindows(tabGroups) {
+  let $windowContainer = $('.window-container');
+  $windowContainer.empty();
+
+  let windowIds = _.keys(_.groupBy(tabGroups, (tg) => tg.windowId));
+
+  for (let wid of windowIds) {
+    $windowContainer.append(renderWindow(wid));
+  }
+}
+
+function generateTabGroupsByWindow(tabGroups, className, tabCount) {
   let $tabGroupContainer = $('.tabgroup-container');
   $tabGroupContainer.empty();
+
+  let tabGroupsByWindow = _.groupBy(tabGroups, (tg) => tg.windowId);
+  for (let tgs in tabGroupsByWindow) {
+    // $element = $('.tabgroup-container');
+    $element = $( '#windowWithTabGroups-' + tgs);
+    $element.empty();
+    for (let value of tabGroupsByWindow[tgs]) {
+      $element.append(renderTabGroup(value, className, value.tabs[0].favIconUrl));
+    }
+  }
+}
+
+function generateTabGroups(tabGroups, className, tabCount, empty = true) {
+  let $tabGroupContainer = $('.tabgroup-container');
+  if (empty) $tabGroupContainer.empty();
   for (let tabGroup of tabGroups) {
     $tabGroupContainer.append(renderTabGroup(tabGroup, className, tabGroup.tabs[0].favIconUrl));
   }

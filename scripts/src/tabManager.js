@@ -33,9 +33,12 @@ class TabManager {
         tab.url = strToURL(tab.url);
 
         let tabInGroup = false;
-        let urlHostnameTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
+        let filteredTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
+        if (!this.settings['showAllWindowsTogether']) {
+          filteredTabGroups = _.filter(filteredTabGroups, (tg) => tg.windowId == tab.windowId);
+        }
 
-        for (let tabGroup of urlHostnameTabGroups) {
+        for (let tabGroup of filteredTabGroups) {
           if (tabGroup.hostname == tab.url.hostname) {
             if (this.settings.limitTabGroupSize && tabGroup.nTabs >= this.settings.maxTabsPerGroup) {
               continue;
@@ -48,7 +51,7 @@ class TabManager {
         }
 
         if (!tabInGroup) {
-          let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab]);
+          let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab], tab.windowId);
           this.tabGroups.push(tabGroup);
         }
       }
@@ -57,9 +60,15 @@ class TabManager {
 
   renderHTMLContent() {
     let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
-
+    // let tabGroups = this.tabGroups;
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
-    generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    if(!this.settings['showAllWindowsTogether']) {
+      generateWindows(tabGroups);
+      generateTabGroupsByWindow(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    } else {
+      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    }
+    // generateWindows(_.range(_.size(_.groupBy(this.tabGroups, (tg) => tg.windowId))));
     generateTabs(tabGroups);
   }
 
@@ -242,6 +251,8 @@ function arrangeWindowTabs(win) {
 
 function initSettings(tabManager, settings) {
   // TODO: put this as a setting in the sidebar
+  // let showAllWindowsTogether = settings['closeManagerWhenTabSelected'] || true;
+  let showAllWindowsTogether = false;
   let closeManagerWhenTabSelected = settings['closeManagerWhenTabSelected'];
   let limitTabGroupSize = settings['limitTabGroupSize'];;
   let maxTabsPerGroup = settings['maxTabsPerGroup'];
@@ -292,6 +303,7 @@ function initSettings(tabManager, settings) {
     };
   }
   tabManager.settings = {
+    'showAllWindowsTogether': showAllWindowsTogether,
     'closeManagerWhenTabSelected': closeManagerWhenTabSelected,
     'limitTabGroupSize': limitTabGroupSize,
     'maxTabsPerGroup': maxTabsPerGroup,
