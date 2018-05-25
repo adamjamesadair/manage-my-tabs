@@ -2,6 +2,8 @@
   font-family: Arial, sans-serif;
   font-size: 16px;
   --tab-hover-color: #2196F3;
+  --main-active-color: #2a9606;
+  --settings-active-color: #2196F3;
 }
 
 body {
@@ -89,7 +91,7 @@ h2 {
   outline: none;
   border: none;
   color: white;
-  background-color: #2a9606;
+  background-color: var(--main-active-color);
 }
 
 .window-select-btn:hover {

@@ -52,6 +52,7 @@ function addListeners(tabManager) {
       $('.main-content').css({'margin-left': '0px'});
       $('.settings').css({'width': '0px'});
     }
+    $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
   });
 
   // Add listener for tab count settings
@@ -72,7 +73,7 @@ function addListeners(tabManager) {
     tabManager.reloadPage();
   });
 
-  // Add listener for manager display settings
+  // Add listener for limit tabGroup size settings
   let $toggleLimitTabGroupSize = $("#toggle-limit-tab-group-size");
   $toggleLimitTabGroupSize.on('click', () => {
     chrome.storage.local.set({
@@ -81,16 +82,17 @@ function addListeners(tabManager) {
     tabManager.reloadPage();
   });
 
-  // Add listener for manager display settings
+  // Add listener for limit tabGroup size slider
   let $sliderMaxTabsPerGroup = $("#max-tabs-per-group");
   $sliderMaxTabsPerGroup.on('input', () => {
+    $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
     chrome.storage.local.set({
       'maxTabsPerGroup': $sliderMaxTabsPerGroup.prop("valueAsNumber")
     });
     tabManager.reloadPage();
   });
 
-  // Add listener for manager display settings
+  // Add listener for close on click setting
   let $toggleCloseOnClickTab = $("#toggle-close-manager-on-click-tab");
   $toggleCloseOnClickTab.on('click', () => {
     chrome.storage.local.set({
