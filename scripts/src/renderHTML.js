@@ -46,16 +46,21 @@ function generateWindows(tabGroups) {
   }
 }
 
-function generateTabGroupsByWindow(tabGroups, className, tabCount) {
+function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
+  let windowIds = [];
+  windows.forEach(function(win){
+    windowIds.push(win.id);
+  });
+
   let $tabGroupContainer = $('.window');
   $tabGroupContainer.empty();
 
   let tabGroupsByWindow = _.groupBy(tabGroups, (tg) => tg.windowId);
   for (let tgs in tabGroupsByWindow) {
-    // $element = $('.tabgroup-container');
     $element = $( '#windowWithTabGroups-' + tgs);
     $element.empty();
-    $element.append(renderWindowTitle(tgs));
+
+    $element.append(renderWindowTitle(windowIds.indexOf(parseInt(tgs)) + 1));
     for (let value of tabGroupsByWindow[tgs]) {
       $element.append(renderTabGroup(value, className, value.tabs[0].favIconUrl));
     }

@@ -64,7 +64,7 @@ class TabManager {
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
     if(!this.settings['showAllWindowsTogether']) {
       generateWindows(tabGroups);
-      generateTabGroupsByWindow(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+      generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
     } else {
       generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
     }
