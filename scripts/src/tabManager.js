@@ -195,7 +195,6 @@ class TabManager {
    * Reopens the most recently closed element.
    */
   reopenLastClosed() {
-    console.log(this.closedElements);
     let element = this.closedElements.pop();
     if (element === undefined) {
       // TODO: give feedback: the stack is empty

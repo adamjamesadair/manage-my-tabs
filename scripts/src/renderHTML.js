@@ -5,7 +5,7 @@ function renderWindow(windowId) {
   `;
 }
 
-function renderWindowTitle(wid){
+function renderWindowTitle(wid) {
   return `<h2 class="window-title">Window ${wid}</h2>`;
 }
 
@@ -15,7 +15,7 @@ function renderTabGroup(tabGroup, className, favIconUrl) {
       <h1 class="tab-title">${tabGroup.title}
       <img class="icon" src=${favIconUrl} />
       </h1>
-      <div class="closeGroupBtn">X</div>
+      <div class="closeGroupBtn close-btn">X</div>
       </div>
     `;
 }
@@ -26,9 +26,13 @@ function renderTab(tab) {
       <div class="tab" title=${tab.title}>
       <p class="tabDescription">${tab.title}</p>
       </div>
-      <div class="closeBtn">X</div>
+      <div class="close-tab-btn close-btn">X</div>
       </div>
     `;
+}
+
+function renderCloseWinBtn() {
+  return `<div class="closeWindowBtn close-btn">X</div>`;
 }
 
 function renderBtn(id) {
@@ -48,7 +52,7 @@ function generateWindows(tabGroups) {
 
 function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
   let windowIds = [];
-  windows.forEach(function(win){
+  windows.forEach(function(win) {
     windowIds.push(win.id);
   });
 
@@ -57,10 +61,11 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
 
   let tabGroupsByWindow = _.groupBy(tabGroups, (tg) => tg.windowId);
   for (let tgs in tabGroupsByWindow) {
-    $element = $( '#windowWithTabGroups-' + tgs);
+    $element = $('#windowWithTabGroups-' + tgs);
     $element.empty();
 
     $element.append(renderWindowTitle(windowIds.indexOf(parseInt(tgs)) + 1));
+    $element.append(renderCloseWinBtn());
     for (let value of tabGroupsByWindow[tgs]) {
       $element.append(renderTabGroup(value, className, value.tabs[0].favIconUrl));
     }

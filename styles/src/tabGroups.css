@@ -16,27 +16,6 @@
   visibility: visible;
 }
 
-.closeGroupBtn{
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 1rem;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 500;
-  opacity: 0.75;
-  z-index: 1;
-  border-right-width: 0;
-  border-top-width: 0;
-  visibility: hidden;
-}
-
-.closeGroupBtn:hover {
-  background-color: #ff1a1a;
-  cursor: pointer;
-  opacity: 1;
-}
-
 .icon {
   position: absolute;
   left: 0.5rem;
@@ -72,7 +51,7 @@
   margin-bottom: 0.5rem;
 }
 
-.tabContainer:hover .closeBtn {
+.tabContainer:hover .close-tab-btn {
   visibility: visible;
 }
 
@@ -121,22 +100,8 @@
   overflow-y: hidden;
 }
 
-.closeBtn {
+.close-tab-btn {
   background-color: var(--tab-hover-color);
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 1rem;
   border-radius: 2px;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 500;
-  opacity: 1;
-  visibility: hidden;
-}
-
-.closeBtn:hover {
-  background-color: #ff1a1a;
-  cursor: pointer;
   opacity: 1;
 }
