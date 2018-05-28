@@ -33,9 +33,12 @@ class TabManager {
         tab.url = strToURL(tab.url);
 
         let tabInGroup = false;
-        let urlHostnameTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
+        let filteredTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
+        if (!this.settings['showAllWindowsTogether']) {
+          filteredTabGroups = _.filter(filteredTabGroups, (tg) => tg.windowId == tab.windowId);
+        }
 
-        for (let tabGroup of urlHostnameTabGroups) {
+        for (let tabGroup of filteredTabGroups) {
           if (tabGroup.hostname == tab.url.hostname) {
             if (this.settings.limitTabGroupSize && tabGroup.nTabs >= this.settings.maxTabsPerGroup) {
               continue;
@@ -48,7 +51,7 @@ class TabManager {
         }
 
         if (!tabInGroup) {
-          let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab]);
+          let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab], tab.windowId);
           this.tabGroups.push(tabGroup);
         }
       }
@@ -57,9 +60,15 @@ class TabManager {
 
   renderHTMLContent() {
     let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
-
+    // let tabGroups = this.tabGroups;
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
-    generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    if(!this.settings['showAllWindowsTogether']) {
+      generateWindows(tabGroups);
+      generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    } else {
+      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    }
+    // generateWindows(_.range(_.size(_.groupBy(this.tabGroups, (tg) => tg.windowId))));
     generateTabs(tabGroups);
   }
 
@@ -146,11 +155,8 @@ class TabManager {
    */
   tryAddToClosedElements(tab) {
     const last = _.last(this.closedElements);
-    if (last instanceof TabGroup) {
-      if (_.contains(last.tabs, tab))
-        return
-    }
-    this.closedElements.push(tab);
+    if (last === undefined || last.index !== undefined) // If isTab
+      this.closedElements.push(tab);
   }
 
   reopenTab(tab) {
@@ -182,17 +188,31 @@ class TabManager {
     }
   }
 
+  reopenWindow(win){
+    chrome.windows.create({url:win.tabs[0].url, focused:false}, (window) =>{
+      win.tabs.shift();
+      win.tabs.forEach((tab)=>{
+        chrome.tabs.create({
+          windowId: window.id,
+          url: tab.url,
+          active: false
+        });
+      });
+    });
+  }
+
   /*
    * Reopens the most recently closed element.
    */
   reopenLastClosed() {
-    console.log(this.closedElements);
     let element = this.closedElements.pop();
     if (element === undefined) {
       // TODO: give feedback: the stack is empty
       return;
     } else if (element instanceof TabGroup) {
       this.reopenTabGroup(element);
+    } else if (element.type !== undefined) { //isWindow
+      this.reopenWindow(element);
     } else { // isTab
       this.reopenTab(element);
     }
@@ -242,6 +262,8 @@ function arrangeWindowTabs(win) {
 
 function initSettings(tabManager, settings) {
   // TODO: put this as a setting in the sidebar
+  // let showAllWindowsTogether = settings['closeManagerWhenTabSelected'] || true;
+  let showAllWindowsTogether = false;
   let closeManagerWhenTabSelected = settings['closeManagerWhenTabSelected'];
   let limitTabGroupSize = settings['limitTabGroupSize'];;
   let maxTabsPerGroup = settings['maxTabsPerGroup'];
@@ -292,6 +314,7 @@ function initSettings(tabManager, settings) {
     };
   }
   tabManager.settings = {
+    'showAllWindowsTogether': showAllWindowsTogether,
     'closeManagerWhenTabSelected': closeManagerWhenTabSelected,
     'limitTabGroupSize': limitTabGroupSize,
     'maxTabsPerGroup': maxTabsPerGroup,

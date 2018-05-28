@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <head>
   <title>Manage My Tabs</title>
   <link rel="stylesheet" type="text/css" href="styles/lib/bootstrap.min.css">
@@ -8,6 +9,7 @@
   <link rel="stylesheet" type="text/css" href="styles/src/settings.css">
   <link rel="stylesheet" type="text/css" href="styles/src/tabGroups.css">
   <link rel="stylesheet" type="text/css" href="styles/src/arrangementOptions.css">
+  <link rel="stylesheet" type="text/css" href="styles/src/windows.css">
 
   <script src="scripts/lib/jquery/jquery-1.12.4.js"></script>
   <script src="scripts/lib/jquery/jquery-ui.js"></script>
@@ -17,16 +19,16 @@
 <body>
   <div class="main-content">
     <div class="settings-btn-container">
-      <img id="settings-icon" src="images/settings.svg" alt="Settings icon" width="25"/>
+      <img id="settings-icon" src="images/settings.svg" alt="Settings icon" width="25" />
       <span id="settings-icon-tooltip">Settings</span>
     </div>
     <header>
       <div class="title">
-        <img id="tabs-icon" src="images/icons/icon.svg" alt="Manage My Tabs icon" width="50"/>
+        <img id="tabs-icon" src="images/icons/icon.svg" alt="Manage My Tabs icon" width="50" />
         <h1>Manage My Tabs</h1>
-    </div>
+      </div>
     </header>
-    <div class="container">
+    <div class="container main-container">
       <button id="undo-btn">Undo</button>
       <div class="window-selection">Select Window:
         <button id="win-btn-all" class="win-btn window-select-btn" type="button">All</button>
@@ -34,7 +36,7 @@
       <div class="search">
         <div class="searchbar">
           <input type="text" id="search-input" placeholder="Search...">
-          <img id="search-icon" src="images/search.svg" alt="Magnifying glass"/>
+          <img id="search-icon" src="images/search.svg" alt="Magnifying glass" />
         </div>
         <div class="search-settings">
           <div class="radio">
@@ -49,16 +51,19 @@
         </div>
       </div>
       <h3 id="no-match-search">No matches for your search term :(</h3>
-      <div class="row tabgroup-container"></div>
+      <div class="window-overflow-container">
+        <div class="row window-container"></div>
+        <div class="row tabgroup-container"></div>
+    </div>
     </div>
   </div>
   <div class="arrangement-options">
     <div class="arrange-tabs-container">
-      <img id="arrange-tabs-btn" src="images/arrange.svg" alt="Settings icon" width="30"/>
+      <img id="arrange-tabs-btn" src="images/arrange.svg" alt="Settings icon" width="30" />
       <span id="arrange-tabs-tooltip">Arrange tabs in current window</span>
     </div>
   </div>
-  <div class= "settings">
+  <div class="settings">
     <div class="settings-container">
       <h2>Settings</h2>
       <div class="layout-options">
@@ -120,7 +125,7 @@
       <div class="restore-defaults">
         <button id="restore-Btn">Restore Defaults</button>
       </div>
-  </div>
+    </div>
   </div>
   <script src="scripts/utils/utils.js"></script>
   <script src="scripts/src/listeners.js"></script>
@@ -129,4 +134,5 @@
   <script src="scripts/src/tabManager.js"></script>
   <script src="scripts/src/main.js"></script>
 </body>
+
 </html>

@@ -177,7 +177,7 @@ function addTabListeners(tab, tabManager) {
   });
 
   // Add event listener for close button
-  $('#' + tab.id + ' .closeBtn').on('click', () => {
+  $('#' + tab.id + ' .close-tab-btn').on('click', () => {
     // Close the selected tab
     chrome.tabs.remove(tab.id);
   });
@@ -191,6 +191,14 @@ function addTabGroupListeners(tabGroup, tabManager) {
     $(tabGroup.hostname).remove();
     tabManager.closedElements = _.difference(tabManager.closedElements, tabGroup.tabs);
     tabManager.closedElements.push(tabGroup);
+  });
+}
+
+function addWinListeners(win, tabManager) {
+  $('#windowWithTabGroups-' + win.id + ' .closeWindowBtn').on('click', () => {
+    tabManager.closedElements = _.difference(tabManager.closedElements, win.tabs);
+    tabManager.closedElements.push(win);
+    chrome.windows.remove(win.id);
   });
 }
 
@@ -208,6 +216,11 @@ function addTabManagerListeners(tabManager) {
       tabManager.reloadPage();
     });
   }
+
+  // Add listeners for windows
+  tabManager.windows.forEach((win)=>{
+    addWinListeners(win, tabManager);
+  });
 
   // Add listeners for tabGroups and tabs
   for (tabGroup of tabManager.tabGroups) {
