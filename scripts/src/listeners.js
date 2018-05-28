@@ -209,11 +209,16 @@ function addTabManagerListeners(tabManager) {
   for ($winBtn of $(".win-btn")) {
     let btnID = $winBtn.id.split('-')[2];
     $('#win-btn-' + btnID).on('click', () => {
-      chrome.storage.local.set({
-        'winSrc': btnID
-      });
-      $("#search-input").val('');
-      tabManager.reloadPage();
+      if (tabManager.settings['classicMode']) {
+        chrome.storage.local.set({
+          'winSrc': btnID
+        });
+        $("#search-input").val('');
+        tabManager.reloadPage();
+      } else {
+        location.hash = "#windowWithTabGroups-" + tabManager.windows[btnID-1].id;
+        location.hash = "";
+      }
     });
   }
 

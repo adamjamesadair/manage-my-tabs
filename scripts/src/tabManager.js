@@ -60,15 +60,16 @@ class TabManager {
 
   renderHTMLContent() {
     let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
-    // let tabGroups = this.tabGroups;
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
     if(!this.settings['showAllWindowsTogether']) {
       generateWindows(tabGroups);
+      if (!this.settings['classicMode'] && this.windows.length > 1){
+        $('.window-container').css({'padding-bottom': '53vh'});
+      }
       generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
     } else {
       generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
     }
-    // generateWindows(_.range(_.size(_.groupBy(this.tabGroups, (tg) => tg.windowId))));
     generateTabs(tabGroups);
   }
 
@@ -263,6 +264,7 @@ function arrangeWindowTabs(win) {
 function initSettings(tabManager, settings) {
   // TODO: put this as a setting in the sidebar
   // let showAllWindowsTogether = settings['closeManagerWhenTabSelected'] || true;
+  let classicMode = false;
   let showAllWindowsTogether = false;
   let closeManagerWhenTabSelected = settings['closeManagerWhenTabSelected'];
   let limitTabGroupSize = settings['limitTabGroupSize'];;
@@ -294,26 +296,32 @@ function initSettings(tabManager, settings) {
   let querySettings = {
     'currentWindow': true
   };
-  if (winSrc === 'all') {
-    querySettings = {};
-  }
-  // Default to the current window
-  else if (winSrc === 'first') {
-    for (var i = 0; i < tabManager.windows.length; i++) {
-      if (tabManager.windows[i].id === tabManager.currentWin.id) {
-        winSrc = i + 1;
-        chrome.storage.local.set({
-          'winSrc': winSrc
-        });
+  if (classicMode){
+    if (winSrc === 'all') {
+      querySettings = {};
+    }
+    // Default to the current window
+    else if (winSrc === 'first') {
+      for (var i = 0; i < tabManager.windows.length; i++) {
+        if (tabManager.windows[i].id === tabManager.currentWin.id) {
+          winSrc = i + 1;
+          chrome.storage.local.set({
+            'winSrc': winSrc
+          });
+        }
       }
+    } else {
+      let winSource = parseInt(winSrc);
+      querySettings = {
+        'windowId': tabManager.windows[winSource - 1].id
+      };
     }
   } else {
-    let winSource = parseInt(winSrc);
-    querySettings = {
-      'windowId': tabManager.windows[winSource - 1].id
-    };
+    querySettings = {};
   }
+
   tabManager.settings = {
+    'classicMode': classicMode,
     'showAllWindowsTogether': showAllWindowsTogether,
     'closeManagerWhenTabSelected': closeManagerWhenTabSelected,
     'limitTabGroupSize': limitTabGroupSize,
