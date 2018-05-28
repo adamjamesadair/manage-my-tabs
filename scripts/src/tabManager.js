@@ -155,11 +155,8 @@ class TabManager {
    */
   tryAddToClosedElements(tab) {
     const last = _.last(this.closedElements);
-    if (last instanceof TabGroup) {
-      if (_.contains(last.tabs, tab))
-        return
-    }
-    this.closedElements.push(tab);
+    if (last === undefined || last.index !== undefined) // If isTab
+      this.closedElements.push(tab);
   }
 
   reopenTab(tab) {
@@ -191,6 +188,19 @@ class TabManager {
     }
   }
 
+  reopenWindow(win){
+    chrome.windows.create({url:win.tabs[0].url, focused:false}, (window) =>{
+      win.tabs.shift();
+      win.tabs.forEach((tab)=>{
+        chrome.tabs.create({
+          windowId: window.id,
+          url: tab.url,
+          active: false
+        });
+      });
+    });
+  }
+
   /*
    * Reopens the most recently closed element.
    */
@@ -201,6 +211,8 @@ class TabManager {
       return;
     } else if (element instanceof TabGroup) {
       this.reopenTabGroup(element);
+    } else if (element.type !== undefined) { //isWindow
+      this.reopenWindow(element);
     } else { // isTab
       this.reopenTab(element);
     }
