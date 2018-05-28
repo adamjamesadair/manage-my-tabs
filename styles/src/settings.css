@@ -194,13 +194,13 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
-#max-tabs-per-group{
+#maxTabsPerGroup{
   display: block;
   margin: auto;
   margin-top: 5px;
 }
 
-#max-tabs-per-group:hover{
+#maxTabsPerGroup:hover{
   cursor: pointer;
 }
 
