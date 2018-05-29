@@ -19,3 +19,14 @@ function strToURL(str, hostname = true) {
   }
   return (url);
 }
+
+
+function getSettingProperty(type) {
+  switch (type) {
+    case "checkbox":
+      return "checked";
+    case "range":
+      return "valueAsNumber";
+      break;
+  }
+}
