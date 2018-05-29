@@ -7,9 +7,7 @@ class TabManager {
     this.windows = [];
     this.currentWin = {};
     this.settings = {};
-    chrome.storage.local.set({
-      'winSrc': 'first'
-    });
+    this.settingsIds = ['classicMode', 'closeManagerWhenTabSelected', 'limitTabGroupSize', 'maxTabsPerGroup', 'sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'];
   }
 
   reloadPage() {
@@ -33,9 +31,12 @@ class TabManager {
         tab.url = strToURL(tab.url);
 
         let tabInGroup = false;
-        let urlHostnameTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
+        let filteredTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
+        if (!this.settings['showAllWindowsTogether']) {
+          filteredTabGroups = _.filter(filteredTabGroups, (tg) => tg.windowId == tab.windowId);
+        }
 
-        for (let tabGroup of urlHostnameTabGroups) {
+        for (let tabGroup of filteredTabGroups) {
           if (tabGroup.hostname == tab.url.hostname) {
             if (this.settings.limitTabGroupSize && tabGroup.nTabs >= this.settings.maxTabsPerGroup) {
               continue;
@@ -48,7 +49,7 @@ class TabManager {
         }
 
         if (!tabInGroup) {
-          let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab]);
+          let tabGroup = new TabGroup(tab.url.hostname, this.settings['tabCount'], [tab], tab.windowId);
           this.tabGroups.push(tabGroup);
         }
       }
@@ -57,9 +58,16 @@ class TabManager {
 
   renderHTMLContent() {
     let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
-
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
-    generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    if(!this.settings['showAllWindowsTogether']) {
+      generateWindows(tabGroups);
+      if (!this.settings['classicMode'] && this.windows.length > 1){
+        $('.window-container').css({'padding-bottom': '53vh'});
+      }
+      generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    } else {
+      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+    }
     generateTabs(tabGroups);
   }
 
@@ -120,6 +128,35 @@ class TabManager {
     }
   }
 
+  storeSettings() {
+    for (let setting of this.settingsIds) {
+      let $settingSelector = $("#" + setting);
+      let type = $settingSelector.prop("type");
+      let property = getSettingProperty(type);
+      let onEvent = type === "range" ? 'input' : 'click';
+      var that = this;
+
+      $settingSelector.on(onEvent, () => {
+        // TODO don't use #slider-value ID
+        if (type === "range")
+          $("#slider-value").html($settingSelector.prop(property));
+
+        chrome.storage.local.set({
+          [setting]: $settingSelector.prop(property)
+        });
+        that.reloadPage();
+      });
+    }
+  }
+
+  loadSettings(callback) {
+    var that = this;
+    chrome.storage.local.get(this.settingsIds, function(settings) {
+      that.initSettings(settings);
+      callback(that);
+    });
+  }
+
   loadBrowserData(callback) {
     chrome.windows.getAll({
       populate: true
@@ -127,13 +164,12 @@ class TabManager {
       chrome.windows.getCurrent((current) => {
         this.windows = windows;
         this.currentWin = current;
-        chrome.storage.local.get(['closeManagerWhenTabSelected', 'limitTabGroupSize', 'maxTabsPerGroup', 'sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'], (settings) => {
-          initSettings(this, settings);
-          chrome.tabs.query(this.settings['querySettings'], (tabs) => {
+        this.loadSettings((that) => {
+          chrome.tabs.query(that.settings['querySettings'], (tabs) => {
             chrome.tabs.getCurrent((managerTab) => {
-              this.openTabs = tabs;
-              this.managerTab = managerTab;
-              callback(this);
+              that.openTabs = tabs;
+              that.managerTab = managerTab;
+              callback(that);
             });
           });
         });
@@ -146,11 +182,8 @@ class TabManager {
    */
   tryAddToClosedElements(tab) {
     const last = _.last(this.closedElements);
-    if (last instanceof TabGroup) {
-      if (_.contains(last.tabs, tab))
-        return
-    }
-    this.closedElements.push(tab);
+    if (last === undefined || last.index !== undefined) // If isTab
+      this.closedElements.push(tab);
   }
 
   reopenTab(tab) {
@@ -182,17 +215,31 @@ class TabManager {
     }
   }
 
+  reopenWindow(win){
+    chrome.windows.create({url:win.tabs[0].url, focused:false}, (window) =>{
+      win.tabs.shift();
+      win.tabs.forEach((tab)=>{
+        chrome.tabs.create({
+          windowId: window.id,
+          url: tab.url,
+          active: false
+        });
+      });
+    });
+  }
+
   /*
    * Reopens the most recently closed element.
    */
   reopenLastClosed() {
-    console.log(this.closedElements);
     let element = this.closedElements.pop();
     if (element === undefined) {
       // TODO: give feedback: the stack is empty
       return;
     } else if (element instanceof TabGroup) {
       this.reopenTabGroup(element);
+    } else if (element.type !== undefined) { //isWindow
+      this.reopenWindow(element);
     } else { // isTab
       this.reopenTab(element);
     }
@@ -209,6 +256,66 @@ class TabManager {
    */
   close() {
     chrome.tabs.remove(this.managerTab.id);
+  }
+
+  updateHtmlValues() {
+    for (let setting of this.settingsIds) {
+      let $settingSelector = $("#" + setting);
+      let type = $settingSelector.prop("type");
+      let property = getSettingProperty(type);
+      $settingSelector.prop(property, this.settings[setting]);
+      // TODO don't use #slider-value ID
+      if (type === "range")
+        $("#slider-value").html($settingSelector.prop(property));
+    }
+
+    // Set the starting active button for column layout settings
+    let colNum = 12 / this.settings.col;
+    let layoutOptions = document.getElementsByClassName("layout-option");
+    for (let layoutOption of layoutOptions) {
+      if (layoutOption.id == colNum) {
+        layoutOption.setAttribute('class', 'layout-option-active');
+      }
+    }
+  }
+
+  setDefaultSettings(settings) {
+    for (let key in defaultSettings) {
+      this.settings[key] = this.settings[key] === undefined ? defaultSettings[key] : this.settings[key];
+    }
+  }
+
+  initSettings(settings) {
+    _.extend(this.settings, settings);
+    this.setDefaultSettings();
+    this.updateHtmlValues();
+
+    let querySettings = {
+      'currentWindow': true
+    };
+    if (this.settings.winSrc === 'all') {
+      querySettings = {};
+    }
+    // Default to the current window
+    else if (this.settings.winSrc === 'first') {
+      for (var i = 0; i < this.windows.length; i++) {
+        if (this.windows[i].id === this.currentWin.id) {
+          this.settings.winSrc = i + 1;
+          chrome.storage.local.set({
+            'winSrc': this.settings.winSrc
+          });
+        }
+      }
+    } else {
+      let winSource = parseInt(this.settings.winSrc);
+      querySettings = {
+        'windowId': this.windows[winSource - 1].id
+      };
+    }
+
+    _.extend(this.settings, {
+      'querySettings': querySettings
+    });
   }
 }
 
@@ -240,68 +347,14 @@ function arrangeWindowTabs(win) {
   }
 }
 
-function initSettings(tabManager, settings) {
-  // TODO: put this as a setting in the sidebar
-  let closeManagerWhenTabSelected = settings['closeManagerWhenTabSelected'];
-  let limitTabGroupSize = settings['limitTabGroupSize'];;
-  let maxTabsPerGroup = settings['maxTabsPerGroup'];
-  let searchScope = settings['searchScope'] || "both";
-  let sortMethod = settings['sortMethod'] || "alphabetically";
-  let winSrc = settings['winSrc'] || 'all';
-  let tabCount = settings['tabCount'];
-  let includeManager = settings['includeManager'] || false;
-  let col = settings['col'] || 3;
-
-  document.getElementById(searchScope).checked = true;
-  document.getElementById(sortMethod).checked = true;
-  document.getElementById("toggle-tab-count-settings").checked = tabCount === true;
-  document.getElementById("toggle-manager-display-settings").checked = includeManager === true;
-  document.getElementById("toggle-close-manager-on-click-tab").checked = closeManagerWhenTabSelected === true;
-  document.getElementById("toggle-limit-tab-group-size").checked = limitTabGroupSize === true;
-  document.getElementById("max-tabs-per-group").valueAsNumber = maxTabsPerGroup;
-
-  // Set the starting active button for column layout settings
-  let colNum = 12 / col;
-  let layoutOptions = document.getElementsByClassName("layout-option");
-  for (layoutOption of layoutOptions) {
-    if (layoutOption.id == colNum) {
-      layoutOption.setAttribute('class', 'layout-option-active');
-    }
-  }
-
-  let querySettings = {
-    'currentWindow': true
-  };
-  if (winSrc === 'all') {
-    querySettings = {};
-  }
-  // Default to the current window
-  else if (winSrc === 'first') {
-    for (var i = 0; i < tabManager.windows.length; i++) {
-      if (tabManager.windows[i].id === tabManager.currentWin.id) {
-        winSrc = i + 1;
-        chrome.storage.local.set({
-          'winSrc': winSrc
-        });
-      }
-    }
-  } else {
-    let winSource = parseInt(winSrc);
-    querySettings = {
-      'windowId': tabManager.windows[winSource - 1].id
-    };
-  }
-  tabManager.settings = {
-    'closeManagerWhenTabSelected': closeManagerWhenTabSelected,
-    'limitTabGroupSize': limitTabGroupSize,
-    'maxTabsPerGroup': maxTabsPerGroup,
-    'searchScope': searchScope,
-    'sortMethod': sortMethod,
-    'winSrc': winSrc,
-    'tabCount': tabCount,
-    'includeManager': includeManager,
-    'limitTabGroupSize': limitTabGroupSize,
-    'col': col,
-    'querySettings': querySettings
-  };
-}
+var defaultSettings = {
+  classicMode: false,
+  searchScope: "both",
+  sortMethod: "alphabetically",
+  winSrc: 'first',
+  includeManager: false,
+  col: 3,
+  closeManagerWhenTabSelected: true,
+  tabCount: true,
+  limitTabGroupSize: true
+};
