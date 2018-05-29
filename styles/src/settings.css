@@ -17,7 +17,7 @@
   visibility: hidden;
   opacity: 0;
   width: 5rem;
-  background-color: #2a9606;
+  background-color: var(--main-active-color);
   color: #fff;
   text-align: center;
   border-radius: 5px;
@@ -75,7 +75,7 @@
   outline: none;
   border: none;
   color: white;
-  background-color: #2196F3;
+  background-color: var(--settings-active-color);
 }
 
 .layout-option:hover {
@@ -89,6 +89,21 @@
 
 .search-option:hover{
   cursor: pointer;
+}
+
+.search-settings{
+  margin-left: -2rem;
+}
+
+.search-settings label{
+  display: block;
+  top: 2rem;
+  margin: -0.75rem;
+  font-size: 0.75rem;
+}
+
+.search-settings .radio {
+  display: inline-block;
 }
 
 .switch {
@@ -125,7 +140,7 @@
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: var(--settings-active-color);
 }
 
 input:checked + .slider:before {
@@ -133,8 +148,67 @@ input:checked + .slider:before {
 }
 
 .radio {
+  position: relative;
   margin-left: 2.5rem;
   text-align: left;
+}
+
+.checkmark{
+  position: absolute;
+  top: 5px;
+  left: -20px;
+  height: 15px;
+  width: 15px;
+  border-radius: 1rem;
+  background-color: #eee;
+}
+
+.search-settings .checkmark{
+  top: -10px;
+  left: -28px;
+  height: 13px;
+  width: 13px;
+  background-color: #eee;
+}
+
+.search-settings .checkmark:hover{
+  background-color: #72a87b;
+}
+
+.search-settings input:checked ~ .checkmark {
+  background-color: var(--main-active-color);
+}
+
+.checkmark:hover{
+  cursor: pointer;
+  background-color: #81b9e8;
+}
+
+.settings input:checked ~ .checkmark {
+  background-color: var(--settings-active-color);
+}
+
+.radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+#maxTabsPerGroup{
+  display: block;
+  margin: auto;
+  margin-top: 5px;
+}
+
+#maxTabsPerGroup:hover{
+  cursor: pointer;
+}
+
+#slider-value{
+  padding: 0.25rem;
+  color: white;
+  background-color: var(--settings-active-color);
+  font-size: 1.1rem;
 }
 
 .restore-defaults {

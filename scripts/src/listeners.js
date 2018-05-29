@@ -18,7 +18,7 @@ function addListeners(tabManager) {
     // Add the closed tab to closed tab list
     for (tab of tabManager.openTabs) {
       if (tab.id == tabID) {
-        tabManager.closedTabs.push(tab);
+        tabManager.tryAddToClosedElements(tab);
       }
     }
     tabManager.reloadPage();
@@ -26,7 +26,7 @@ function addListeners(tabManager) {
 
   // Add listner for creating tabs
   chrome.tabs.onCreated.addListener((tab) => {
-    if (tab.url.startsWith("chrome-extension://") && tab.url.endsWith("/tabPage.html")) {
+    if (tabManager.managerTab.url.includes(tab.title)) {
       chrome.tabs.remove(tabManager.managerTab.id);
     }
     tabManager.reloadPage();
@@ -46,58 +46,26 @@ function addListeners(tabManager) {
   $('#settings-icon').on('click', () => {
     let settingsWidth = "192px";
     if ($('.settings').css('width') != settingsWidth) {
-      $('.main-content').css({'margin-left': settingsWidth});
-      $('.settings').css({'width': settingsWidth});
+      $('.main-content').css({
+        'margin-left': settingsWidth
+      });
+      $('.settings').css({
+        'width': settingsWidth
+      });
     } else {
-      $('.main-content').css({'margin-left': '0px'});
-      $('.settings').css({'width': '0px'});
+      $('.main-content').css({
+        'margin-left': '0px'
+      });
+      $('.settings').css({
+        'width': '0px'
+      });
     }
+    // $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
   });
 
   // Add listener for tab count settings
-  let $tabCount = $("#toggle-tab-count-settings");
-  $tabCount.on('click', () => {
-    chrome.storage.local.set({
-      'tabCount': $tabCount.prop("checked")
-    });
-    tabManager.reloadPage();
-  });
 
-  // Add listener for manager display settings
-  let $toggleManager = $("#toggle-manager-display-settings");
-  $toggleManager.on('click', () => {
-    chrome.storage.local.set({
-      'includeManager': $toggleManager.prop("checked")
-    });
-    tabManager.reloadPage();
-  });
-
-  // Add listener for manager display settings
-  let $toggleLimitTabGroupSize = $("#toggle-limit-tab-group-size");
-  $toggleLimitTabGroupSize.on('click', () => {
-    chrome.storage.local.set({
-      'limitTabGroupSize': $toggleLimitTabGroupSize.prop("checked")
-    });
-    tabManager.reloadPage();
-  });
-
-  // Add listener for manager display settings
-  let $sliderMaxTabsPerGroup = $("#max-tabs-per-group");
-  $sliderMaxTabsPerGroup.on('change', () => {
-    chrome.storage.local.set({
-      'maxTabsPerGroup': $sliderMaxTabsPerGroup.prop("valueAsNumber")
-    });
-    tabManager.reloadPage();
-  });
-
-  // Add listener for manager display settings
-  let $toggleCloseOnClickTab = $("#toggle-close-manager-on-click-tab");
-  $toggleCloseOnClickTab.on('click', () => {
-    chrome.storage.local.set({
-      'closeManagerWhenTabSelected': $toggleCloseOnClickTab.prop("checked")
-    });
-    tabManager.reloadPage();
-  });
+  tabManager.storeSettings();
 
   // Add listener for layout options
   $(".layout-option").each(function() {
@@ -146,16 +114,7 @@ function addListeners(tabManager) {
 
   // Add listener for restore defaults button
   $("#restore-Btn").on('click', () => {
-    chrome.storage.local.set({
-      'closeManagerWhenTabSelected' : true,
-      'col': 3,
-      'winSrc': 'all',
-      'tabCount': true,
-      'includeManager': false,
-      'limitTabGroupSize': true,
-      'sortMethod': 'alphabetically',
-      'searchScope': 'both'
-    });
+    chrome.storage.local.set(defaultSettings);
     tabManager.reloadPage();
   });
 }
@@ -184,18 +143,28 @@ function addTabListeners(tab, tabManager) {
   });
 
   // Add event listener for close button
-  $('#' + tab.id + ' .closeBtn').on('click', () => {
+  $('#' + tab.id + ' .close-tab-btn').on('click', () => {
     // Close the selected tab
     chrome.tabs.remove(tab.id);
   });
 }
 
-function addTabGroupListeners(tabGroup) {
+function addTabGroupListeners(tabGroup, tabManager) {
   $('#' + tabGroup.id + ' .closeGroupBtn').on('click', () => {
     for (let i = 0; i < tabGroup.tabs.length; i++) {
       chrome.tabs.remove(tabGroup.tabs[i].id);
     }
     $(tabGroup.hostname).remove();
+    tabManager.closedElements = _.difference(tabManager.closedElements, tabGroup.tabs);
+    tabManager.closedElements.push(tabGroup);
+  });
+}
+
+function addWinListeners(win, tabManager) {
+  $('#windowWithTabGroups-' + win.id + ' .closeWindowBtn').on('click', () => {
+    tabManager.closedElements = _.difference(tabManager.closedElements, win.tabs);
+    tabManager.closedElements.push(win);
+    chrome.windows.remove(win.id);
   });
 }
 
@@ -206,17 +175,29 @@ function addTabManagerListeners(tabManager) {
   for ($winBtn of $(".win-btn")) {
     let btnID = $winBtn.id.split('-')[2];
     $('#win-btn-' + btnID).on('click', () => {
-      chrome.storage.local.set({
-        'winSrc': btnID
-      });
-      $("#search-input").val('');
-      tabManager.reloadPage();
+      if (tabManager.settings['classicMode']) {
+        chrome.storage.local.set({
+          'winSrc': btnID
+        });
+        $("#search-input").val('');
+        tabManager.reloadPage();
+      } else {
+        document.querySelector("#windowWithTabGroups-" + tabManager.windows[btnID - 1].id).scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
     });
   }
 
+  // Add listeners for windows
+  tabManager.windows.forEach((win) => {
+    addWinListeners(win, tabManager);
+  });
+
   // Add listeners for tabGroups and tabs
   for (tabGroup of tabManager.tabGroups) {
-    addTabGroupListeners(tabGroup);
+    addTabGroupListeners(tabGroup, tabManager);
     tabGroup.tabs.forEach((tab) => addTabListeners(tab, tabManager));
   }
 

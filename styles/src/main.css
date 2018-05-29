@@ -2,6 +2,8 @@
   font-family: Arial, sans-serif;
   font-size: 16px;
   --tab-hover-color: #2196F3;
+  --main-active-color: #2a9606;
+  --settings-active-color: #2196F3;
 }
 
 body {
@@ -20,6 +22,11 @@ header {
   width: 25rem;
 }
 
+.main-container{
+  position: relative;
+  overflow-x: visible;
+}
+
 #tabs-icon {
   position: absolute;
   left: 1rem;
@@ -32,6 +39,27 @@ h1 {
 
 h2 {
   font-size: 1.25rem;
+}
+
+.close-btn{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.75;
+  z-index: 1;
+  border-right-width: 0;
+  border-top-width: 0;
+  visibility: hidden;
+}
+
+.close-btn:hover {
+  background-color: #ff1a1a;
+  cursor: pointer;
+  opacity: 1;
 }
 
 .main-content {
@@ -89,7 +117,7 @@ h2 {
   outline: none;
   border: none;
   color: white;
-  background-color: #2a9606;
+  background-color: var(--main-active-color);
 }
 
 .window-select-btn:hover {
@@ -106,12 +134,18 @@ h2 {
   z-index: -1;
 }
 
-.search {
+.search{
   position: absolute;
-  top: -4rem;
+  top: -3.25rem;
   right: -1rem;
+  width: 12.3rem;
+  height: 4rem;
   margin-right: 1rem;
   text-align: center;
+}
+
+.searchbar {
+  display: block;
 }
 
 #search-input {
@@ -122,7 +156,7 @@ h2 {
 
 #search-icon {
   position: absolute;
-  top: 2.3rem;
+  top: 0.4rem;
   left: 0.4rem;
   width: 8%;
 }
