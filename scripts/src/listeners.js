@@ -26,7 +26,7 @@ function addListeners(tabManager) {
 
   // Add listner for creating tabs
   chrome.tabs.onCreated.addListener((tab) => {
-    if (tab.url.startsWith("chrome-extension://") && tab.url.endsWith("/tabPage.html")) {
+    if (tabManager.managerTab.url.includes(tab.title)) {
       chrome.tabs.remove(tabManager.managerTab.id);
     }
     tabManager.reloadPage();
