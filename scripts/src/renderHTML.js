@@ -73,7 +73,7 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
 }
 
 function generateTabGroups(tabGroups, className, tabCount, empty = true) {
-  let $tabGroupContainer = $('.tabgroup-container');
+  let $tabGroupContainer = $('.window-container');
   if (empty) $tabGroupContainer.empty();
   for (let tabGroup of tabGroups) {
     $tabGroupContainer.append(renderTabGroup(tabGroup, className, tabGroup.tabs[0].favIconUrl));
