@@ -26,7 +26,7 @@ function addListeners(tabManager) {
 
   // Add listner for creating tabs
   chrome.tabs.onCreated.addListener((tab) => {
-    if (tab.url.startsWith("chrome-extension://") && tab.url.endsWith("/tabPage.html")) {
+    if (tabManager.managerTab.url.includes(tab.title)) {
       chrome.tabs.remove(tabManager.managerTab.id);
     }
     tabManager.reloadPage();
@@ -125,10 +125,19 @@ function addTabListeners(tab, tabManager) {
     chrome.windows.update(tab.windowId, {
       focused: true
     });
-    chrome.tabs.update(tab.id, {
-      highlighted: true
-    });
 
+    let updateProperties;
+    if (platform.name == "Firefox") {
+      updateProperties = {
+        active: true
+      };
+    } else {
+      updateProperties = {
+        highlighted: true
+      };
+    }
+
+    chrome.tabs.update(tab.id, updateProperties);
     tabManager.onTabClicked();
 
   });
