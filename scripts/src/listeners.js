@@ -126,7 +126,7 @@ function addTabListeners(tab, tabManager) {
   });
 
   // Add event listener for close button
-  $('#' + tab.id + ' .closeBtn').on('click', () => {
+  $('#' + tab.id + ' .close-tab-btn').on('click', () => {
     // Close the selected tab
     chrome.tabs.remove(tab.id);
   });
@@ -143,6 +143,14 @@ function addTabGroupListeners(tabGroup, tabManager) {
   });
 }
 
+function addWinListeners(win, tabManager) {
+  $('#windowWithTabGroups-' + win.id + ' .closeWindowBtn').on('click', () => {
+    tabManager.closedElements = _.difference(tabManager.closedElements, win.tabs);
+    tabManager.closedElements.push(win);
+    chrome.windows.remove(win.id);
+  });
+}
+
 function addTabManagerListeners(tabManager) {
   // Prevent duplicate listeners
   $('#win-btn-all').off();
@@ -150,13 +158,23 @@ function addTabManagerListeners(tabManager) {
   for ($winBtn of $(".win-btn")) {
     let btnID = $winBtn.id.split('-')[2];
     $('#win-btn-' + btnID).on('click', () => {
-      chrome.storage.local.set({
-        'winSrc': btnID
-      });
-      $("#search-input").val('');
-      tabManager.reloadPage();
+      if (tabManager.settings['classicMode']) {
+        chrome.storage.local.set({
+          'winSrc': btnID
+        });
+        $("#search-input").val('');
+        tabManager.reloadPage();
+      } else {
+        location.hash = "#windowWithTabGroups-" + tabManager.windows[btnID-1].id;
+        location.hash = "";
+      }
     });
   }
+
+  // Add listeners for windows
+  tabManager.windows.forEach((win)=>{
+    addWinListeners(win, tabManager);
+  });
 
   // Add listeners for tabGroups and tabs
   for (tabGroup of tabManager.tabGroups) {

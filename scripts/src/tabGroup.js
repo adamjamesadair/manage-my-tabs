@@ -12,12 +12,13 @@ String.prototype.capitalize = function() {
 */
 class TabGroup {
 
-  constructor(hostname, tabCount, tabs=[]) {
+  constructor(hostname, tabCount, tabs=[], windowId) {
     this.hostname = hostname;
     // this.id = hostname.split('.').join("");
     this.id = TabGroup.n_instances++;
     this.tabs = tabs;
     this.tabCount = tabCount;
+    this.windowId = windowId;
     this.setTitle();
   }
 
