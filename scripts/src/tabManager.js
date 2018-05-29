@@ -7,7 +7,7 @@ class TabManager {
     this.windows = [];
     this.currentWin = {};
     this.settings = {};
-    this.settingsIds = ['closeManagerWhenTabSelected', 'limitTabGroupSize', 'maxTabsPerGroup', 'sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'];
+    this.settingsIds = ['classicMode', 'closeManagerWhenTabSelected', 'limitTabGroupSize', 'maxTabsPerGroup', 'sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'];
   }
 
   reloadPage() {
@@ -280,11 +280,9 @@ class TabManager {
   }
 
   setDefaultSettings(settings) {
-    this.settings.searchScope = this.settings.searchScope || defaultSettings.searchScope;
-    this.settings.sortMethod = this.settings.sortMethod || defaultSettings.sortMethod;
-    this.settings.winSrc = this.settings.winSrc || defaultSettings.winSrc;;
-    this.settings.includeManager = this.settings.includeManager || defaultSettings.includeManager;
-    this.settings.col = this.settings.col || defaultSettings.col;
+    for (let key in defaultSettings) {
+      this.settings[key] = this.settings[key] === undefined ? defaultSettings[key] : this.settings[key];
+    }
   }
 
   initSettings(settings) {
@@ -350,6 +348,7 @@ function arrangeWindowTabs(win) {
 }
 
 var defaultSettings = {
+  classicMode: false,
   searchScope: "both",
   sortMethod: "alphabetically",
   winSrc: 'first',
