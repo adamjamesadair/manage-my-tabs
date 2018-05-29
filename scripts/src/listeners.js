@@ -60,54 +60,12 @@ function addListeners(tabManager) {
         'width': '0px'
       });
     }
-    $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
+    // $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
   });
 
   // Add listener for tab count settings
-  let $tabCount = $("#toggle-tab-count-settings");
-  $tabCount.on('click', () => {
-    chrome.storage.local.set({
-      'tabCount': $tabCount.prop("checked")
-    });
-    tabManager.reloadPage();
-  });
 
-  // Add listener for manager display settings
-  let $toggleManager = $("#toggle-manager-display-settings");
-  $toggleManager.on('click', () => {
-    chrome.storage.local.set({
-      'includeManager': $toggleManager.prop("checked")
-    });
-    tabManager.reloadPage();
-  });
-
-  // Add listener for limit tabGroup size settings
-  let $toggleLimitTabGroupSize = $("#toggle-limit-tab-group-size");
-  $toggleLimitTabGroupSize.on('click', () => {
-    chrome.storage.local.set({
-      'limitTabGroupSize': $toggleLimitTabGroupSize.prop("checked")
-    });
-    tabManager.reloadPage();
-  });
-
-  // Add listener for limit tabGroup size slider
-  let $sliderMaxTabsPerGroup = $("#max-tabs-per-group");
-  $sliderMaxTabsPerGroup.on('input', () => {
-    $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
-    chrome.storage.local.set({
-      'maxTabsPerGroup': $sliderMaxTabsPerGroup.prop("valueAsNumber")
-    });
-    tabManager.reloadPage();
-  });
-
-  // Add listener for close on click setting
-  let $toggleCloseOnClickTab = $("#toggle-close-manager-on-click-tab");
-  $toggleCloseOnClickTab.on('click', () => {
-    chrome.storage.local.set({
-      'closeManagerWhenTabSelected': $toggleCloseOnClickTab.prop("checked")
-    });
-    tabManager.reloadPage();
-  });
+  tabManager.storeSettings();
 
   // Add listener for layout options
   $(".layout-option").each(function() {
@@ -156,16 +114,7 @@ function addListeners(tabManager) {
 
   // Add listener for restore defaults button
   $("#restore-Btn").on('click', () => {
-    chrome.storage.local.set({
-      'closeManagerWhenTabSelected': true,
-      'col': 3,
-      'winSrc': 'all',
-      'tabCount': true,
-      'includeManager': false,
-      'limitTabGroupSize': true,
-      'sortMethod': 'alphabetically',
-      'searchScope': 'both'
-    });
+    chrome.storage.local.set(defaultSettings);
     tabManager.reloadPage();
   });
 }
