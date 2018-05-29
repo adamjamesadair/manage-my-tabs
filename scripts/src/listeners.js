@@ -105,9 +105,7 @@ function addListeners(tabManager) {
 
   // Add listener for arrange tabs button
   $("#arrange-tabs-btn").on('click', () => {
-    chrome.windows.getCurrent({
-      populate: true
-    }, (win) => {
+    tabManager.windows.forEach((win) => {
       arrangeWindowTabs(win);
     });
   });
