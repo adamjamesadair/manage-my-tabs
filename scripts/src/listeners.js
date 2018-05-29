@@ -46,11 +46,19 @@ function addListeners(tabManager) {
   $('#settings-icon').on('click', () => {
     let settingsWidth = "192px";
     if ($('.settings').css('width') != settingsWidth) {
-      $('.main-content').css({'margin-left': settingsWidth});
-      $('.settings').css({'width': settingsWidth});
+      $('.main-content').css({
+        'margin-left': settingsWidth
+      });
+      $('.settings').css({
+        'width': settingsWidth
+      });
     } else {
-      $('.main-content').css({'margin-left': '0px'});
-      $('.settings').css({'width': '0px'});
+      $('.main-content').css({
+        'margin-left': '0px'
+      });
+      $('.settings').css({
+        'width': '0px'
+      });
     }
     $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
   });
@@ -149,7 +157,7 @@ function addListeners(tabManager) {
   // Add listener for restore defaults button
   $("#restore-Btn").on('click', () => {
     chrome.storage.local.set({
-      'closeManagerWhenTabSelected' : true,
+      'closeManagerWhenTabSelected': true,
       'col': 3,
       'winSrc': 'all',
       'tabCount': true,
@@ -216,14 +224,16 @@ function addTabManagerListeners(tabManager) {
         $("#search-input").val('');
         tabManager.reloadPage();
       } else {
-        location.hash = "#windowWithTabGroups-" + tabManager.windows[btnID-1].id;
-        location.hash = "";
+        document.querySelector("#windowWithTabGroups-" + tabManager.windows[btnID - 1].id).scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
       }
     });
   }
 
   // Add listeners for windows
-  tabManager.windows.forEach((win)=>{
+  tabManager.windows.forEach((win) => {
     addWinListeners(win, tabManager);
   });
 
