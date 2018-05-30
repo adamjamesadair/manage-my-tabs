@@ -105,9 +105,7 @@ function addListeners(tabManager) {
 
   // Add listener for arrange tabs button
   $("#arrange-tabs-btn").on('click', () => {
-    chrome.windows.getCurrent({
-      populate: true
-    }, (win) => {
+    tabManager.windows.forEach((win) => {
       arrangeWindowTabs(win);
     });
   });
@@ -182,10 +180,17 @@ function addTabManagerListeners(tabManager) {
         $("#search-input").val('');
         tabManager.reloadPage();
       } else {
-        document.querySelector("#windowWithTabGroups-" + tabManager.windows[btnID - 1].id).scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
+        tabManager.settings['winSrc'] = btnID;
+        tabManager.renderHTMLContent();
+        addTabManagerListeners(tabManager);
+        if (btnID == 'all') {
+          $('.window-overflow-container').animate({scrollTop:0},0);
+        } else {
+          document.querySelector("#windowWithTabGroups-" + tabManager.windows[btnID - 1].id).scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
       }
     });
   }

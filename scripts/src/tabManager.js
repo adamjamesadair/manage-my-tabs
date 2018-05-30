@@ -32,7 +32,7 @@ class TabManager {
 
         let tabInGroup = false;
         let filteredTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
-        if (!this.settings['showAllWindowsTogether']) {
+        if (!this.settings['classicMode']) {
           filteredTabGroups = _.filter(filteredTabGroups, (tg) => tg.windowId == tab.windowId);
         }
 
@@ -59,14 +59,14 @@ class TabManager {
   renderHTMLContent() {
     let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
-    if(!this.settings['showAllWindowsTogether']) {
+    if(this.settings['classicMode'] || this.settings['winSrc'] == 'all') {
+      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount'], this.settings['winSrc']);
+    } else {
       generateWindows(tabGroups);
-      if (!this.settings['classicMode'] && this.windows.length > 1){
+      if (this.windows.length > 1){
         $('.window-container').css({'padding-bottom': '53vh'});
       }
       generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
-    } else {
-      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
     }
     generateTabs(tabGroups);
   }

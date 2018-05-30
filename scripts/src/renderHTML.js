@@ -5,8 +5,9 @@ function renderWindow(windowId) {
   `;
 }
 
-function renderWindowTitle(wid) {
-  return `<h2 class="window-title">Window ${wid}</h2>`;
+function renderWindowTitle(wid, customTitle="") {
+  let title = customTitle || "Window " + wid;
+  return `<h2 class="window-title">${title}</h2>`;
 }
 
 function renderTabGroup(tabGroup, className, favIconUrl) {
@@ -72,9 +73,13 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
   }
 }
 
-function generateTabGroups(tabGroups, className, tabCount, empty = true) {
-  let $tabGroupContainer = $('.tabgroup-container');
-  if (empty) $tabGroupContainer.empty();
+function generateTabGroups(tabGroups, className, tabCount, winSrc, empty = true) {
+  let $windowContainer = $('.window-container');
+  if (empty) $windowContainer.empty();
+  $windowContainer.append(renderWindow(winSrc));
+  $tabGroupContainer = $('#windowWithTabGroups-' + winSrc);
+  let title = winSrc == 'all' ? 'All tabs': "Window " + winSrc;
+  $tabGroupContainer.append(renderWindowTitle(0, customTitle=title));
   for (let tabGroup of tabGroups) {
     $tabGroupContainer.append(renderTabGroup(tabGroup, className, tabGroup.tabs[0].favIconUrl));
   }
