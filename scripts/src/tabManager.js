@@ -60,7 +60,7 @@ class TabManager {
     let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
     if(this.settings['classicMode'] || this.settings['winSrc'] == 'all') {
-      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
+      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount'], this.settings['winSrc']);
     } else {
       generateWindows(tabGroups);
       if (this.windows.length > 1){
