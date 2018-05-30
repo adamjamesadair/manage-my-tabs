@@ -1,7 +1,17 @@
 function addListeners(tabManager) {
   // Add listener for commands
-  chrome.commands.onCommand.addListener(() => {
-    tabManager.reopenLastClosed();
+  chrome.commands.onCommand.addListener((command) => {
+    switch (command) {
+      case 'undo':
+        tabManager.reopenLastClosed();
+        break;
+      case 'toggleSettings':
+        toggleSettings();
+        break;
+      case 'arrangeTabs':
+        arrangeTabs();
+        break;
+    }
   });
 
   // Add listener for updating tabs
@@ -44,23 +54,7 @@ function addListeners(tabManager) {
 
   // Add listener for settings button
   $('#settings-icon').on('click', () => {
-    let settingsWidth = "192px";
-    if ($('.settings').css('width') != settingsWidth) {
-      $('.main-content').css({
-        'margin-left': settingsWidth
-      });
-      $('.settings').css({
-        'width': settingsWidth
-      });
-    } else {
-      $('.main-content').css({
-        'margin-left': '0px'
-      });
-      $('.settings').css({
-        'width': '0px'
-      });
-    }
-    // $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
+    toggleSettings();
   });
 
   // Add listener for tab count settings
@@ -105,9 +99,7 @@ function addListeners(tabManager) {
 
   // Add listener for arrange tabs button
   $("#arrange-tabs-btn").on('click', () => {
-    tabManager.windows.forEach((win) => {
-      arrangeWindowTabs(win);
-    });
+    arrangeTabs();
   });
 
   // Add listener for restore defaults button
@@ -184,7 +176,9 @@ function addTabManagerListeners(tabManager) {
         tabManager.renderHTMLContent();
         addTabManagerListeners(tabManager);
         if (btnID == 'all') {
-          $('.window-overflow-container').animate({scrollTop:0},0);
+          $('.window-overflow-container').animate({
+            scrollTop: 0
+          }, 0);
         } else {
           document.querySelector("#windowWithTabGroups-" + tabManager.windows[btnID - 1].id).scrollIntoView({
             behavior: 'smooth',
@@ -215,4 +209,30 @@ function addTabManagerListeners(tabManager) {
       tabManager.renderHTMLContent();
     }
   });
+}
+
+function arrangeTabs() {
+  tabManager.windows.forEach((win) => {
+    arrangeWindowTabs(win);
+  });
+}
+
+function toggleSettings() {
+  let settingsWidth = "192px";
+  if ($('.settings').css('width') != settingsWidth) {
+    $('.main-content').css({
+      'margin-left': settingsWidth
+    });
+    $('.settings').css({
+      'width': settingsWidth
+    });
+  } else {
+    $('.main-content').css({
+      'margin-left': '0px'
+    });
+    $('.settings').css({
+      'width': '0px'
+    });
+  }
+  // $("#slider-value").html($sliderMaxTabsPerGroup.prop("valueAsNumber"));
 }
