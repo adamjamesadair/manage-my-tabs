@@ -28,10 +28,22 @@
       },
       "description": "Undo last tab close"
     },
+    "toggleSettings": {
+      "suggested_key": {
+        "default": "Alt+Q"
+      },
+      "description": "Toggle the settings sidebar"
+    },
+    "arrangeTabs": {
+      "suggested_key": {
+        "default": "Alt+W"
+      },
+      "description": "Arrange tabs in all windows"
+    },
     "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Space",
-        "mac": "Command+Space"
+        "mac": "Alt+Space"
       }
     }
   },
