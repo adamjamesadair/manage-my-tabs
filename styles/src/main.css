@@ -1,128 +1,104 @@
 :root {
-  font-family: Arial, sans-serif;
   font-size: 16px;
-  --tab-hover-color: #2196F3;
+  --downloads-color: silver;
 }
 
 body {
-  background-color: white;
+  margin: 0;
 }
 
-header {
-  margin-bottom: 5.5rem;
-  padding-top: 1rem;
+.intro {
+  height: 100vh;
+  background-color: #5296A5;
   text-align: center;
+  font-size: 1.5rem;
+  padding-top: 20vh;
 }
 
 .title {
-  position: relative;
+  display: inline-block;
+  height: auto;
+  width: 30rem;
   margin: auto;
-  width: 25rem;
+  margin-right: 10rem;
 }
 
-#tabs-icon {
-  position: absolute;
-  left: 1rem;
-  top: -0.2rem;
+#mmt-logo {
+  margin-bottom: 0.5rem;
 }
 
-h1 {
-  font-size: 2rem;
-}
-
-h2 {
-  font-size: 1.25rem;
-}
-
-.main-content {
-    position: relative;
-    transition: 0.5s;
-}
-
-#undo-btn {
-  border: 1px solid black;
-  position: absolute;
-  width: 10%;
-  font-size: 0.9rem;
-  top: -1.9rem;
-  left: 0;
-  transition: 0.2s;
-}
-
-#undo-btn:hover {
-  background-color: #ddd;
-  cursor: pointer;
-}
-
-.window-selection h2 {
+.downloads {
   display: inline-block;
-  padding-top: 0.25rem;
-  margin-right: 0.25rem;
-  font-weight: 300;
-}
-
-.window-selection {
-  position: absolute;
-  display: inline-block;
-  padding-top: 0.25rem;
-  height: 3.5rem;
-  display: inline-block;
-  top: -2.4rem;
-  left: 8rem;
-  text-align: center;
-  white-space: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  max-width: 45%;
-}
-
-.window-select-btn {
-  margin-left: 1px;
-  outline: none;
-  text-decoration: none;
-  border: none;
-  background-color: white;
-  transition-duration: 0.2s;
-}
-
-.window-select-active {
-  outline: none;
-  border: none;
+  height: 17rem;
+  width: 20rem;
+  margin: auto;
+  margin-top: 3.5rem;
+  border: 1px solid var(--downloads-color);
+  border-radius: 10px;
+  font-size: 2.5rem;
+  vertical-align: top;
   color: white;
-  background-color: #2a9606;
 }
 
-.window-select-btn:hover {
-  background-color: #ddd;
-  cursor: pointer;
+.downloads hr {
+  margin: 0;
+  border-color: var(--downloads-color);
 }
 
-#no-match-search {
-  position: absolute;
-  left:0rem;
-  top: 2rem;
+.download-btn {
+  height: 25%;
+  width: 75%;
+  display: block;
+  margin: auto;
+  margin-top: 1.5rem;
+  font-size: 1.5rem;
+  background-color: white;
+  color: navy;
+  text-align: left;
+}
+
+.download-btn:hover {
+  background-color: navy;
+  color: white;
+}
+
+.browser-icon {
+  margin-left: 1.75rem;
+}
+
+.about {
+  background-color: #E8C547;
+  min-height: 100vh;
+  padding-top: 5rem;
   text-align: center;
-  font-size: 1rem;
-  z-index: -1;
 }
 
-.search {
-  position: absolute;
-  top: -4rem;
-  right: -1rem;
-  margin-right: 1rem;
+.fa-10x {
+  padding: 3rem;
+}
+
+.features {
+  padding-top: 2rem;
   text-align: center;
+  background-color: #8CBA80;
 }
 
-#search-input {
-  padding-left: 1.5rem;
-  font-size: 0.8rem;
-  width: 12rem;
+.features h1, .features p {
+  margin-bottom: 2rem;
 }
 
-#search-icon {
-  position: absolute;
-  top: 2.3rem;
-  left: 0.4rem;
-  width: 8%;
+@media only screen and (max-width:983px){
+  .intro{
+    height: inherit;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+  }
+  .title {
+    margin: auto;
+    margin-top: 2rem;
+  }
+  .downloads{
+    margin-top: 1rem;
+    display: block;
+  }
 }
