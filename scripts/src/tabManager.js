@@ -59,12 +59,14 @@ class TabManager {
   renderHTMLContent() {
     let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
-    if(this.settings['classicMode'] || this.settings['winSrc'] == 'all') {
+    if (this.settings['classicMode'] || this.settings['winSrc'] == 'all') {
       generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount'], this.settings['winSrc']);
     } else {
       generateWindows(tabGroups);
-      if (this.windows.length > 1){
-        $('.window-container').css({'padding-bottom': '53vh'});
+      if (this.windows.length > 1) {
+        $('.window-container').css({
+          'padding-bottom': '53vh'
+        });
       }
       generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
     }
@@ -215,10 +217,13 @@ class TabManager {
     }
   }
 
-  reopenWindow(win){
-    chrome.windows.create({url:win.tabs[0].url, focused:false}, (window) =>{
+  reopenWindow(win) {
+    chrome.windows.create({
+      url: win.tabs[0].url,
+      focused: false
+    }, (window) => {
       win.tabs.shift();
-      win.tabs.forEach((tab)=>{
+      win.tabs.forEach((tab) => {
         chrome.tabs.create({
           windowId: window.id,
           url: tab.url,
@@ -269,6 +274,9 @@ class TabManager {
         $("#slider-value").html($settingSelector.prop(property));
     }
 
+    document.getElementById(this.settings['searchScope']).checked = true;
+    document.getElementById(this.settings['sortMethod']).checked = true;
+
     // Set the starting active button for column layout settings
     let colNum = 12 / this.settings.col;
     let layoutOptions = document.getElementsByClassName("layout-option");
@@ -279,7 +287,7 @@ class TabManager {
     }
   }
 
-  setDefaultSettings(settings) {
+  setDefaultSettings() {
     for (let key in defaultSettings) {
       this.settings[key] = this.settings[key] === undefined ? defaultSettings[key] : this.settings[key];
     }
@@ -287,7 +295,7 @@ class TabManager {
 
   initSettings(settings) {
     _.extend(this.settings, settings);
-    this.setDefaultSettings();
+    this.setDefaultSettings(settings);
     this.updateHtmlValues();
 
     let querySettings = {
