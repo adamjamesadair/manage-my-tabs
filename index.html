@@ -10,23 +10,24 @@
   <script src="scripts/lib/jquery/jquery-1.12.4.js"></script>
   <script src="scripts/lib/jquery/jquery-ui.js"></script>
   <script src="scripts/lib/bootstrap.min.js"></script>
+  <script src="scripts/src/listeners.js"></script>
 </head>
 
 <body>
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Manage My Tabs</a>
+    <a class="navbar-brand" href="#top">Manage My Tabs</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
-  </button>
+    </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link active" href="#top">Download <span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link active" href="#intro">Download <span class="sr-only">(current)</span></a>
         <a class="nav-item nav-link" href="#about">About</a>
         <a class="nav-item nav-link" href="#features">Features</a>
       </div>
     </div>
   </nav>
-  <section class="intro">
+  <section id="intro" class="intro">
     <div class="title">
       <img id="mmt-logo" src="images/mmt-logo.svg" alt="Manage My Tabs logo" width="200" />
       <h1>Manage My Tabs - Window and Tab Manager</h1>

@@ -9,6 +9,7 @@ body {
 
 .intro {
   height: 100vh;
+  min-height: 450px;
   background-color: #5296A5;
   text-align: center;
   font-size: 1.5rem;
@@ -78,13 +79,17 @@ body {
 }
 
 .features {
-  padding-top: 2rem;
+  padding-top: 4rem;
   text-align: center;
   background-color: #8CBA80;
 }
 
-.features h1, .features p {
-  margin-bottom: 2rem;
+.features h1 {
+  margin-bottom: 5rem;
+}
+
+.features p {
+  margin-bottom: 7rem;
 }
 
 @media only screen and (max-width:983px){
