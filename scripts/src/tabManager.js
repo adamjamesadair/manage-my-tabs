@@ -146,6 +146,11 @@ class TabManager {
         chrome.storage.local.set({
           [setting]: $settingSelector.prop(property)
         });
+
+        if(setting === "classicMode") {
+          $("#win-btn-all").click();
+        }
+
         that.reloadPage();
       });
     }
