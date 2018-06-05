@@ -153,7 +153,7 @@ class TabManager {
 
   loadSettings(callback) {
     var that = this;
-    chrome.storage.local.get(this.settingsIds, function(settings) {
+    chrome.storage.local.get(this.settingsIds, function(settings){
       that.initSettings(settings);
       callback(that);
     });
@@ -291,28 +291,25 @@ class TabManager {
     for (let key in defaultSettings) {
       this.settings[key] = this.settings[key] === undefined ? defaultSettings[key] : this.settings[key];
     }
+    chrome.storage.local.set(this.settings);
   }
 
   initSettings(settings) {
     _.extend(this.settings, settings);
-    this.setDefaultSettings(settings);
+    this.setDefaultSettings();
     this.updateHtmlValues();
 
     let querySettings = {
       'currentWindow': true
     };
-    if (this.settings.winSrc === 'all') {
+    if (this.settings.winSrc === 'all' || this.settings.classicMode == false) {
       querySettings = {};
     }
     // Default to the current window
     else if (this.settings.winSrc === 'first') {
       for (var i = 0; i < this.windows.length; i++) {
-        if (this.windows[i].id === this.currentWin.id) {
+        if (this.windows[i].id === this.currentWin.id)
           this.settings.winSrc = i + 1;
-          chrome.storage.local.set({
-            'winSrc': this.settings.winSrc
-          });
-        }
       }
     } else {
       let winSource = parseInt(this.settings.winSrc);
@@ -324,6 +321,7 @@ class TabManager {
     _.extend(this.settings, {
       'querySettings': querySettings
     });
+    chrome.storage.local.set(this.settings);
   }
 }
 
@@ -359,7 +357,7 @@ var defaultSettings = {
   classicMode: false,
   searchScope: "both",
   sortMethod: "alphabetically",
-  winSrc: 'first',
+  winSrc: 'all',
   includeManager: false,
   col: 3,
   closeManagerWhenTabSelected: true,

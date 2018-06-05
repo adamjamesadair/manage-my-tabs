@@ -165,10 +165,10 @@ function addTabManagerListeners(tabManager) {
   for ($winBtn of $(".win-btn")) {
     let btnID = $winBtn.id.split('-')[2];
     $('#win-btn-' + btnID).on('click', () => {
+      chrome.storage.local.set({
+        'winSrc': btnID
+      });
       if (tabManager.settings['classicMode']) {
-        chrome.storage.local.set({
-          'winSrc': btnID
-        });
         $("#search-input").val('');
         tabManager.reloadPage();
       } else {
@@ -204,6 +204,7 @@ function addTabManagerListeners(tabManager) {
   $("#search-input").off();
   $("#search-input").keyup(function() {
     tabManager.renderHTMLContent();
+    addTabManagerListeners(tabManager);
   });
 }
 
