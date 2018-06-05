@@ -203,11 +203,7 @@ function addTabManagerListeners(tabManager) {
   // Add listener for seach bar
   $("#search-input").off();
   $("#search-input").keyup(function() {
-    if ($("#search-input").val() == '') {
-      tabManager.reloadPage();
-    } else {
-      tabManager.renderHTMLContent();
-    }
+    tabManager.renderHTMLContent();
   });
 }
 
