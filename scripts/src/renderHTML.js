@@ -40,12 +40,17 @@ function renderBtn(id) {
   return `<button id="win-btn-${id}" class="window-select-btn win-btn generated-win-btn" type="button">${id}</button>`;
 }
 
+function renderNoSearchResultsText(){
+  return `<h3 id="no-match-search">No matches for your search term :(</h3>`;
+}
+
 function generateWindows(tabGroups) {
   let $windowContainer = $('.window-container');
   $windowContainer.empty();
 
   let windowIds = _.keys(_.groupBy(tabGroups, (tg) => tg.windowId));
 
+  $windowContainer.append(renderNoSearchResultsText());
   for (let wid of windowIds) {
     $windowContainer.append(renderWindow(wid));
   }
@@ -76,6 +81,7 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
 function generateTabGroups(tabGroups, className, tabCount, winSrc, empty = true) {
   let $windowContainer = $('.window-container');
   if (empty) $windowContainer.empty();
+  $windowContainer.append(renderNoSearchResultsText());
   $windowContainer.append(renderWindow(winSrc));
   $tabGroupContainer = $('#windowWithTabGroups-' + winSrc);
   let title = winSrc == 'all' ? 'All tabs': "Window " + winSrc;
