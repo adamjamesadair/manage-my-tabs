@@ -111,7 +111,7 @@ function addListeners(tabManager) {
 
 function addTabListeners(tab, tabManager) {
   // Add event listener to tab
-  $('#' + tab.id + ' .tab').on('click', () => {
+  $('#t-' + tab.id + ' .tab').on('click', () => {
     chrome.windows.update(tab.windowId, {
       focused: true
     });
@@ -133,14 +133,14 @@ function addTabListeners(tab, tabManager) {
   });
 
   // Add event listener for close button
-  $('#' + tab.id + ' .close-tab-btn').on('click', () => {
+  $('#t' + tab.id + ' .close-tab-btn').on('click', () => {
     // Close the selected tab
     chrome.tabs.remove(tab.id);
   });
 }
 
 function addTabGroupListeners(tabGroup, tabManager) {
-  $('#' + tabGroup.id + ' .closeGroupBtn').on('click', () => {
+  $('#tg' + tabGroup.id + ' .closeGroupBtn').on('click', () => {
     for (let i = 0; i < tabGroup.tabs.length; i++) {
       tabGroup.tabs[i].groupID = tabGroup.id;
       chrome.tabs.remove(tabGroup.tabs[i].id);
