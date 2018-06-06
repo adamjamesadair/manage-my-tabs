@@ -153,7 +153,7 @@ class TabManager {
 
   loadSettings(callback) {
     var that = this;
-    chrome.storage.local.get(this.settingsIds, function(settings){
+    chrome.storage.local.get(this.settingsIds, function(settings) {
       that.initSettings(settings);
       callback(that);
     });
@@ -212,8 +212,31 @@ class TabManager {
   }
 
   reopenTabGroup(tabGroup) {
-    for (let tab of tabGroup.tabs) {
-      this.reopenTab(tab);
+    let winExists = false;
+    // Check if the window the tab came from exsits
+    for (let win of this.windows) {
+      if (win.id === tabGroup.tabs[0].windowId)
+        winExists = true;
+    }
+    if (!winExists) {
+      var that = this;
+      chrome.windows.create({
+        url: tabGroup.tabs[0].url.href,
+        focused: true
+      }, function(newWin) {
+        // Add the rest of the tabs to the new window
+        for (let tab of tabGroup.tabs) {
+          chrome.tabs.create({
+            windowId: newWin.id,
+            url: tab.url.href,
+            active: false
+          });
+        }
+      });
+    } else {
+      for (let tab of tabGroup.tabs) {
+        this.reopenTab(tab);
+      }
     }
   }
 

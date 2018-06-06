@@ -36,7 +36,7 @@ function addListeners(tabManager) {
 
   // Add listner for creating tabs
   chrome.tabs.onCreated.addListener((tab) => {
-    if (tabManager.managerTab.url.includes(tab.title)) {
+    if (tabManager.managerTab.url == tab.url) {
       chrome.tabs.remove(tabManager.managerTab.id);
     }
     tabManager.reloadPage();
@@ -142,6 +142,7 @@ function addTabListeners(tab, tabManager) {
 function addTabGroupListeners(tabGroup, tabManager) {
   $('#' + tabGroup.id + ' .closeGroupBtn').on('click', () => {
     for (let i = 0; i < tabGroup.tabs.length; i++) {
+      tabGroup.tabs[i].groupID = tabGroup.id;
       chrome.tabs.remove(tabGroup.tabs[i].id);
     }
     $(tabGroup.hostname).remove();
