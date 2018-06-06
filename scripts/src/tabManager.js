@@ -12,15 +12,19 @@ class TabManager {
 
   reloadPage() {
     this.loadBrowserData(function(tabManager) {
-      tabManager.getTabGroups();
-      tabManager.sortTabGroups();
-      // Sort the tabs in each tabGroup
-      for (let tabGroup of tabManager.tabGroups) {
-        tabGroup.sortTabs("alphabetically");
-      }
+      tabManager.getSortedTabGroups();
       tabManager.renderHTMLContent();
       addTabManagerListeners(tabManager);
     });
+  }
+
+  getSortedTabGroups() {
+    this.getTabGroups();
+    this.sortTabGroups();
+    // Sort the tabs in each tabGroup
+    for (let tabGroup of this.tabGroups) {
+      tabGroup.sortTabs("alphabetically");
+    }
   }
 
   getTabGroups() {
@@ -32,7 +36,7 @@ class TabManager {
 
         let tabInGroup = false;
         let filteredTabGroups = this.tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
-        if (!this.settings['classicMode']) {
+        if (!this.settings['classicMode'] && this.settings['winSrc'] != 'all') {
           filteredTabGroups = _.filter(filteredTabGroups, (tg) => tg.windowId == tab.windowId);
         }
 

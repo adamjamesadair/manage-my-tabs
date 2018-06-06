@@ -174,6 +174,7 @@ function addTabManagerListeners(tabManager) {
         tabManager.reloadPage();
       } else {
         tabManager.settings['winSrc'] = btnID;
+        tabManager.getSortedTabGroups();
         tabManager.renderHTMLContent();
         addTabManagerListeners(tabManager);
         if (btnID == 'all') {
