@@ -92,6 +92,10 @@ body {
   margin-bottom: 7rem;
 }
 
+.feature{
+  height: 33%;
+}
+
 @media only screen and (max-width:983px){
   .intro{
     height: inherit;
