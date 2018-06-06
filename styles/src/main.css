@@ -70,7 +70,8 @@ body {
 .about {
   background-color: #E8C547;
   min-height: 100vh;
-  padding-top: 5rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
   text-align: center;
 }
 
