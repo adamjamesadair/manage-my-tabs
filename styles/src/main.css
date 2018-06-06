@@ -120,7 +120,7 @@ h2 {
   background-color: var(--main-active-color);
 }
 
-.window-select-btn:hover {
+.window-select-btn:hover:not(.window-select-active) {
   background-color: #ddd;
   cursor: pointer;
 }

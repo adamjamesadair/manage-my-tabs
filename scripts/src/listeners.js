@@ -206,6 +206,29 @@ function addTabManagerListeners(tabManager) {
     tabManager.renderHTMLContent();
     addTabManagerListeners(tabManager);
   });
+
+  // Add listener for scrolling
+  $(".window-overflow-container").on("scroll", function(event) {
+    if (tabManager.settings['winSrc'] != 'all') {
+      var scrollPos = $(".window-overflow-container").offset().top;
+      let i = 1;
+      for ($win of $(".window")) {
+        var currLink = $('#win-btn-' + i);
+        var refElement = $('#' + $win.id);
+        if (refElement.offset().top <= scrollPos + 10 && refElement.offset().top + refElement.height() > scrollPos - 100) {
+          $('.win-btn').removeClass("window-select-active");
+          currLink.addClass("window-select-active");
+          chrome.storage.local.set({
+            'winSrc': i
+          });
+        } else {
+          currLink.removeClass("window-select-active");
+          currLink.addClass("window-select-btn");
+        }
+        i++;
+      }
+    }
+  });
 }
 
 function arrangeTabs() {
