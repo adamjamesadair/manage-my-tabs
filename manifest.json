@@ -28,17 +28,17 @@
       },
       "description": "Undo last tab close"
     },
-    "toggleSettings": {
+    "selectWindowPrev": {
       "suggested_key": {
-        "default": "Alt+Q"
+        "default": "Ctrl+Up"
       },
-      "description": "Toggle the settings sidebar"
+      "description": "Selects the previous window"
     },
-    "arrangeTabs": {
+    "selectWindowNext": {
       "suggested_key": {
-        "default": "Alt+W"
+        "default": "Ctrl+Down"
       },
-      "description": "Arrange tabs in all windows"
+      "description": "Selects the next window"
     },
     "_execute_browser_action": {
       "suggested_key": {
