@@ -1,6 +1,7 @@
 <h1 align="middle">
 <img alt='Manage My Tabs Logo' src='images/icons/icon128.png'></img>
-<br>Manage My Tabs - <br>Window and Tab Manager
+<br>Manage My Tabs - <br>Window and Tab Manager<br><br>
+<img alt='Manage My Tabs Screen Shot' src='store_content/screenshots/Screen_Shot_6_Col.png'></img>
 </h1>
 
 ## Description
