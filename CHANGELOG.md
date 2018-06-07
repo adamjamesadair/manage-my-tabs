@@ -1,7 +1,7 @@
 # Changelog
 All changes between releases of this project will be documented here.
 
-## [0.2.0]() - 2018-
+## [0.2.0](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.2.0) - 2018-06-08
 ### Added
 - Firefox support.
 - Shortcuts for navigating windows and opening settings.
