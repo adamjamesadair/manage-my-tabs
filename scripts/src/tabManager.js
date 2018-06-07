@@ -69,7 +69,7 @@ class TabManager {
       generateWindows(tabGroups);
       if (this.windows.length > 1) {
         $('.window-container').css({
-          'padding-bottom': this.settings.allowOverscrollMainContainer ? '53vh' : '0vh' 
+          'padding-bottom': this.settings.allowOverscrollMainContainer ? '53vh' : '0vh'
         });
       }
       generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
@@ -230,11 +230,13 @@ class TabManager {
       }, function(newWin) {
         // Add the rest of the tabs to the new window
         for (let tab of tabGroup.tabs) {
-          chrome.tabs.create({
-            windowId: newWin.id,
-            url: tab.url.href,
-            active: false
-          });
+          if (tab != tabGroup.tabs[0]){
+            chrome.tabs.create({
+              windowId: newWin.id,
+              url: tab.url.href,
+              active: false
+            });
+          }      
         }
       });
     } else {
