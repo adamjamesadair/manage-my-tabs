@@ -43,3 +43,7 @@
 .window:hover .closeWindowBtn {
   visibility: visible;
 }
+
+.selected-window {
+  background-color: #84cc67;
+}
