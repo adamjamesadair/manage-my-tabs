@@ -59,7 +59,7 @@ function addListeners(tabManager) {
 
   // Add listener for tab count settings
 
-  tabManager.storeSettings();
+  tabManager.addGenericSettingsCallbacks();
 
   // Add listener for layout options
   $(".layout-option").each(function() {

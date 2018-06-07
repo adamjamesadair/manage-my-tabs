@@ -7,7 +7,7 @@ class TabManager {
     this.windows = [];
     this.currentWin = {};
     this.settings = {};
-    this.settingsIds = ['classicMode', 'closeManagerWhenTabSelected', 'limitTabGroupSize', 'maxTabsPerGroup', 'sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'];
+    this.settingsIds = ['allowOverscrollMainContainer', 'classicMode', 'closeManagerWhenTabSelected', 'limitTabGroupSize', 'maxTabsPerGroup', 'sortMethod', 'searchScope', 'winSrc', 'tabCount', 'includeManager', 'col'];
   }
 
   reloadPage() {
@@ -69,7 +69,7 @@ class TabManager {
       generateWindows(tabGroups);
       if (this.windows.length > 1) {
         $('.window-container').css({
-          'padding-bottom': '53vh'
+          'padding-bottom': this.settings.allowOverscrollMainContainer ? '53vh' : '0vh' 
         });
       }
       generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
@@ -134,7 +134,7 @@ class TabManager {
     }
   }
 
-  storeSettings() {
+  addGenericSettingsCallbacks() {
     for (let setting of this.settingsIds) {
       let $settingSelector = $("#" + setting);
       let type = $settingSelector.prop("type");
@@ -381,6 +381,7 @@ function arrangeWindowTabs(win) {
 }
 
 var defaultSettings = {
+  allowOverscrollMainContainer: false,
   classicMode: false,
   searchScope: "both",
   sortMethod: "alphabetically",

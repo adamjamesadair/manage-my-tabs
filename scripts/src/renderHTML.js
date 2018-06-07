@@ -90,7 +90,7 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
     }
 
     Promise.all(promisesTabGroups).then(function() {
-      console.log('All tab groups have been rendered!');
+      // console.log('All tab groups have been rendered!');
     }).catch(function() {
       console.log('Oh no, epic failure!');
     });
@@ -129,7 +129,7 @@ function generateTabs(tabGroups) {
     }
 
     Promise.all(promisesTabs).then(function() {
-      console.log('All tabs have been rendered!');
+      // console.log('All tabs have been rendered!');
     }).catch(function() {
       console.log('Oh no, epic failure!');
     });
