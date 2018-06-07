@@ -46,4 +46,5 @@
 
 .selected-window {
   background-color: #84cc67;
+  border:2px solid blue;
 }
