@@ -50,9 +50,6 @@ function addListeners(tabManager) {
       case 'selectWindow9':
         $('#win-btn-9').click();
         break;
-      case 'arrangeTabs':
-        arrangeTabs();
-        break;
     }
   });
 
