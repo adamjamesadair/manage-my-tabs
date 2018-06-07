@@ -40,6 +40,78 @@
       },
       "description": "Arrange tabs in all windows"
     },
+    "selectWindowPrev": {
+      "suggested_key": {
+        "default": "Ctrl+Up"
+      },
+      "description": "Selects the previous window"
+    },
+    "selectWindowNext": {
+      "suggested_key": {
+        "default": "Ctrl+Down"
+      },
+      "description": "Selects the next window"
+    },
+    "selectWindowAll": {
+      "suggested_key": {
+        "default": "Alt+0"
+      },
+      "description": "Put tabs from all windows in the same container"
+    },
+    "selectWindow1": {
+      "suggested_key": {
+        "default": "Alt+1"
+      },
+      "description": "Selects the window 1 in the view mode"
+    },
+    "selectWindow2": {
+      "suggested_key": {
+        "default": "Alt+2"
+      },
+      "description": "Selects the window 2 in the view mode"
+    },
+    "selectWindow3": {
+      "suggested_key": {
+        "default": "Alt+3"
+      },
+      "description": "Selects the window 3 in the view mode"
+    },
+    "selectWindow4": {
+      "suggested_key": {
+        "default": "Alt+4"
+      },
+      "description": "Selects the window 4 in the view mode"
+    },
+    "selectWindow5": {
+      "suggested_key": {
+        "default": "Alt+5"
+      },
+      "description": "Selects the window 5 in the view mode"
+    },
+    "selectWindow6": {
+      "suggested_key": {
+        "default": "Alt+6"
+      },
+      "description": "Selects the window 6 in the view mode"
+    },
+    "selectWindow7": {
+      "suggested_key": {
+        "default": "Alt+7"
+      },
+      "description": "Selects the window 7 in the view mode"
+    },
+    "selectWindow8": {
+      "suggested_key": {
+        "default": "Alt+8"
+      },
+      "description": "Selects the window 8 in the view mode"
+    },
+    "selectWindow9": {
+      "suggested_key": {
+        "default": "Alt+9"
+      },
+      "description": "Selects the window 9 in the view mode"
+    },
     "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Space",
