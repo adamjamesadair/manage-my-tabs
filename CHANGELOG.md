@@ -1,11 +1,26 @@
 # Changelog
 All changes between releases of this project will be documented here.
 
+## [0.2.0]() - 2018-
+### Added
+- Firefox support.
+- New default view.
+- Classic mode which functions as v0.1.0.
+- New styles for settings and navigating tabs, tab groups and windows.
+- Settings:
+  - Max tabs per tab group toggle and slider.
+  - Close extension after navigating to a tab.
+  - Allow scrolling beyond the end of the last window.
+  - Toggle Classic mode.
+  
 ### Changed
-- Manage My Tabs remains open when using it to navigate to a tab.
+- Tabs are all displayed on one screen and grouped by window.
+- Window select buttons scroll to selected window instead of changing pages.
+- Moved search options closer to the search bar.
+- Arrange tabs button now arranges the tabs in all windows.
 
 ### Fixed
-- Fixed changing the search settings not updating the search results.
+- Bug fixes.
 
 ## [0.1.0](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.1.0) - 2018-05-17
 ### Added
