@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+
 <head>
   <title>Manage My Tabs</title>
   <link rel="stylesheet" type="text/css" href="styles/lib/bootstrap.min.css">
@@ -8,42 +11,60 @@
   <link rel="stylesheet" type="text/css" href="styles/src/settings.css">
   <link rel="stylesheet" type="text/css" href="styles/src/tabGroups.css">
   <link rel="stylesheet" type="text/css" href="styles/src/arrangementOptions.css">
+  <link rel="stylesheet" type="text/css" href="styles/src/windows.css">
 
   <script src="scripts/lib/jquery/jquery-1.12.4.js"></script>
   <script src="scripts/lib/jquery/jquery-ui.js"></script>
+  <script src="scripts/lib/platform.js"></script>
+  <script src="scripts/lib/underscore.js"></script>
 </head>
 
 <body>
   <div class="main-content">
     <div class="settings-btn-container">
-      <img id="settings-icon" src="images/settings.svg" alt="Settings icon" width="25"/>
+      <img id="settings-icon" src="images/settings.svg" alt="Settings icon" width="25" />
       <span id="settings-icon-tooltip">Settings</span>
     </div>
     <header>
       <div class="title">
-        <img id="tabs-icon" src="images/icons/icon.svg" alt="Manage My Tabs icon" width="50"/>
+        <img id="tabs-icon" src="images/icons/icon.svg" alt="Manage My Tabs icon" width="50" />
         <h1>Manage My Tabs</h1>
-    </div>
-    </header>
-    <div class="container">
-      <button id="undo-btn">Undo</button>
-      <div class="window-selection"></div>
-      <div class="search">
-        <h2>Search</h2>
-        <input type="text" id="search-input" placeholder="Search...">
-        <img id="search-icon" src="images/search.svg" alt="Magnifying glass"/>
       </div>
-      <h3 id="no-match-search">No matches for your search term :(</h3>
-      <div class="row"></div>
+    </header>
+    <div class="container main-container">
+      <button id="undo-btn">Undo</button>
+      <div class="window-selection">Select Window:
+        <button id="win-btn-all" class="win-btn window-select-btn" type="button">All</button>
+      </div>
+      <div class="search">
+        <div class="searchbar">
+          <input type="text" id="search-input" placeholder="Search...">
+          <img id="search-icon" src="images/search.svg" alt="Magnifying glass" />
+        </div>
+        <div class="search-settings">
+          <div class="radio">
+            <label><input class="search-option" type="radio" name="searchradio" id="url"> URLs<span class="checkmark"></span></label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" class="search-option" name="searchradio" id="tabs"> Tabs<span class="checkmark"></span></label>
+          </div>
+          <div class="radio">
+            <label><input type="radio" class="search-option" name="searchradio" id="both"> Both<span class="checkmark"></span></label>
+          </div>
+        </div>
+      </div>
+      <div class="window-overflow-container">
+        <div class="row window-container"></div>
+    </div>
     </div>
   </div>
   <div class="arrangement-options">
     <div class="arrange-tabs-container">
-      <img id="arrange-tabs-btn" src="images/arrange.svg" alt="Settings icon" width="30"/>
-      <span id="arrange-tabs-tooltip">Arrange tabs in current window</span>
+      <img id="arrange-tabs-btn" src="images/arrange.svg" alt="Settings icon" width="30" />
+      <span id="arrange-tabs-tooltip">Arrange tabs in all window</span>
     </div>
   </div>
-  <div class= "settings">
+  <div class="settings">
     <div class="settings-container">
       <h2>Settings</h2>
       <div class="layout-options">
@@ -57,51 +78,76 @@
       <div class="tab-count-settings">
         <h3>Display number of tabs:</h3>
         <label class="switch">
-          <input type="checkbox" id="toggle-tab-count-settings">
+          <input type="checkbox" id="tabCount">
           <span class="slider"></span>
         </label>
       </div>
       <div class="manager-display-settings">
         <h3>Include tab manager:</h3>
         <label class="switch">
-          <input type="checkbox" id="toggle-manager-display-settings">
+          <input type="checkbox" id="includeManager">
           <span class="slider"></span>
         </label>
+      </div>
+      <div class="close-manager-on-click-tab">
+        <h3>Close the tab manager when a tab is clicked:</h3>
+        <label class="switch">
+          <input type="checkbox" id="closeManagerWhenTabSelected">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="limit-tab-group-size">
+        <h3>Limit the number of tabs in a tab group</h3>
+        <label class="switch">
+          <input type="checkbox" id="limitTabGroupSize">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="limit-tab-group-size">
+        <h3>Max number of tabs:</h3>
+        <span id="slider-value"></span>
+        <input type="range" min="1" max="10" step="1" id="maxTabsPerGroup">
       </div>
       <div class="sort-settings">
         <h3>Sort groups:</h3>
         <div class="radio">
-          <label><input class="sort-option" type="radio" name="optradio" id="mostTabs"> Most tabs</label>
+          <label><input class="sort-option" type="radio" name="optradio" id="mostTabs"> Most tabs<span class="checkmark"></span></label>
         </div>
         <div class="radio">
-          <label><input type="radio" class="sort-option" name="optradio" id="leastTabs"> Least tabs</label>
+          <label><input type="radio" class="sort-option" name="optradio" id="leastTabs"> Least tabs<span class="checkmark"></span></label>
         </div>
         <div class="radio">
-          <label><input type="radio" class="sort-option" name="optradio" id="alphabetically"> Alphabetically</label>
+          <label><input type="radio" class="sort-option" name="optradio" id="alphabetically"> Alphabetically<span class="checkmark"></span></label>
         </div>
         <div class="radio">
-          <label><input type="radio" class="sort-option" name="optradio" id="none"> None</label>
+          <label><input type="radio" class="sort-option" name="optradio" id="none"> Window order<span class="checkmark"></span></label>
         </div>
       </div>
-      <div class="search-settings">
-        <h3>Search:</h3>
-        <div class="radio">
-          <label><input class="search-option" type="radio" name="searchradio" id="url"> URLs</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" class="search-option" name="searchradio" id="tabs"> Tabs</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" class="search-option" name="searchradio" id="both"> Both</label>
-        </div>
+      <div class="classic-mode-activated">
+        <h3>Use the classic view mode of the tab manager:</h3>
+        <label class="switch">
+          <input type="checkbox" id="classicMode">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="overscroll-main-container">
+        <h3>Allow scrolling beyond the end of the last window:</h3>
+        <label class="switch">
+          <input type="checkbox" id="allowOverscrollMainContainer">
+          <span class="slider"></span>
+        </label>
       </div>
       <div class="restore-defaults">
         <button id="restore-Btn">Restore Defaults</button>
       </div>
+    </div>
   </div>
-  </div>
+  <script src="scripts/utils/utils.js"></script>
+  <script src="scripts/src/listeners.js"></script>
+  <script src="scripts/src/renderHTML.js"></script>
   <script src="scripts/src/tabGroup.js"></script>
   <script src="scripts/src/tabManager.js"></script>
   <script src="scripts/src/main.js"></script>
 </body>
+
 </html>

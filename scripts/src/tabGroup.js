@@ -1,3 +1,7 @@
+String.prototype.capitalize = function() {
+  return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
+};
+
 /*
 * @class A group of tabs which has hold the tabs and has a name.
 * @param {string} hostname
@@ -7,9 +11,29 @@
 *   List of tabs to be held by the TabGroup.
 */
 class TabGroup {
-  constructor(hostname, tabs=[]) {
+
+  constructor(hostname, tabCount, tabs=[], windowId) {
     this.hostname = hostname;
+    // this.id = hostname.split('.').join("");
+    this.id = TabGroup.n_instances++;
     this.tabs = tabs;
+    this.tabCount = tabCount;
+    this.windowId = windowId;
+    this.setTitle();
+  }
+
+  setTitle(){
+    this.title = this.hostname.capitalize();
+    // Special pages includng extensions and newtab pages have no '.'
+    if (!this.hostname.includes('.')) {
+      this.title = this.tabs[0].title.replace(/ /g, '_');
+    }
+    if (this.tabCount)
+      this.title = "(" + this.tabs.length + ")" + this.title;
+  }
+
+  get nTabs() {
+    return this.tabs.length;
   }
 
   /*
@@ -33,6 +57,7 @@ class TabGroup {
   */
   addTab(tab){
     this.tabs.push(tab);
+    this.setTitle();
   }
 
   /*
@@ -47,3 +72,5 @@ class TabGroup {
       this.tabs.splice(index, 1);
   }
 }
+
+TabGroup.n_instances = 0;

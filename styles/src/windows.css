@@ -1,0 +1,50 @@
+.window-overflow-container{
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 0 1rem;
+  margin: 0 -1rem;
+  border-bottom: 1px solid black;
+}
+
+.window-container{
+  position: relative;
+  background-color: grey;
+  min-width: 40rem;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 1vw 1.5vw 0 rgba(0, 0, 0, 0.3), 0 1.5vw 3vw 0 rgba(0, 0, 0, 0.20);
+}
+
+.window{
+  position: relative;
+  padding-top: 2.5rem;
+  margin: auto;
+  padding-bottom: 1rem;
+  background-color: silver;
+  border: 2px solid black;
+  border-radius: 10px;
+  box-shadow: 0 1vw 1.5vw 0 rgba(0, 0, 0, 0.3), 0 1.5vw 3vw 0 rgba(0, 0, 0, 0.20);
+  margin-bottom: 0.5rem;
+}
+
+.window-title{
+  position: absolute;
+  z-index: 1;
+  padding: 3px 10px;
+  top: 10px;
+  font-size: 20px;
+  border: 1px solid black;
+  border-bottom: none;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  color: black;
+  background-color: #fcfcfc;
+}
+
+.window:hover .closeWindowBtn {
+  visibility: visible;
+}
+
+.selected-window {
+  background-color: #84cc67;
+  border:2px solid blue;
+}
