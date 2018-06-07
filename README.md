@@ -16,13 +16,21 @@ https://adamjamesadair.github.io/manage-my-tabs
 Install the latest release through the chrome web store: \
 https://chrome.google.com/webstore/detail/manage-my-tabs-tab-manage/jbhejjmjopbmikcoffcckcnbaiohgbge 
 
-For development releases, download the [source code](https://github.com/adamjamesadair/manage-my-tabs) or clone this repository.
-
-### Unpacked Extension
+#### Unpacked Extension (Development release)
 - If you downloaded the code, unzip the file.
 - Open the extension manager by navigating to [chrome://extensions/](chrome://extensions/) or by clicking `Window -> Extensions`.
 - Enable developer mode with the toggle in the top right corner.
 - Click `LOAD UNPACKED` and select the source code folder or drag the folder into the window.
+
+### Firefox
+Install the latest release through the firefox add-on gallery: \
+https://addons.mozilla.org/en-US/firefox/addon/manage-my-tabs/
+#### Unpacked Extension (Development release)
+- If you downloaded the code, unzip the file.
+- Open the extension manager by navigating to [about:debugging](about:debugging).
+- Click `Load Temporary Add-on` and select the manifest.json file.
+
+For development releases, download the [source code](https://github.com/adamjamesadair/manage-my-tabs) or clone this repository.
 
 ## Contributing
 
