@@ -50,7 +50,7 @@
     "content_scripts": [
     {
       "matches": ["https://*/*"],
-      "js": ["scripts/lib/jquery/jquery-1.12.4.js", "scripts/lib/jquery/jquery-ui.js"]
+      "js": ["scripts/lib/jquery/jquery-3.3.1.min.js", "scripts/lib/jquery/jquery-ui.js"]
     }
   ]
 }
