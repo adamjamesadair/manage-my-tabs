@@ -1,58 +1,47 @@
 function addListeners(tabManager) {
-  // Add listener for commands
-  chrome.commands.onCommand.addListener((command) => {
+  // shortcuts
+  $(document).bind('keyup', function(e) {
+    var key = e.which || e.keyCode;
+    key = String.fromCharCode(key);
+    let shortcuts = {
+      'U': 'undo',
+      'S': 'toggleSettings',
+      'A': 'arrangeTabs',
+      '&': 'selectWindowPrev',
+      '(': 'selectWindowNext',
+      '0': 'selectWindowAll'
+    };
+
     let next = 1;
-    switch (command) {
-      case 'undo':
-        tabManager.reopenLastClosed();
-        break;
-      case 'toggleSettings':
-        toggleSettings();
-        break;
-      case 'arrangeTabs':
-        arrangeTabs();
-        break;
-      case 'selectWindowPrev':
-        next -= 2; // Wow, very hack
-      case 'selectWindowNext':
-        let currentWindowNumber = $('.window-select-active')[0].id.replace('win-btn-', '');
-        currentWindowNumber = parseInt(currentWindowNumber);
-        let targetWindow = currentWindowNumber + next;
-        $('#win-btn-' + targetWindow).click();
-        break;
-      case 'selectWindowAll':
-        $('#win-btn-all').click();
-        break;
-      case 'selectWindow1':
-        $('#win-btn-1').click();
-        break;
-      case 'selectWindow2':
-        $('#win-btn-2').click();
-        break;
-      case 'selectWindow3':
-        $('#win-btn-3').click();
-        break;
-      case 'selectWindow4':
-        $('#win-btn-4').click();
-        break;
-      case 'selectWindow5':
-        $('#win-btn-5').click();
-        break;
-      case 'selectWindow6':
-        $('#win-btn-6').click();
-        break;
-      case 'selectWindow7':
-        $('#win-btn-7').click();
-        break;
-      case 'selectWindow8':
-        $('#win-btn-8').click();
-        break;
-      case 'selectWindow9':
-        $('#win-btn-9').click();
-        break;
+    let command = parseInt(key) || shortcuts[key];
+    if (typeof command == 'number') {
+      $('#win-btn-' + command).click();
+    } else {
+      switch (command) {
+        case 'undo':
+          tabManager.reopenLastClosed();
+          break;
+        case 'toggleSettings':
+          toggleSettings();
+          break;
+        case 'arrangeTabs':
+          arrangeTabs();
+          break;
+        case 'selectWindowPrev':
+          next -= 2; // Wow, very hack
+        case 'selectWindowNext':
+          let currentWindowNumber = $('.window-select-active')[0].id.replace('win-btn-', '');
+          currentWindowNumber = parseInt(currentWindowNumber);
+          let targetWindow = currentWindowNumber + next;
+          $('#win-btn-' + targetWindow).click();
+          break;
+        case 'selectWindowAll':
+          $('#win-btn-all').click();
+          break;
+      }
     }
   });
-
+  
   // Add listener for updating tabs
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tabManager.managerTab) {
