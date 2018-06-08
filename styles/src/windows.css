@@ -40,7 +40,7 @@
   background-color: #fcfcfc;
 }
 
-.window:hover .closeWindowBtn {
+.window:hover .closeWindowBtn, .window:hover .closeAllBtn{
   visibility: visible;
 }
 

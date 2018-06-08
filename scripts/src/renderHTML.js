@@ -44,6 +44,10 @@ function renderNoSearchResultsText(){
   return `<h3 id="no-match-search">No matches for your search term :(</h3>`;
 }
 
+function renderCloseAllBtn(){
+  return `<div class="closeAllBtn close-btn">X</div>`;
+}
+
 function generateWindows(tabGroups) {
   let $windowContainer = $('.window-container');
   $windowContainer.empty();
@@ -97,12 +101,13 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
   }
 }
 
-function generateTabGroups(tabGroups, className, tabCount, winSrc, empty = true) {
+function generateTabGroups(tabGroups, className, tabCount, winSrc, addCloseBtn=false, empty = true) {
   let $windowContainer = $('.window-container');
   if (empty) $windowContainer.empty();
   $windowContainer.append(renderNoSearchResultsText());
   $windowContainer.append(renderWindow(winSrc));
   $tabGroupContainer = $('#windowWithTabGroups-' + winSrc);
+  if (addCloseBtn) $tabGroupContainer.append(renderCloseAllBtn());
   let title = winSrc == 'all' ? 'All tabs' : "Window " + winSrc;
   $tabGroupContainer.append(renderWindowTitle(0, customTitle = title));
   for (let tabGroup of tabGroups) {

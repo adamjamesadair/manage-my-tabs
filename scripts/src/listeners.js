@@ -187,6 +187,16 @@ function addWinListeners(win, tabManager) {
     tabManager.closedElements.push(win);
     chrome.windows.remove(win.id);
   });
+
+  $('.closeAllBtn').off();
+  $('.closeAllBtn').on('click', function(){
+    if (confirm("Are you sure you want to close all windows?")){
+      for (win of tabManager.windows){
+        chrome.windows.remove(win.id);
+      }
+    }
+  });
+
 }
 
 function addTabManagerListeners(tabManager) {
