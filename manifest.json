@@ -21,25 +21,6 @@
     "scripts": ["scripts/src/bg.js"]
     },
   "commands": {
-    "undo": {
-      "suggested_key": {
-        "default": "Ctrl+Z",
-        "mac": "Command+Z"
-      },
-      "description": "Undo last tab close"
-    },
-    "selectWindowPrev": {
-      "suggested_key": {
-        "default": "Ctrl+Up"
-      },
-      "description": "Selects the previous window"
-    },
-    "selectWindowNext": {
-      "suggested_key": {
-        "default": "Ctrl+Down"
-      },
-      "description": "Selects the next window"
-    },
     "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Space",
