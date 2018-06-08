@@ -17,7 +17,7 @@ function addListeners(tabManager) {
       case 'selectWindowNext':
         let currentWindowNumber = $('.window-select-active')[0].id.replace('win-btn-', '');
         currentWindowNumber = parseInt(currentWindowNumber);
-        let targetWindow = currentWindowNumber+next;
+        let targetWindow = currentWindowNumber + next;
         $('#win-btn-' + targetWindow).click();
         break;
       case 'selectWindowAll':
@@ -54,7 +54,12 @@ function addListeners(tabManager) {
   });
 
   // Add listener for updating tabs
-  chrome.tabs.onUpdated.addListener(() => {
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (tabManager.managerTab) {
+      if (tabManager.managerTab.url == tab.url) {
+        chrome.tabs.remove(tabManager.managerTab.id);
+      }
+    }
     tabManager.reloadPage();
   });
 
@@ -75,9 +80,6 @@ function addListeners(tabManager) {
 
   // Add listner for creating tabs
   chrome.tabs.onCreated.addListener((tab) => {
-    if (tabManager.managerTab.url == tab.url) {
-      chrome.tabs.remove(tabManager.managerTab.id);
-    }
     tabManager.reloadPage();
   });
 
@@ -227,9 +229,9 @@ function addTabManagerListeners(tabManager) {
           });
           let $targetWindow = $('#windowWithTabGroups-' + tabManager.windows[btnID - 1].id);
           $targetWindow
-              .addClass('selected-window', 250)
-              .delay(350)
-              .removeClass('selected-window', 500);
+            .addClass('selected-window', 250)
+            .delay(350)
+            .removeClass('selected-window', 500);
         }
       }
     });
@@ -249,6 +251,7 @@ function addTabManagerListeners(tabManager) {
   // Add listener for seach bar
   $("#search-input").off();
   $("#search-input").keyup(function() {
+    tabManager.getSortedTabGroups();
     tabManager.renderHTMLContent();
     addTabManagerListeners(tabManager);
   });
