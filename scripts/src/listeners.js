@@ -57,7 +57,6 @@ function addListeners(tabManager) {
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tabManager.managerTab) {
       if (tabManager.managerTab.url == tab.url) {
-        alert("here");
         chrome.tabs.remove(tabManager.managerTab.id);
       }
     }
