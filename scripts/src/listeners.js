@@ -249,6 +249,7 @@ function addTabManagerListeners(tabManager) {
   // Add listener for seach bar
   $("#search-input").off();
   $("#search-input").keyup(function() {
+    tabManager.getSortedTabGroups();
     tabManager.renderHTMLContent();
     addTabManagerListeners(tabManager);
   });
