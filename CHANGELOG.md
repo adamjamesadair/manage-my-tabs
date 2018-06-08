@@ -1,6 +1,13 @@
 # Changelog
 All changes between releases of this project will be documented here.
 
+## [0.2.1](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.2.1) - 2018-06-08
+### Fixed
+- Search results not updating when deleting part of the search query.
+- Multiple instances of Manage My Tabs opening in Firefox.
+- Undo for closed windows not working in Firefox.
+
+
 ## [0.2.0](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.2.0) - 2018-06-08
 ### Added
 - Firefox support.
