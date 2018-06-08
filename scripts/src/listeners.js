@@ -162,10 +162,34 @@ function addTabListeners(tab, tabManager) {
 
   });
 
+  addTabOptionListeners(tab);
+
   // Add event listener for close button
   $('#t-' + tab.id + ' .close-tab-btn').on('click', () => {
     // Close the selected tab
     chrome.tabs.remove(tab.id);
+  });
+}
+
+function addTabOptionListeners(tab){
+  // Add event listener for tab options button
+  $('#t-' + tab.id + ' .tab-options-btn').on('click', () => {
+    $('#t-' + tab.id + ' .dropdown-content').addClass('active');
+  });
+
+  // Add event listener for reload button
+  $('#t-' + tab.id + ' #reload').on('click', () => {
+    chrome.tabs.reload(tab.id);
+  });
+
+  // Add event listener for suspend button
+  $('#t-' + tab.id + ' #suspend').on('click', () => {
+
+  });
+
+  // Add event listener for send to window button
+  $('#t-' + tab.id + ' #send').on('click', () => {
+
   });
 }
 

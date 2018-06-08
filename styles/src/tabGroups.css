@@ -8,8 +8,7 @@
   padding-bottom: 0.5rem;
   background-color: #fcfcfc;
   max-height: 11rem;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .tab-group:hover .closeGroupBtn {
@@ -51,7 +50,7 @@
   margin-bottom: 0.5rem;
 }
 
-.tabContainer:hover .close-tab-btn {
+.tabContainer:hover .close-tab-btn, .tabContainer:hover .tab-options-btn {
   visibility: visible;
 }
 
@@ -98,6 +97,52 @@
   white-space: nowrap;
   overflow-x: hidden;
   overflow-y: hidden;
+}
+
+.tab-options-btn {
+  position: absolute;
+  top: 0;
+  right: 1rem;
+  width: 1rem;
+  text-align: center;
+  z-index: 1;
+  visibility: hidden;
+  background-color: var(--tab-hover-color);
+  border-radius: 2px;
+  opacity: 1;
+}
+
+.tab-options-btn:hover {
+  background-color: green;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.dropdown-content {
+  text-align: left;
+    display: none;
+    position: absolute;
+    right: -1rem;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 10;
+}
+
+.tab-options-btn .active.dropdown-content {
+    display: block;
+}
+
+.tab-option{
+  background-color: #f2f2f2;
+  margin: 0;
+}
+
+.tab-option:hover {
+  background-color: var(--tab-hover-color);
+  color: white;
+  cursor: pointer;
 }
 
 .close-tab-btn {
