@@ -202,8 +202,7 @@ class TabManager {
     // If the window no longer exists, make a new window with that tab
     if (!winExists) {
       chrome.windows.create({
-        url: tab.url.href,
-        focused: true
+        url: tab.url.href
       });
     } else {
       // else make the tab in its original window
@@ -225,8 +224,7 @@ class TabManager {
     if (!winExists) {
       var that = this;
       chrome.windows.create({
-        url: tabGroup.tabs[0].url.href,
-        focused: true
+        url: tabGroup.tabs[0].url.href
       }, function(newWin) {
         // Add the rest of the tabs to the new window
         for (let tab of tabGroup.tabs) {
@@ -236,7 +234,7 @@ class TabManager {
               url: tab.url.href,
               active: false
             });
-          }      
+          }
         }
       });
     } else {
@@ -248,8 +246,7 @@ class TabManager {
 
   reopenWindow(win) {
     chrome.windows.create({
-      url: win.tabs[0].url,
-      focused: false
+      url: win.tabs[0].url
     }, (window) => {
       win.tabs.shift();
       win.tabs.forEach((tab) => {
