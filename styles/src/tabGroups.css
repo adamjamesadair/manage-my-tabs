@@ -8,7 +8,7 @@
   padding-bottom: 0.5rem;
   background-color: #fcfcfc;
   max-height: 11rem;
-  overflow-y: visible;
+  overflow-y: auto;
 }
 
 .tab-group:hover .closeGroupBtn {
@@ -68,7 +68,7 @@
   transition: 0.1s;
 }
 
-.tab:hover {
+.tabContainer:hover .tab{
   background-color: var(--tab-hover-color);
   color: white;
   border: none;
@@ -85,7 +85,7 @@
   background: linear-gradient(to right, rgba(0,0,0,0), #f2f2f2);
 }
 
-.tab:hover:after{
+.tabContainer:hover .tab:after{
   background: linear-gradient(to right, rgba(0,0,0,0), var(--tab-hover-color));
   transition: none;
 }
@@ -110,6 +110,7 @@
   background-color: var(--tab-hover-color);
   border-radius: 2px;
   opacity: 1;
+  z-index: 2;
 }
 
 .tab-options-btn:hover {
@@ -119,15 +120,14 @@
 }
 
 .dropdown-content {
-  text-align: left;
-    display: none;
     position: absolute;
+    text-align: center;
+    display: none;
     right: -1rem;
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     padding: 12px 16px;
-    z-index: 10;
 }
 
 .tab-options-btn .active.dropdown-content {
@@ -135,8 +135,8 @@
 }
 
 .tab-option{
-  background-color: #f2f2f2;
   margin: 0;
+  padding: 0;
 }
 
 .tab-option:hover {

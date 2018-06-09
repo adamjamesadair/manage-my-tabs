@@ -175,6 +175,11 @@ function addTabOptionListeners(tab){
   // Add event listener for tab options button
   $('#t-' + tab.id + ' .tab-options-btn').on('click', () => {
     $('#t-' + tab.id + ' .dropdown-content').addClass('active');
+    $('#' + tab.tabGroupID).css('overflow', 'visible');
+  });
+
+  $('#t-' + tab.id + ' .dropdown-content').on('mouseleave', () => {
+    $('#t-' + tab.id + ' .dropdown-content').removeClass('active');
   });
 
   // Add event listener for reload button

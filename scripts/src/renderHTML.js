@@ -30,11 +30,17 @@ function renderTab(tab) {
         <div class="tab-options-btn">
           <i class="fas fa-ellipsis-h"></i>
           <div class="dropdown-content">
-            <div class="btn-group-verticle" role="group" aria-label="Basic example">
-              <button id="reload" type="button" class="btn-sm btn-block tab-option">Reload</button>
-              <button id="suspend" type="button" class="btn-sm btn-block tab-option">Suspend</button>
-              <button id="send" type="button" class="btn-sm btn-block tab-option">Send to Window</button>
-            </div>
+          <ul class="nav flex-column">
+            <li id="reload" class="nav-item">
+              <a class="nav-link tab-option" href="#">Reload</a>
+            </li>
+            <li id="suspend" class="nav-item">
+              <a class="nav-link tab-option" href="#">Suspend</a>
+            </li>
+            <li id="send" class="nav-item">
+              <a class="nav-link tab-option" href="#">Send to Window</a>
+            </li>
+          </ul>
           </div>
         </div>
       </div>

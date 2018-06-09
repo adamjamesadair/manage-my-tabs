@@ -24,6 +24,7 @@
   border-radius: 10px;
   box-shadow: 0 1vw 1.5vw 0 rgba(0, 0, 0, 0.3), 0 1.5vw 3vw 0 rgba(0, 0, 0, 0.20);
   margin-bottom: 0.5rem;
+  overflow: visible;
 }
 
 .window-title{
