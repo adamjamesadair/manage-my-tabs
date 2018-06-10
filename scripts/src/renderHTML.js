@@ -72,6 +72,9 @@ function renderSendTabModal(windows) {
                    </li>`);
     i++;
   }
+  result = result.concat(`<li id="st-new" class="nav-item">
+                  <a class="nav-link tab-option" href="#">New Window</a>
+                 </li>`);
   result = result.concat(`</ul></div>`);
   return result;
 }

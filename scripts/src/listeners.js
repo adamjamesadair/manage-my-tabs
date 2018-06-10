@@ -198,9 +198,16 @@ function addTabOptionListeners(tab, tabManager) {
 }
 
 function addSendTabModalListeners(tab, windows) {
+  $('#st-new').off();
+  $('#st-new').on('click', () => {
+    chrome.windows.create({
+      tabId: tab.id
+    });
+  });
+
   for (win of windows) {
     $('#st-' + win.id).off();
-    $('#st-' + win.id).on('click', function(e) {
+    $('#st-' + win.id).on('click', function() {
       chrome.tabs.move(tab.id, {
         windowId: parseInt(this.id.split('-')[1]),
         index: -1
