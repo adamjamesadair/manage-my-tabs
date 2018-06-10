@@ -45,7 +45,7 @@ function addListeners(tabManager) {
   // Add listener for updating tabs
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tabManager.managerTab) {
-      if (tabManager.managerTab.url == tab.url) {
+      if (tabManager.managerTab.url == tab.url && Object.keys(changeInfo).length > 1) {
         chrome.tabs.remove(tabManager.managerTab.id);
       }
     }
@@ -162,11 +162,51 @@ function addTabListeners(tab, tabManager) {
 
   });
 
+  addTabOptionListeners(tab, tabManager);
+
   // Add event listener for close button
   $('#t-' + tab.id + ' .close-tab-btn').on('click', () => {
     // Close the selected tab
     chrome.tabs.remove(tab.id);
   });
+}
+
+function addTabOptionListeners(tab, tabManager) {
+  // Add event listener for tab options button
+  $('#t-' + tab.id + ' .tab-options-btn').on('click', () => {
+    $('#t-' + tab.id + ' .dropdown-content').addClass('active');
+    $('#' + tab.tabGroupID).css('overflow', 'visible');
+  });
+
+  // Close dropdown on mouse leave
+  $('#t-' + tab.id + ' .dropdown-content').on('mouseleave', () => {
+    $('#t-' + tab.id + ' .dropdown-content').removeClass('active');
+  });
+
+  // Add event listener for reload button
+  $('#t-' + tab.id + ' #reload').on('click', () => {
+    chrome.tabs.reload(tab.id);
+  });
+
+  // Add event listener for send to window button
+  $('#t-' + tab.id + ' #send').on('click', () => {
+    $('.select-win-dest').empty();
+    $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
+    addSendTabModalListeners(tab, tabManager.windows);
+    $('.select-win-dest-bg').show();
+  });
+}
+
+function addSendTabModalListeners(tab, windows) {
+  for (win of windows) {
+    $('#st-' + win.id).off();
+    $('#st-' + win.id).on('click', function(e) {
+      chrome.tabs.move(tab.id, {
+        windowId: parseInt(this.id.split('-')[1]),
+        index: -1
+      });
+    });
+  }
 }
 
 function addTabGroupListeners(tabGroup, tabManager) {
@@ -189,14 +229,23 @@ function addWinListeners(win, tabManager) {
   });
 
   $('.closeAllBtn').off();
-  $('.closeAllBtn').on('click', function(){
-    if (confirm("Are you sure you want to close all windows?")){
-      for (win of tabManager.windows){
+  $('.closeAllBtn').on('click', function() {
+    if (confirm("Are you sure you want to close all windows?")) {
+      for (win of tabManager.windows) {
         chrome.windows.remove(win.id);
       }
     }
   });
+}
 
+function addModalListeners() {
+  let selectWinDestBg = $('.select-win-dest-bg');
+  $('.select-win-dest-bg').on('click', function() {
+    $('.select-win-dest-bg').hide();
+  });
+  $('#select-win-dest-close').on('click', () => {
+    $('.select-win-dest-bg').hide();
+  });
 }
 
 function addTabManagerListeners(tabManager) {
@@ -246,6 +295,9 @@ function addTabManagerListeners(tabManager) {
     addTabGroupListeners(tabGroup, tabManager);
     tabGroup.tabs.forEach((tab) => addTabListeners(tab, tabManager));
   }
+
+  // Add listeners for addModalListeners
+  addModalListeners();
 
   // Add listener for seach bar
   $("#search-input").off();

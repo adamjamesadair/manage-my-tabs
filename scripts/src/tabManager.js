@@ -18,6 +18,12 @@ class TabManager {
     });
   }
 
+  reloadTabGroups(){
+    this.getSortedTabGroups();
+    this.renderHTMLContent();
+    addTabManagerListeners(this);
+  }
+
   getSortedTabGroups() {
     this.getTabGroups();
     this.sortTabGroups();
@@ -72,7 +78,7 @@ class TabManager {
         generateWindows(tabGroups);
         if (this.windows.length > 1) {
           $('.window-container').css({
-            'padding-bottom': this.settings.allowOverscrollMainContainer ? '53vh' : '0vh'
+            'padding-bottom': this.settings.allowOverscrollMainContainer ? '53vh' : '8vh'
           });
         }
         generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);

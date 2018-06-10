@@ -17,6 +17,7 @@ class TabGroup {
     // this.id = hostname.split('.').join("");
     this.id = TabGroup.n_instances++;
     this.tabs = tabs;
+    this.tabs[0].tabGroupID="tg-" + this.id;
     this.tabCount = tabCount;
     this.windowId = windowId;
     this.setTitle();
@@ -56,6 +57,7 @@ class TabGroup {
   *   The tab to add to TabGroup.tabs.
   */
   addTab(tab){
+    tab.tabGroupID = 'tg-' + this.id;
     this.tabs.push(tab);
     this.setTitle();
   }
@@ -67,6 +69,7 @@ class TabGroup {
   *   The tab to remove from TabGroup.tabs.
   */
   removeTab(tab){
+    tab.tabGroupID = '';
     let index = this.tabs.indexOf(tab);
     if (index > -1)
       this.tabs.splice(index, 1);

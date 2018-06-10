@@ -1,7 +1,6 @@
 function renderWindow(windowId) {
   return `
-    <div id="windowWithTabGroups-${windowId}" class="row container window">
-    </div>
+    <div id="windowWithTabGroups-${windowId}" class="row container window"></div>
   `;
 }
 
@@ -13,10 +12,10 @@ function renderWindowTitle(wid, customTitle = "") {
 function renderTabGroup(tabGroup, className, favIconUrl) {
   return `
       <div id="tg-${tabGroup.id}" class="tab-group ${className}">
-      <h1 class="tab-title">${tabGroup.title}
-      <img class="icon" src=${favIconUrl} />
-      </h1>
-      <div class="closeGroupBtn close-btn">X</div>
+        <h1 class="tab-title">${tabGroup.title}
+        <img class="icon" src=${favIconUrl} />
+        </h1>
+        <div class="closeGroupBtn close-btn">X</div>
       </div>
     `;
 }
@@ -24,10 +23,23 @@ function renderTabGroup(tabGroup, className, favIconUrl) {
 function renderTab(tab) {
   return `
       <div id="t-${tab.id}" class="tabContainer">
-      <div class="tab" title=${tab.title}>
-      <p class="tabDescription">${tab.title}</p>
-      </div>
-      <div class="close-tab-btn close-btn">X</div>
+        <div class="tab" title=${tab.title}>
+          <p class="tabDescription">${tab.title}</p>
+        </div>
+        <div class="close-tab-btn close-btn">X</div>
+        <div class="tab-options-btn">
+          <i class="fas fa-ellipsis-h"></i>
+          <div class="dropdown-content">
+            <ul class="nav flex-column">
+              <li id="reload" class="nav-item">
+                <a class="nav-link tab-option" href="#">Reload</a>
+              </li>
+              <li id="send" class="nav-item">
+                <a class="nav-link tab-option" href="#">Send to Window</a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     `;
 }
@@ -40,12 +52,28 @@ function renderBtn(id) {
   return `<button id="win-btn-${id}" class="window-select-btn win-btn generated-win-btn" type="button">${id}</button>`;
 }
 
-function renderNoSearchResultsText(){
+function renderNoSearchResultsText() {
   return `<h3 id="no-match-search">No matches for your search term :(</h3>`;
 }
 
-function renderCloseAllBtn(){
+function renderCloseAllBtn() {
   return `<div class="closeAllBtn close-btn">X</div>`;
+}
+
+function renderSendTabModal(windows) {
+  let result = `<span id="select-win-dest-close" class="close">&times;</span>
+                <h1>Send to</h1><div class="select-win-dest-content">
+                <ul class="nav flex-column">`;
+  let i = 1;
+
+  for (win of windows) {
+    result = result.concat(`<li id="st-${win.id}" class="nav-item">
+                    <a class="nav-link tab-option" href="#">Window ${i}</a>
+                   </li>`);
+    i++;
+  }
+  result = result.concat(`</ul></div>`);
+  return result;
 }
 
 function generateWindows(tabGroups) {
@@ -101,7 +129,7 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
   }
 }
 
-function generateTabGroups(tabGroups, className, tabCount, winSrc, addCloseBtn=false, empty = true) {
+function generateTabGroups(tabGroups, className, tabCount, winSrc, addCloseBtn = false, empty = true) {
   let $windowContainer = $('.window-container');
   if (empty) $windowContainer.empty();
   $windowContainer.append(renderNoSearchResultsText());
