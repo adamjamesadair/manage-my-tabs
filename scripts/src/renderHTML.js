@@ -30,17 +30,17 @@ function renderTab(tab) {
         <div class="tab-options-btn">
           <i class="fas fa-ellipsis-h"></i>
           <div class="dropdown-content">
-          <ul class="nav flex-column">
-            <li id="reload" class="nav-item">
-              <a class="nav-link tab-option" href="#">Reload</a>
-            </li>
-            <li id="suspend" class="nav-item">
-              <a class="nav-link tab-option" href="#">Suspend</a>
-            </li>
-            <li id="send" class="nav-item">
-              <a class="nav-link tab-option" href="#">Send to Window</a>
-            </li>
-          </ul>
+            <ul class="nav flex-column">
+              <li id="reload" class="nav-item">
+                <a class="nav-link tab-option" href="#">Reload</a>
+              </li>
+              <li id="suspend" class="nav-item">
+                <a class="nav-link tab-option" href="#">Suspend</a>
+              </li>
+              <li id="send" class="nav-item">
+                <a class="nav-link tab-option" href="#">Send to Window</a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -61,6 +61,22 @@ function renderNoSearchResultsText() {
 
 function renderCloseAllBtn() {
   return `<div class="closeAllBtn close-btn">X</div>`;
+}
+
+function renderSendTabModal(windows) {
+  let result = `<span id="select-win-dest-close" class="close">&times;</span>
+                <h1>Send to</h1><div class="select-win-dest-content">
+                <ul class="nav flex-column">`;
+  let i = 1;
+
+  for (win of windows) {
+    result = result.concat(`<li id="st-${win.id}" class="nav-item">
+                    <a class="nav-link tab-option" href="#">Window ${i}</a>
+                   </li>`);
+    i++;
+  }
+  result = result.concat(`</ul></div>`);
+  return result;
 }
 
 function generateWindows(tabGroups) {
