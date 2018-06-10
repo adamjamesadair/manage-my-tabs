@@ -178,6 +178,7 @@ function addTabOptionListeners(tab, tabManager) {
     $('#' + tab.tabGroupID).css('overflow', 'visible');
   });
 
+  // Close dropdown on mouse leave
   $('#t-' + tab.id + ' .dropdown-content').on('mouseleave', () => {
     $('#t-' + tab.id + ' .dropdown-content').removeClass('active');
   });
@@ -185,11 +186,6 @@ function addTabOptionListeners(tab, tabManager) {
   // Add event listener for reload button
   $('#t-' + tab.id + ' #reload').on('click', () => {
     chrome.tabs.reload(tab.id);
-  });
-
-  // Add event listener for suspend button
-  $('#t-' + tab.id + ' #suspend').on('click', () => {
-
   });
 
   // Add event listener for send to window button
@@ -203,12 +199,10 @@ function addTabOptionListeners(tab, tabManager) {
 
 function addSendTabModalListeners(tab, windows) {
   for (win of windows) {
-    console.log(win.id);
     $('#st-' + win.id).off();
-    $('#st-' + win.id).on('click', () => {
-      console.log($('#st-' + win.id)[0].id);
+    $('#st-' + win.id).on('click', function(e) {
       chrome.tabs.move(tab.id, {
-        windowId: win.id,
+        windowId: parseInt(this.id.split('-')[1]),
         index: -1
       });
     });

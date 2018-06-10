@@ -34,9 +34,6 @@ function renderTab(tab) {
               <li id="reload" class="nav-item">
                 <a class="nav-link tab-option" href="#">Reload</a>
               </li>
-              <li id="suspend" class="nav-item">
-                <a class="nav-link tab-option" href="#">Suspend</a>
-              </li>
               <li id="send" class="nav-item">
                 <a class="nav-link tab-option" href="#">Send to Window</a>
               </li>
