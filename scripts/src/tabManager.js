@@ -362,7 +362,7 @@ class TabManager {
 }
 
 function isOverflown(element) {
-  return element.prop('scrollWidth') > element.width();
+  return element.prop('scrollWidth') > element.width() + 0.5;
 }
 
 /*
