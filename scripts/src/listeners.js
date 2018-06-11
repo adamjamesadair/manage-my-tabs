@@ -188,6 +188,11 @@ function addTabOptionListeners(tab, tabManager) {
     chrome.tabs.reload(tab.id);
   });
 
+  // Add event listener for copy url button
+  $('#t-' + tab.id + ' #copy').on('click', () => {
+    copyStringToClipboard(tab.url.href);
+  });
+
   // Add event listener for send to window button
   $('#t-' + tab.id + ' #send').on('click', () => {
     $('.select-win-dest').empty();
