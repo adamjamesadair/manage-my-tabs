@@ -45,7 +45,7 @@ function addListeners(tabManager) {
   // Add listener for updating tabs
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tabManager.managerTab) {
-      if (tabManager.managerTab.url == tab.url && Object.keys(changeInfo).length > 1) {
+      if (tabManager.managerTab.url == tab.url && Object.keys(changeInfo).length > 1 && changeInfo['status'] == 'loading') {
         chrome.tabs.remove(tabManager.managerTab.id);
       }
     }
