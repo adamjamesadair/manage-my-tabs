@@ -1,4 +1,4 @@
-.select-win-dest-bg {
+.modal-bg {
     display: none;
     position: fixed;
     z-index: 3;
@@ -12,7 +12,7 @@
     background-color: rgba(0,0,0,0.4);
 }
 
-.select-win-dest {
+.select-win-dest, .shortcut-settings-modal {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
@@ -20,15 +20,15 @@
     width: 80%;
 }
 
-.select-win-dest.close {
+.modal-bg.close {
     color: #aaaaaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
 
-.select-win-dest.close:hover,
-.select-win-dest.close:focus {
+.modal-bg.close:hover,
+.modal-bg.close:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
