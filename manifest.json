@@ -15,7 +15,8 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "storage"
+    "storage",
+    "clipboardWrite"
    ],
    "background":{
     "scripts": ["scripts/src/bg.js"]
