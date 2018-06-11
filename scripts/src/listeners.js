@@ -202,21 +202,110 @@ function addTabOptionListeners(tab, tabManager) {
   });
 }
 
-function addSendTabModalListeners(tab, windows) {
+function addTabGroupOptionListeners(tabGroup, tabManager) {
+  // Add event listener for tab options button
+  $('#tg-' + tabGroup.id + ' .tab-group-options-btn').on('click', () => {
+    $('#tg-' + tabGroup.id + ' .dropdown-content').addClass('active');
+  });
+
+  // Close dropdown on mouse leave
+  $('#tg-' + tabGroup.id + ' .dropdown-content').on('mouseleave', () => {
+    $('#tg-' + tabGroup.id + ' .dropdown-content').removeClass('active');
+  });
+
+  // Add event listener for reload button
+  $('#tg-' + tabGroup.id + ' #reload').on('click', () => {
+    for (tab of tabGroup.tabs) {
+      chrome.tabs.reload(tab.id);
+    }
+  });
+
+  // Add event listener for send to window button
+  $('#tg-' + tabGroup.id + ' #send').on('click', () => {
+    $('.select-win-dest').empty();
+    $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
+    $('.select-win-dest-bg').show();
+
+    addSendTabModalListeners(tabGroup, tabManager.windows);
+  });
+}
+
+function addWindowOptionListeners(win, tabManager) {
+  // Add event listener for tab options button
+  $('#windowWithTabGroups-' + win.id + ' .win-options-btn').on('click', () => {
+    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').addClass('active');
+  });
+
+  // Close dropdown on mouse leave
+  $('#windowWithTabGroups-' + win.id + ' .dropdown-content').on('mouseleave', () => {
+    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').removeClass('active');
+  });
+
+  // Add event listener for reload button
+  $('#windowWithTabGroups-' + win.id + ' #reload').on('click', () => {
+    for (tabGroup of win.tabGroups) {
+      for (tab of tabGroup.tabs) {
+        chrome.tabs.reload(tab.id);
+      }
+    }
+  });
+
+  // Add event listener for send to window button
+  $('#windowWithTabGroups-' + win.id + ' #send').on('click', () => {
+    $('.select-win-dest').empty();
+    $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
+    $('.select-win-dest-bg').show();
+
+    addSendTabModalListeners(win, tabManager.windows);
+  });
+}
+
+function moveTabGroupNewWin(tabGroup) {
+
+}
+
+function addSendTabModalListeners(element, windows) {
+
   $('#st-new').off();
   $('#st-new').on('click', () => {
-    chrome.windows.create({
-      tabId: tab.id
-    });
+
+    if (element instanceof TabGroup || windows.includes(element)) {
+      chrome.windows.create({
+        tabId: element.tabs[0].id
+      }, (win) => {
+        for (tab of element.tabs) {
+          if (tab != element.tabs[0]) {
+            chrome.tabs.move(tab.id, {
+              windowId: parseInt(win.id),
+              index: -1
+            });
+          }
+        }
+      });
+    } else { //is tab
+      chrome.windows.create({
+        tabId: element.id
+      });
+    }
   });
 
   for (win of windows) {
     $('#st-' + win.id).off();
     $('#st-' + win.id).on('click', function() {
-      chrome.tabs.move(tab.id, {
-        windowId: parseInt(this.id.split('-')[1]),
-        index: -1
-      });
+
+      if (element instanceof TabGroup || windows.includes(element)) {
+        for (tab of element.tabs) {
+          chrome.tabs.move(tab.id, {
+            windowId: parseInt(this.id.split('-')[1]),
+            index: -1
+          });
+        }
+      } else { //is tab
+        chrome.tabs.move(element.id, {
+          windowId: parseInt(this.id.split('-')[1]),
+          index: -1
+        });
+      }
     });
   }
 }
@@ -231,6 +320,7 @@ function addTabGroupListeners(tabGroup, tabManager) {
     tabManager.closedElements = _.difference(tabManager.closedElements, tabGroup.tabs);
     tabManager.closedElements.push(tabGroup);
   });
+  addTabGroupOptionListeners(tabGroup, tabManager);
 }
 
 function addWinListeners(win, tabManager) {
@@ -248,6 +338,7 @@ function addWinListeners(win, tabManager) {
       }
     }
   });
+  addWindowOptionListeners(win, tabManager);
 }
 
 function addModalListeners() {
