@@ -14,8 +14,8 @@ function renderTabGroup(tabGroup, className, favIconUrl) {
     id: 'reload',
     text: 'Reload'
   }, {
-    id: 'send',
-    text: 'Send to Window'
+    id: 'merge',
+    text: 'Merge with Window'
   }];
   return `
       <div id="tg-${tabGroup.id}" class="tab-group ${className}">
@@ -34,8 +34,8 @@ function renderTab(tab) {
     id: 'copy',
     text: 'Copy URL'
   }, {
-    id: 'send',
-    text: 'Send to Window'
+    id: 'merge',
+    text: 'Merge with Window'
   }];
   return `
       <div id="t-${tab.id}" class="tabContainer">
@@ -66,8 +66,8 @@ function renderWinBtns() {
     id: 'reload',
     text: 'Reload'
   }, {
-    id: 'send',
-    text: 'Send to Window'
+    id: 'merge',
+    text: 'Merge with Window'
   }];
   return `<div class="closeWindowBtn close-btn">X</div>`.concat(renderDropdownOptions('win-options-btn', options));
 }
@@ -128,7 +128,7 @@ function renderShortcutModal() {
 
 function renderSendTabModal(windows) {
   let result = `<span id="modal-close" class="close">&times;</span>
-                <h1>Send to</h1><div class="select-win-dest-content">
+                <h1>Merge with</h1><div class="select-win-dest-content">
                 <ul class="nav flex-column">`;
   let i = 1;
 

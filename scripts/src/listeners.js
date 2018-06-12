@@ -198,8 +198,8 @@ function addTabOptionListeners(tab, tabManager) {
     copyStringToClipboard(tab.url.href);
   });
 
-  // Add event listener for send to window button
-  $('#t-' + tab.id + ' #send').on('click', () => {
+  // Add event listener for merge to window button
+  $('#t-' + tab.id + ' #merge').on('click', () => {
     $('.modal-bg').empty();
     $('.modal-bg').append(`<div class="select-win-dest"></div>`);
     $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
@@ -226,8 +226,8 @@ function addTabGroupOptionListeners(tabGroup, tabManager) {
     }
   });
 
-  // Add event listener for send to window button
-  $('#tg-' + tabGroup.id + ' #send').on('click', () => {
+  // Add event listener for merge to window button
+  $('#tg-' + tabGroup.id + ' #merge').on('click', () => {
     $('.modal-bg').empty();
     $('.modal-bg').append(`<div class="select-win-dest"></div>`);
     $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
@@ -257,8 +257,8 @@ function addWindowOptionListeners(win, tabManager) {
     }
   });
 
-  // Add event listener for send to window button
-  $('#windowWithTabGroups-' + win.id + ' #send').on('click', () => {
+  // Add event listener for merge to window button
+  $('#windowWithTabGroups-' + win.id + ' #merge').on('click', () => {
     $('.modal-bg').empty();
     $('.modal-bg').append(`<div class="select-win-dest"></div>`);
     $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
