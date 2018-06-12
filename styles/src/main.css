@@ -111,6 +111,9 @@ body {
     margin-top: 1rem;
     display: block;
   }
+}
+
+@media only screen and (max-width:766px) {
   .feature {
     height: auto;
   }
