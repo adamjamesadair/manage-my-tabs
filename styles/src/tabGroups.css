@@ -133,10 +133,6 @@
   padding: 12px 16px;
 }
 
-.tab-options-btn .active.dropdown-content, .tab-group-options-btn .active.dropdown-content, .win-options-btn .active.dropdown-content {
-  display: block;
-}
-
 .tab-option {
   margin: 0;
   padding: 0;

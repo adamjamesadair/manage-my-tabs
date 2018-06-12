@@ -11,7 +11,7 @@ function renderWindowTitle(wid, customTitle = "") {
 
 function renderTabGroup(tabGroup, className, favIconUrl) {
   options = [{
-    id: 'reload',
+    id: 'tg-reload',
     text: 'Reload'
   }, {
     id: 'merge',
@@ -34,7 +34,7 @@ function renderTab(tab) {
 
 function renderTabContent(tab) {
   options = [{
-    id: 'reload',
+    id: 't-reload',
     text: 'Reload'
   }, {
     id: 'copy',
@@ -67,7 +67,7 @@ function renderDropdownOptions(className, options) {
 
 function renderWinBtns() {
   options = [{
-    id: 'reload',
+    id: 'w-reload',
     text: 'Reload'
   }, {
     id: 'merge',

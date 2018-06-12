@@ -186,22 +186,24 @@ function addTabListeners(tab, tabManager) {
 function addTabOptionListeners(tab, tabManager) {
   // Add event listener for tab options button
   $('#t-' + tab.id + ' .tab-options-btn').on('click', () => {
-    $('#t-' + tab.id + ' .dropdown-content').addClass('active');
+    $('#t-' + tab.id + ' .dropdown-content').show();
   });
 
   // Close dropdown on mouse leave
   $('#t-' + tab.id + ' .dropdown-content').on('mouseleave', () => {
-    $('#t-' + tab.id + ' .dropdown-content').removeClass('active');
+    $('#t-' + tab.id + ' .dropdown-content').hide();
   });
 
   // Add event listener for reload button
-  $('#t-' + tab.id + ' #reload').on('click', () => {
+  $('#t-' + tab.id + ' #t-reload').on('click', () => {
     chrome.tabs.reload(tab.id);
+    $('#t-' + tab.id + ' .dropdown-content').hide();
   });
 
   // Add event listener for copy url button
   $('#t-' + tab.id + ' #copy').on('click', () => {
     copyStringToClipboard(tab.url.href);
+    $('#t-' + tab.id + ' .dropdown-content').hide();
   });
 
   // Add event listener for merge to window button
@@ -217,19 +219,20 @@ function addTabOptionListeners(tab, tabManager) {
 function addTabGroupOptionListeners(tabGroup, tabManager) {
   // Add event listener for tab options button
   $('#tg-' + tabGroup.id + ' .tab-group-options-btn').on('click', () => {
-    $('#tg-' + tabGroup.id + ' .dropdown-content').addClass('active');
+    $('#tg-' + tabGroup.id + ' .dropdown-content').show();
   });
 
   // Close dropdown on mouse leave
   $('#tg-' + tabGroup.id + ' .dropdown-content').on('mouseleave', () => {
-    $('#tg-' + tabGroup.id + ' .dropdown-content').removeClass('active');
+    $('#tg-' + tabGroup.id + ' .dropdown-content').hide();
   });
 
   // Add event listener for reload button
-  $('#tg-' + tabGroup.id + ' #reload').on('click', () => {
+  $('#tg-' + tabGroup.id + ' #tg-reload').on('click', () => {
     for (tab of tabGroup.tabs) {
       chrome.tabs.reload(tab.id);
     }
+    $('#tg-' + tabGroup.id + ' .dropdown-content').hide();
   });
 
   // Add event listener for merge to window button
@@ -246,21 +249,20 @@ function addTabGroupOptionListeners(tabGroup, tabManager) {
 function addWindowOptionListeners(win, tabManager) {
   // Add event listener for tab options button
   $('#windowWithTabGroups-' + win.id + ' .win-options-btn').on('click', () => {
-    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').addClass('active');
+    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').show();
   });
 
   // Close dropdown on mouse leave
   $('#windowWithTabGroups-' + win.id + ' .dropdown-content').on('mouseleave', () => {
-    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').removeClass('active');
+    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').hide();
   });
 
   // Add event listener for reload button
-  $('#windowWithTabGroups-' + win.id + ' #reload').on('click', () => {
-    for (tabGroup of win.tabGroups) {
-      for (tab of tabGroup.tabs) {
-        chrome.tabs.reload(tab.id);
-      }
+  $('#windowWithTabGroups-' + win.id + ' #w-reload').on('click', () => {
+    for (tab of win.tabs) {
+      chrome.tabs.reload(tab.id);
     }
+    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').hide();
   });
 
   // Add event listener for merge to window button
