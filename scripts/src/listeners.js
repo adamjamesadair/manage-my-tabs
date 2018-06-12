@@ -181,7 +181,6 @@ function addTabOptionListeners(tab, tabManager) {
   // Add event listener for tab options button
   $('#t-' + tab.id + ' .tab-options-btn').on('click', () => {
     $('#t-' + tab.id + ' .dropdown-content').addClass('active');
-    $('#' + tab.tabGroupID).css('overflow', 'visible');
   });
 
   // Close dropdown on mouse leave

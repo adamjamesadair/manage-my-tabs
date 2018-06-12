@@ -7,8 +7,7 @@
   border: 1px solid black;
   padding-bottom: 0.5rem;
   background-color: var(--tab-group-bg-color);
-  max-height: 11rem;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .tab-group:hover .closeGroupBtn, .tab-group:hover .tab-group-options-btn {
