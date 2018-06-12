@@ -170,7 +170,6 @@ function addTabListeners(tab, tabManager) {
   });
 
   addTabOptionListeners(tab, tabManager);
-
   // Add event listener for close button
   $('#t-' + tab.id + ' .close-tab-btn').on('click', () => {
     // Close the selected tab
@@ -230,9 +229,10 @@ function addTabGroupOptionListeners(tabGroup, tabManager) {
 
   // Add event listener for send to window button
   $('#tg-' + tabGroup.id + ' #send').on('click', () => {
-    $('.select-win-dest').empty();
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="select-win-dest"></div>`);
     $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
-    $('.select-win-dest-bg').show();
+    $('.modal-bg').show();
 
     addSendTabModalListeners(tabGroup, tabManager.windows);
   });
@@ -260,9 +260,10 @@ function addWindowOptionListeners(win, tabManager) {
 
   // Add event listener for send to window button
   $('#windowWithTabGroups-' + win.id + ' #send').on('click', () => {
-    $('.select-win-dest').empty();
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="select-win-dest"></div>`);
     $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
-    $('.select-win-dest-bg').show();
+    $('.modal-bg').show();
 
     addSendTabModalListeners(win, tabManager.windows);
   });
