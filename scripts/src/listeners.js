@@ -301,6 +301,7 @@ function addSendTabModalListeners(element, windows) {
         tabId: element.id
       });
     }
+    tabManager.reloadPage();
   });
 
   for (win of windows) {
@@ -320,6 +321,7 @@ function addSendTabModalListeners(element, windows) {
           index: -1
         });
       }
+      tabManager.reloadPage();
     });
   }
 }
