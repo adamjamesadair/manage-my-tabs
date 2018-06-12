@@ -10,45 +10,66 @@ function renderWindowTitle(wid, customTitle = "") {
 }
 
 function renderTabGroup(tabGroup, className, favIconUrl) {
+  options = [{
+    id: 'reload',
+    text: 'Reload'
+  }, {
+    id: 'send',
+    text: 'Send to Window'
+  }];
   return `
       <div id="tg-${tabGroup.id}" class="tab-group ${className}">
         <h1 class="tab-title">${tabGroup.title}
         <img class="icon" src=${favIconUrl} />
         </h1>
-        <div class="closeGroupBtn close-btn">X</div>
-      </div>
-    `;
+        <div class="closeGroupBtn close-btn">X</div>`.concat(renderDropdownOptions('tab-group-options-btn', options))
+    .concat(`</div>`);
 }
 
 function renderTab(tab) {
+  options = [{
+    id: 'reload',
+    text: 'Reload'
+  }, {
+    id: 'copy',
+    text: 'Copy URL'
+  }, {
+    id: 'send',
+    text: 'Send to Window'
+  }];
   return `
       <div id="t-${tab.id}" class="tabContainer">
         <div class="tab" title=${tab.title}>
           <p class="tabDescription">${tab.title}</p>
         </div>
-        <div class="close-tab-btn close-btn">X</div>
-        <div class="tab-options-btn">
-          <i class="fas fa-ellipsis-h"></i>
-          <div class="dropdown-content">
-            <ul class="nav flex-column">
-              <li id="reload" class="nav-item">
-                <a class="nav-link tab-option" href="#">Reload</a>
-              </li>
-              <li id="copy" class="nav-item">
-                <a class="nav-link tab-option" href="#">Copy URL</a>
-              </li>
-              <li id="send" class="nav-item">
-                <a class="nav-link tab-option" href="#">Send to Window</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    `;
+        <div class="close-tab-btn close-btn">X</div>`
+    .concat(renderDropdownOptions('tab-options-btn', options)).concat(`</div>`);
 }
 
-function renderCloseWinBtn() {
-  return `<div class="closeWindowBtn close-btn">X</div>`;
+function renderDropdownOptions(className, options) {
+
+  result = `<div class="${className}">
+              <i class="fas fa-ellipsis-h"></i>
+              <div class="dropdown-content">
+                <ul class="nav flex-column">`;
+  for (option of options) {
+    result = result.concat(`<li id="${option['id']}" class="nav-item">
+      <a class="nav-link tab-option" href="#">${option['text']}</a>
+    </li>`);
+  }
+  result = result.concat(`</ul></div></div>`);
+  return result;
+}
+
+function renderWinBtns() {
+  options = [{
+    id: 'reload',
+    text: 'Reload'
+  }, {
+    id: 'send',
+    text: 'Send to Window'
+  }];
+  return `<div class="closeWindowBtn close-btn">X</div>`.concat(renderDropdownOptions('win-options-btn', options));
 }
 
 function renderBtn(id) {
@@ -152,7 +173,7 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
     $element.empty();
 
     $element.append(renderWindowTitle(windowIds.indexOf(parseInt(tgs)) + 1));
-    $element.append(renderCloseWinBtn());
+    $element.append(renderWinBtns());
 
     function renderThisTabGroup(tg) {
       return new Promise(function(resolve, reject) {
