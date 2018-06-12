@@ -127,6 +127,13 @@ function addListeners(tabManager) {
     });
   });
 
+  $('#shortcut-btn').on('click', () => {
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="shortcut-settings-modal"></div>`);
+    $('.shortcut-settings-modal').append(renderShortcutModal());
+    $('.modal-bg').show();
+  });
+
   // Add listener for arrange tabs button
   $("#arrange-tabs-btn").on('click', () => {
     arrangeTabs();
@@ -195,10 +202,11 @@ function addTabOptionListeners(tab, tabManager) {
 
   // Add event listener for send to window button
   $('#t-' + tab.id + ' #send').on('click', () => {
-    $('.select-win-dest').empty();
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="select-win-dest"></div>`);
     $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
     addSendTabModalListeners(tab, tabManager.windows);
-    $('.select-win-dest-bg').show();
+    $('.modal-bg').show();
   });
 }
 
@@ -251,12 +259,12 @@ function addWinListeners(win, tabManager) {
 }
 
 function addModalListeners() {
-  let selectWinDestBg = $('.select-win-dest-bg');
-  $('.select-win-dest-bg').on('click', function() {
-    $('.select-win-dest-bg').hide();
+  let selectWinDestBg = $('.modal-bg');
+  $('.modal-bg').on('click', function() {
+    $('.modal-bg').hide();
   });
-  $('#select-win-dest-close').on('click', () => {
-    $('.select-win-dest-bg').hide();
+  $('#modal-close').on('click', () => {
+    $('.modal-bg').hide();
   });
 }
 

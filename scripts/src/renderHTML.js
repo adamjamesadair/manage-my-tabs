@@ -63,8 +63,50 @@ function renderCloseAllBtn() {
   return `<div class="closeAllBtn close-btn">X</div>`;
 }
 
+function renderShortcutModal() {
+  let shortcuts = [{
+    shortcut: 'U',
+    description: 'Undo.'
+  }, {
+    shortcut: 'S',
+    description: 'Toggle settings.'
+  }, {
+    shortcut: 'A',
+    description: 'Arrange tabs.'
+  }, {
+    shortcut: 'Up Arrow',
+    description: 'Select previous window.'
+  }, {
+    shortcut: 'Down Arrow',
+    description: 'Select next window.'
+  }, {
+    shortcut: '0',
+    description: 'View all windows.'
+  }];
+
+  let result = `<span id="modal-close" class="close">&times;</span>
+                <div class="shortcut-content container">
+                  <h1>Shortcuts</h1>
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Shortcut</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>`;
+  for (shortcut of shortcuts) {
+    result = result.concat(`<tr>
+                              <td>${shortcut['shortcut']}</td>
+                              <td>${shortcut['description']}</td>
+                            </tr>`);
+  }
+  result = result.concat(`</tbody></table></div>`);
+  return result;
+}
+
 function renderSendTabModal(windows) {
-  let result = `<span id="select-win-dest-close" class="close">&times;</span>
+  let result = `<span id="modal-close" class="close">&times;</span>
                 <h1>Send to</h1><div class="select-win-dest-content">
                 <ul class="nav flex-column">`;
   let i = 1;
