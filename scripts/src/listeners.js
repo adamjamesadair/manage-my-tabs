@@ -49,7 +49,13 @@ function addListeners(tabManager) {
         chrome.tabs.remove(tabManager.managerTab.id);
       }
     }
-    tabManager.reloadPage();
+
+    if (changeInfo['url']) {
+      tabManager.reloadPage();
+    } else if (changeInfo['title']) {
+      $('#t-' + tab.id).empty();
+      $('#t-' + tab.id).append(renderTabContent(tab));
+    }
   });
 
   // Add listner for tabs being removed
