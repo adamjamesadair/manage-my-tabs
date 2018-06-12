@@ -27,6 +27,12 @@ function renderTabGroup(tabGroup, className, favIconUrl) {
 }
 
 function renderTab(tab) {
+
+  return `<div id="t-${tab.id}" class="tabContainer">`.concat(renderTabContent(tab))
+    .concat(`</div>`);
+}
+
+function renderTabContent(tab) {
   options = [{
     id: 'reload',
     text: 'Reload'
@@ -37,13 +43,11 @@ function renderTab(tab) {
     id: 'merge',
     text: 'Merge with Window'
   }];
-  return `
-      <div id="t-${tab.id}" class="tabContainer">
-        <div class="tab" title=${tab.title}>
-          <p class="tabDescription">${tab.title}</p>
-        </div>
-        <div class="close-tab-btn close-btn">X</div>`
-    .concat(renderDropdownOptions('tab-options-btn', options)).concat(`</div>`);
+  return `<div class="tab" title=${tab.title}>
+            <p class="tabDescription">${tab.title}</p>
+          </div>
+          <div class="close-tab-btn close-btn">X</div>`
+    .concat(renderDropdownOptions('tab-options-btn', options));
 }
 
 function renderDropdownOptions(className, options) {
