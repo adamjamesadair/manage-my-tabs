@@ -122,6 +122,10 @@
   opacity: 1;
 }
 
+.fa-ellipsis-h{
+  pointer-events: none;
+}
+
 .dropdown-content {
   position: absolute;
   text-align: center;
