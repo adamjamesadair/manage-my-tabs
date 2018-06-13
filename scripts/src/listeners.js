@@ -1,43 +1,45 @@
 function addListeners(tabManager) {
   // shortcuts
   $(document).bind('keyup', function(e) {
-    var key = e.which || e.keyCode;
-    key = String.fromCharCode(key);
-    let shortcuts = {
-      'U': 'undo',
-      'S': 'toggleSettings',
-      'A': 'arrangeTabs',
-      '&': 'selectWindowPrev',
-      '(': 'selectWindowNext',
-      '0': 'selectWindowAll'
-    };
+    if(e.target.id != 'search-input'){
+      var key = e.which || e.keyCode;
+      key = String.fromCharCode(key);
+      let shortcuts = {
+        'U': 'undo',
+        'S': 'toggleSettings',
+        'A': 'arrangeTabs',
+        '&': 'selectWindowPrev',
+        '(': 'selectWindowNext',
+        '0': 'selectWindowAll'
+      };
 
-    let next = 1;
-    let command = parseInt(key) || shortcuts[key];
-    if (typeof command == 'number') {
-      $('#win-btn-' + command).click();
-    } else {
-      switch (command) {
-        case 'undo':
-          tabManager.reopenLastClosed();
-          break;
-        case 'toggleSettings':
-          toggleSettings();
-          break;
-        case 'arrangeTabs':
-          arrangeTabs();
-          break;
-        case 'selectWindowPrev':
-          next -= 2; // Wow, very hack
-        case 'selectWindowNext':
-          let currentWindowNumber = $('.window-select-active')[0].id.replace('win-btn-', '');
-          currentWindowNumber = parseInt(currentWindowNumber);
-          let targetWindow = currentWindowNumber + next;
-          $('#win-btn-' + targetWindow).click();
-          break;
-        case 'selectWindowAll':
-          $('#win-btn-all').click();
-          break;
+      let next = 1;
+      let command = parseInt(key) || shortcuts[key];
+      if (typeof command == 'number') {
+        $('#win-btn-' + command).click();
+      } else {
+        switch (command) {
+          case 'undo':
+            tabManager.reopenLastClosed();
+            break;
+          case 'toggleSettings':
+            toggleSettings();
+            break;
+          case 'arrangeTabs':
+            arrangeTabs();
+            break;
+          case 'selectWindowPrev':
+            next -= 2; // Wow, very hack
+          case 'selectWindowNext':
+            let currentWindowNumber = $('.window-select-active')[0].id.replace('win-btn-', '');
+            currentWindowNumber = parseInt(currentWindowNumber);
+            let targetWindow = currentWindowNumber + next;
+            $('#win-btn-' + targetWindow).click();
+            break;
+          case 'selectWindowAll':
+            $('#win-btn-all').click();
+            break;
+        }
       }
     }
   });
