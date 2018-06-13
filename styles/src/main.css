@@ -130,7 +130,7 @@ h2 {
 #no-match-search {
   position: absolute;
   left: 2rem;
-  top: 4rem;
+  top: -0.75rem;
   text-align: center;
   font-size: 1.5rem;
   padding: 1rem;
