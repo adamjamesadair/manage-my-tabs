@@ -187,6 +187,8 @@ function addTabOptionListeners(tab, tabManager) {
   // Add event listener for tab options button
   $('#t-' + tab.id + ' .tab-options-btn').on('click', () => {
     $('#t-' + tab.id + ' .dropdown-content').show();
+  }).children().click(() => {
+    return false;
   });
 
   // Close dropdown on mouse leave
@@ -220,7 +222,9 @@ function addTabGroupOptionListeners(tabGroup, tabManager) {
   // Add event listener for tab options button
   $('#tg-' + tabGroup.id + ' .tab-group-options-btn').on('click', () => {
     $('#tg-' + tabGroup.id + ' .dropdown-content').show();
-  });
+  }).children().click(() => {
+    return false;
+  });;
 
   // Close dropdown on mouse leave
   $('#tg-' + tabGroup.id + ' .dropdown-content').on('mouseleave', () => {
@@ -250,6 +254,8 @@ function addWindowOptionListeners(win, tabManager) {
   // Add event listener for tab options button
   $('#windowWithTabGroups-' + win.id + ' .win-options-btn').on('click', () => {
     $('#windowWithTabGroups-' + win.id + ' .dropdown-content').show();
+  }).children().click(() => {
+    return false;
   });
 
   // Close dropdown on mouse leave
