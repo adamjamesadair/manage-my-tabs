@@ -1,7 +1,6 @@
 function renderWindow(windowId) {
   return `
-    <div id="windowWithTabGroups-${windowId}" class="row container window">
-    </div>
+    <div id="windowWithTabGroups-${windowId}" class="row container window"></div>
   `;
 }
 
@@ -11,37 +10,143 @@ function renderWindowTitle(wid, customTitle = "") {
 }
 
 function renderTabGroup(tabGroup, className, favIconUrl) {
+  options = [{
+    id: 'tg-reload',
+    text: 'Reload'
+  }, {
+    id: 'merge',
+    text: 'Merge with Window'
+  }];
   return `
       <div id="tg-${tabGroup.id}" class="tab-group ${className}">
-      <h1 class="tab-title">${tabGroup.title}
-      <img class="icon" src=${favIconUrl} />
-      </h1>
-      <div class="closeGroupBtn close-btn">X</div>
-      </div>
-    `;
+        <h1 class="tab-title">${tabGroup.title}
+        <img class="icon" src=${favIconUrl} />
+        </h1>
+        <div class="closeGroupBtn close-btn">X</div>`.concat(renderDropdownOptions('tab-group-options-btn', options))
+    .concat(`</div>`);
 }
 
 function renderTab(tab) {
-  return `
-      <div id="t-${tab.id}" class="tabContainer">
-      <div class="tab" title=${tab.title}>
-      <p class="tabDescription">${tab.title}</p>
-      </div>
-      <div class="close-tab-btn close-btn">X</div>
-      </div>
-    `;
+
+  return `<div id="t-${tab.id}" class="tabContainer">`.concat(renderTabContent(tab))
+    .concat(`</div>`);
 }
 
-function renderCloseWinBtn() {
-  return `<div class="closeWindowBtn close-btn">X</div>`;
+function renderTabContent(tab) {
+  options = [{
+    id: 't-reload',
+    text: 'Reload'
+  }, {
+    id: 'copy',
+    text: 'Copy URL'
+  }, {
+    id: 'merge',
+    text: 'Merge with Window'
+  }];
+  return `<div class="tab" title=${tab.title}>
+            <p class="tabDescription">${tab.title}</p>
+          </div>
+          <div class="close-tab-btn close-btn">X</div>`
+    .concat(renderDropdownOptions('tab-options-btn', options));
+}
+
+function renderDropdownOptions(className, options) {
+
+  result = `<div class="${className}">
+              <i class="fas fa-ellipsis-h"></i>
+              <div class="dropdown-content">
+                <ul class="nav flex-column">`;
+  for (option of options) {
+    result = result.concat(`<li id="${option['id']}" class="nav-item">
+      <a class="nav-link tab-option" href="#">${option['text']}</a>
+    </li>`);
+  }
+  result = result.concat(`</ul></div></div>`);
+  return result;
+}
+
+function renderWinBtns() {
+  options = [{
+    id: 'w-reload',
+    text: 'Reload'
+  }, {
+    id: 'merge',
+    text: 'Merge with Window'
+  }];
+  return `<div class="closeWindowBtn close-btn">X</div>`.concat(renderDropdownOptions('win-options-btn', options));
 }
 
 function renderBtn(id) {
   return `<button id="win-btn-${id}" class="window-select-btn win-btn generated-win-btn" type="button">${id}</button>`;
 }
 
-function renderNoSearchResultsText(){
+function renderNoSearchResultsText() {
   return `<h3 id="no-match-search">No matches for your search term :(</h3>`;
+}
+
+function renderCloseAllBtn() {
+  return `<div class="closeAllBtn close-btn">X</div>`;
+}
+
+function renderShortcutModal() {
+  let shortcuts = [{
+    shortcut: 'U',
+    description: 'Undo.'
+  }, {
+    shortcut: 'S',
+    description: 'Toggle settings.'
+  }, {
+    shortcut: 'A',
+    description: 'Arrange tabs.'
+  }, {
+    shortcut: 'Up Arrow',
+    description: 'Select previous window.'
+  }, {
+    shortcut: 'Down Arrow',
+    description: 'Select next window.'
+  }, {
+    shortcut: '0',
+    description: 'View all windows.'
+  }];
+
+  let result = `<span id="modal-close" class="close">&times;</span>
+                <div class="shortcut-content container">
+                  <h1>Shortcuts</h1>
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Shortcut</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>`;
+  for (shortcut of shortcuts) {
+    result = result.concat(`<tr>
+                              <td>${shortcut['shortcut']}</td>
+                              <td>${shortcut['description']}</td>
+                            </tr>`);
+  }
+  result = result.concat(`</tbody></table></div>`);
+  return result;
+}
+
+function renderSendTabModal(windows) {
+  let result = `<span id="modal-close" class="close">&times;</span>
+                <h1>Merge with</h1><div class="select-win-dest-content">
+                <ul class="nav flex-column">`;
+  let i = 1;
+
+  for (win of windows) {
+    result = result.concat(`<li id="st-${win.id}" class="nav-item">
+                    <a class="nav-link tab-option" href="#">Window ${i}</a>
+                   </li>`);
+    i++;
+  }
+  result = result.concat(`<li id="st-new" class="nav-item">
+                  <a class="nav-link tab-option" href="#">New Window</a>
+                 </li>`);
+  result = result.concat(`</ul></div>`);
+  return result;
 }
 
 function generateWindows(tabGroups) {
@@ -72,7 +177,7 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
     $element.empty();
 
     $element.append(renderWindowTitle(windowIds.indexOf(parseInt(tgs)) + 1));
-    $element.append(renderCloseWinBtn());
+    $element.append(renderWinBtns());
 
     function renderThisTabGroup(tg) {
       return new Promise(function(resolve, reject) {
@@ -97,12 +202,13 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
   }
 }
 
-function generateTabGroups(tabGroups, className, tabCount, winSrc, empty = true) {
+function generateTabGroups(tabGroups, className, tabCount, winSrc, addCloseBtn = false, empty = true) {
   let $windowContainer = $('.window-container');
   if (empty) $windowContainer.empty();
   $windowContainer.append(renderNoSearchResultsText());
   $windowContainer.append(renderWindow(winSrc));
   $tabGroupContainer = $('#windowWithTabGroups-' + winSrc);
+  if (addCloseBtn) $tabGroupContainer.append(renderCloseAllBtn());
   let title = winSrc == 'all' ? 'All tabs' : "Window " + winSrc;
   $tabGroupContainer.append(renderWindowTitle(0, customTitle = title));
   for (let tabGroup of tabGroups) {

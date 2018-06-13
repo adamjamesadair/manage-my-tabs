@@ -7,11 +7,13 @@
 <head>
   <title>Manage My Tabs</title>
   <link rel="stylesheet" type="text/css" href="styles/lib/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/lib/fontawesome/css/fontawesome-all.min.css">
   <link rel="stylesheet" type="text/css" href="styles/src/main.css">
   <link rel="stylesheet" type="text/css" href="styles/src/settings.css">
   <link rel="stylesheet" type="text/css" href="styles/src/tabGroups.css">
   <link rel="stylesheet" type="text/css" href="styles/src/arrangementOptions.css">
   <link rel="stylesheet" type="text/css" href="styles/src/windows.css">
+  <link rel="stylesheet" type="text/css" href="styles/src/modals.css">
 
   <script src="scripts/lib/jquery/jquery-3.3.1.min.js"></script>
   <script src="scripts/lib/jquery/jquery-ui.js"></script>
@@ -55,7 +57,7 @@
       </div>
       <div class="window-overflow-container">
         <div class="row window-container"></div>
-    </div>
+      </div>
     </div>
   </div>
   <div class="arrangement-options">
@@ -123,6 +125,10 @@
           <label><input type="radio" class="sort-option" name="optradio" id="none"> Window order<span class="checkmark"></span></label>
         </div>
       </div>
+      <div class="shortcut-settings">
+        <h3>Shortcuts:</h3>
+        <button id="shortcut-btn">View Shortcuts</button>
+      </div>
       <div class="classic-mode-activated">
         <h3>Use the classic view mode of the tab manager:</h3>
         <label class="switch">
@@ -142,6 +148,8 @@
       </div>
     </div>
   </div>
+  <div class="modal-bg"></div>
+
   <script src="scripts/utils/utils.js"></script>
   <script src="scripts/src/listeners.js"></script>
   <script src="scripts/src/renderHTML.js"></script>

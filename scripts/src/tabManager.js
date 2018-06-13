@@ -18,6 +18,12 @@ class TabManager {
     });
   }
 
+  reloadTabGroups(){
+    this.getSortedTabGroups();
+    this.renderHTMLContent();
+    addTabManagerListeners(this);
+  }
+
   getSortedTabGroups() {
     this.getTabGroups();
     this.sortTabGroups();
@@ -63,16 +69,20 @@ class TabManager {
   renderHTMLContent() {
     let tabGroups = this.searchTabGroups($("#search-input").val(), this.settings['searchScope']);
     generateWinSelectBtns(this.windows, this.settings['winSrc']);
-    if (this.settings['classicMode'] || this.settings['winSrc'] == 'all') {
-      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount'], this.settings['winSrc']);
+    if (this.settings['winSrc'] == 'all'){
+      generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount'], this.settings['winSrc'], true);
     } else {
-      generateWindows(tabGroups);
-      if (this.windows.length > 1) {
-        $('.window-container').css({
-          'padding-bottom': this.settings.allowOverscrollMainContainer ? '53vh' : '0vh'
-        });
+      if (this.settings['classicMode']) {
+        generateTabGroups(tabGroups, 'col-' + this.settings['col'], this.settings['tabCount'], this.settings['winSrc']);
+      } else {
+        generateWindows(tabGroups);
+        if (this.windows.length > 1) {
+          $('.window-container').css({
+            'padding-bottom': this.settings.allowOverscrollMainContainer ? '53vh' : '8vh'
+          });
+        }
+        generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
       }
-      generateTabGroupsByWindow(this.windows, tabGroups, 'col-' + this.settings['col'], this.settings['tabCount']);
     }
     generateTabs(tabGroups);
   }
@@ -352,7 +362,7 @@ class TabManager {
 }
 
 function isOverflown(element) {
-  return element.prop('scrollWidth') > element.width();
+  return element.prop('scrollWidth') > element.width() + 0.5;
 }
 
 /*

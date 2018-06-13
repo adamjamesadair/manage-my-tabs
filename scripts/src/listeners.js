@@ -1,66 +1,61 @@
 function addListeners(tabManager) {
-  // Add listener for commands
-  chrome.commands.onCommand.addListener((command) => {
+  // shortcuts
+  $(document).bind('keyup', function(e) {
+    var key = e.which || e.keyCode;
+    key = String.fromCharCode(key);
+    let shortcuts = {
+      'U': 'undo',
+      'S': 'toggleSettings',
+      'A': 'arrangeTabs',
+      '&': 'selectWindowPrev',
+      '(': 'selectWindowNext',
+      '0': 'selectWindowAll'
+    };
+
     let next = 1;
-    switch (command) {
-      case 'undo':
-        tabManager.reopenLastClosed();
-        break;
-      case 'toggleSettings':
-        toggleSettings();
-        break;
-      case 'arrangeTabs':
-        arrangeTabs();
-        break;
-      case 'selectWindowPrev':
-        next -= 2; // Wow, very hack
-      case 'selectWindowNext':
-        let currentWindowNumber = $('.window-select-active')[0].id.replace('win-btn-', '');
-        currentWindowNumber = parseInt(currentWindowNumber);
-        let targetWindow = currentWindowNumber + next;
-        $('#win-btn-' + targetWindow).click();
-        break;
-      case 'selectWindowAll':
-        $('#win-btn-all').click();
-        break;
-      case 'selectWindow1':
-        $('#win-btn-1').click();
-        break;
-      case 'selectWindow2':
-        $('#win-btn-2').click();
-        break;
-      case 'selectWindow3':
-        $('#win-btn-3').click();
-        break;
-      case 'selectWindow4':
-        $('#win-btn-4').click();
-        break;
-      case 'selectWindow5':
-        $('#win-btn-5').click();
-        break;
-      case 'selectWindow6':
-        $('#win-btn-6').click();
-        break;
-      case 'selectWindow7':
-        $('#win-btn-7').click();
-        break;
-      case 'selectWindow8':
-        $('#win-btn-8').click();
-        break;
-      case 'selectWindow9':
-        $('#win-btn-9').click();
-        break;
+    let command = parseInt(key) || shortcuts[key];
+    if (typeof command == 'number') {
+      $('#win-btn-' + command).click();
+    } else {
+      switch (command) {
+        case 'undo':
+          tabManager.reopenLastClosed();
+          break;
+        case 'toggleSettings':
+          toggleSettings();
+          break;
+        case 'arrangeTabs':
+          arrangeTabs();
+          break;
+        case 'selectWindowPrev':
+          next -= 2; // Wow, very hack
+        case 'selectWindowNext':
+          let currentWindowNumber = $('.window-select-active')[0].id.replace('win-btn-', '');
+          currentWindowNumber = parseInt(currentWindowNumber);
+          let targetWindow = currentWindowNumber + next;
+          $('#win-btn-' + targetWindow).click();
+          break;
+        case 'selectWindowAll':
+          $('#win-btn-all').click();
+          break;
+      }
     }
   });
 
   // Add listener for updating tabs
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tabManager.managerTab) {
-      if (tabManager.managerTab.url == tab.url) {
+      if (tabManager.managerTab.url == tab.url && Object.keys(changeInfo).length > 1 && changeInfo['status'] == 'loading') {
         chrome.tabs.remove(tabManager.managerTab.id);
       }
     }
-    tabManager.reloadPage();
+
+    if (changeInfo['url']) {
+      tabManager.reloadPage();
+    } else if (changeInfo['title']) {
+      $('#t-' + tab.id).empty();
+      $('#t-' + tab.id).append(renderTabContent(tab));
+    }
   });
 
   // Add listner for tabs being removed
@@ -138,6 +133,13 @@ function addListeners(tabManager) {
     });
   });
 
+  $('#shortcut-btn').on('click', () => {
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="shortcut-settings-modal"></div>`);
+    $('.shortcut-settings-modal').append(renderShortcutModal());
+    $('.modal-bg').show();
+  });
+
   // Add listener for arrange tabs button
   $("#arrange-tabs-btn").on('click', () => {
     arrangeTabs();
@@ -173,11 +175,163 @@ function addTabListeners(tab, tabManager) {
 
   });
 
+  addTabOptionListeners(tab, tabManager);
   // Add event listener for close button
   $('#t-' + tab.id + ' .close-tab-btn').on('click', () => {
     // Close the selected tab
     chrome.tabs.remove(tab.id);
   });
+}
+
+function addTabOptionListeners(tab, tabManager) {
+  // Add event listener for tab options button
+  $('#t-' + tab.id + ' .tab-options-btn').on('click', () => {
+    $('#t-' + tab.id + ' .dropdown-content').show();
+  }).children().click(() => {
+    return false;
+  });
+
+  // Close dropdown on mouse leave
+  $('#t-' + tab.id + ' .dropdown-content').on('mouseleave', () => {
+    $('#t-' + tab.id + ' .dropdown-content').hide();
+  });
+
+  // Add event listener for reload button
+  $('#t-' + tab.id + ' #t-reload').on('click', () => {
+    chrome.tabs.reload(tab.id);
+    $('#t-' + tab.id + ' .dropdown-content').hide();
+  });
+
+  // Add event listener for copy url button
+  $('#t-' + tab.id + ' #copy').on('click', () => {
+    copyStringToClipboard(tab.url.href);
+    $('#t-' + tab.id + ' .dropdown-content').hide();
+  });
+
+  // Add event listener for merge to window button
+  $('#t-' + tab.id + ' #merge').on('click', () => {
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="select-win-dest"></div>`);
+    $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
+    addSendTabModalListeners(tab, tabManager.windows);
+    $('.modal-bg').show();
+  });
+}
+
+function addTabGroupOptionListeners(tabGroup, tabManager) {
+  // Add event listener for tab options button
+  $('#tg-' + tabGroup.id + ' .tab-group-options-btn').on('click', () => {
+    $('#tg-' + tabGroup.id + ' .dropdown-content').show();
+  }).children().click(() => {
+    return false;
+  });;
+
+  // Close dropdown on mouse leave
+  $('#tg-' + tabGroup.id + ' .dropdown-content').on('mouseleave', () => {
+    $('#tg-' + tabGroup.id + ' .dropdown-content').hide();
+  });
+
+  // Add event listener for reload button
+  $('#tg-' + tabGroup.id + ' #tg-reload').on('click', () => {
+    for (tab of tabGroup.tabs) {
+      chrome.tabs.reload(tab.id);
+    }
+    $('#tg-' + tabGroup.id + ' .dropdown-content').hide();
+  });
+
+  // Add event listener for merge to window button
+  $('#tg-' + tabGroup.id + ' #merge').on('click', () => {
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="select-win-dest"></div>`);
+    $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
+    $('.modal-bg').show();
+
+    addSendTabModalListeners(tabGroup, tabManager.windows);
+  });
+}
+
+function addWindowOptionListeners(win, tabManager) {
+  // Add event listener for tab options button
+  $('#windowWithTabGroups-' + win.id + ' .win-options-btn').on('click', () => {
+    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').show();
+  }).children().click(() => {
+    return false;
+  });
+
+  // Close dropdown on mouse leave
+  $('#windowWithTabGroups-' + win.id + ' .dropdown-content').on('mouseleave', () => {
+    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').hide();
+  });
+
+  // Add event listener for reload button
+  $('#windowWithTabGroups-' + win.id + ' #w-reload').on('click', () => {
+    for (tab of win.tabs) {
+      chrome.tabs.reload(tab.id);
+    }
+    $('#windowWithTabGroups-' + win.id + ' .dropdown-content').hide();
+  });
+
+  // Add event listener for merge to window button
+  $('#windowWithTabGroups-' + win.id + ' #merge').on('click', () => {
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="select-win-dest"></div>`);
+    $('.select-win-dest').append(renderSendTabModal(tabManager.windows));
+    $('.modal-bg').show();
+
+    addSendTabModalListeners(win, tabManager.windows);
+  });
+}
+
+function moveTabGroupNewWin(tabGroup) {
+
+}
+
+function addSendTabModalListeners(element, windows) {
+
+  $('#st-new').off();
+  $('#st-new').on('click', () => {
+
+    if (element instanceof TabGroup || windows.includes(element)) {
+      chrome.windows.create({
+        tabId: element.tabs[0].id
+      }, (win) => {
+        for (tab of element.tabs) {
+          if (tab != element.tabs[0]) {
+            chrome.tabs.move(tab.id, {
+              windowId: parseInt(win.id),
+              index: -1
+            });
+          }
+        }
+      });
+    } else { //is tab
+      chrome.windows.create({
+        tabId: element.id
+      });
+    }
+    tabManager.reloadPage();
+  });
+
+  for (win of windows) {
+    $('#st-' + win.id).off();
+    $('#st-' + win.id).on('click', function() {
+
+      if (element instanceof TabGroup || windows.includes(element)) {
+        for (tab of element.tabs) {
+          chrome.tabs.move(tab.id, {
+            windowId: parseInt(this.id.split('-')[1]),
+            index: -1
+          });
+        }
+      } else { //is tab
+        chrome.tabs.move(element.id, {
+          windowId: parseInt(this.id.split('-')[1]),
+          index: -1
+        });
+      }
+      tabManager.reloadPage();
+    });
+  }
 }
 
 function addTabGroupListeners(tabGroup, tabManager) {
@@ -190,6 +344,7 @@ function addTabGroupListeners(tabGroup, tabManager) {
     tabManager.closedElements = _.difference(tabManager.closedElements, tabGroup.tabs);
     tabManager.closedElements.push(tabGroup);
   });
+  addTabGroupOptionListeners(tabGroup, tabManager);
 }
 
 function addWinListeners(win, tabManager) {
@@ -197,6 +352,26 @@ function addWinListeners(win, tabManager) {
     tabManager.closedElements = _.difference(tabManager.closedElements, win.tabs);
     tabManager.closedElements.push(win);
     chrome.windows.remove(win.id);
+  });
+
+  $('.closeAllBtn').off();
+  $('.closeAllBtn').on('click', function() {
+    if (confirm("Are you sure you want to close all windows?")) {
+      for (win of tabManager.windows) {
+        chrome.windows.remove(win.id);
+      }
+    }
+  });
+  addWindowOptionListeners(win, tabManager);
+}
+
+function addModalListeners() {
+  let selectWinDestBg = $('.modal-bg');
+  $('.modal-bg').on('click', function() {
+    $('.modal-bg').hide();
+  });
+  $('#modal-close').on('click', () => {
+    $('.modal-bg').hide();
   });
 }
 
@@ -247,6 +422,9 @@ function addTabManagerListeners(tabManager) {
     addTabGroupListeners(tabGroup, tabManager);
     tabGroup.tabs.forEach((tab) => addTabListeners(tab, tabManager));
   }
+
+  // Add listeners for addModalListeners
+  addModalListeners();
 
   // Add listener for seach bar
   $("#search-input").off();

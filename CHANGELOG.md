@@ -1,6 +1,17 @@
 # Changelog
 All changes between releases of this project will be documented here.
 
+## [0.3.0](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.3.0) - 2018-06-13
+### Added
+- Option to copy the URL of a tab. Found in the tab options dropdown.
+- Option to Merge tab, tab group or window with another window or send to a new window. Found in the options dropdown.
+- Reload option for tabs, tab groups and windows. Found in the options dropdown.
+- A button in the 'All' section to close all windows. Confirmation is required to prevent accidents.
+- Shortcuts for navigation and major functions. A list of available shortcuts can be seen in settings -> View Shortcuts.
+
+### Fixed
+- Page reloading when a tab title is changed. Only the HTML element is updated now.
+
 ## [0.2.1](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.2.1) - 2018-06-08
 ### Fixed
 - Search results not updating when deleting part of the search query.

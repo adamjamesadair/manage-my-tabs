@@ -21,7 +21,6 @@
   color: #fff;
   text-align: center;
   border-radius: 5px;
-
   /* Position the tooltip */
   position: absolute;
   z-index: 1;
@@ -83,19 +82,19 @@
   cursor: pointer;
 }
 
-.sort-option:hover{
+.sort-option:hover {
   cursor: pointer;
 }
 
-.search-option:hover{
+.search-option:hover {
   cursor: pointer;
 }
 
-.search-settings{
+.search-settings {
   margin-left: -2rem;
 }
 
-.search-settings label{
+.search-settings label {
   display: block;
   top: 2rem;
   margin: -0.75rem;
@@ -113,7 +112,9 @@
   height: 1.5rem;
 }
 
-.switch input {display:none;}
+.switch input {
+  display: none;
+}
 
 .slider {
   position: absolute;
@@ -139,11 +140,11 @@
   border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: var(--settings-active-color);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(1.9rem);
 }
 
@@ -153,7 +154,7 @@ input:checked + .slider:before {
   text-align: left;
 }
 
-.checkmark{
+.checkmark {
   position: absolute;
   top: 5px;
   left: -20px;
@@ -163,7 +164,7 @@ input:checked + .slider:before {
   background-color: #eee;
 }
 
-.search-settings .checkmark{
+.search-settings .checkmark {
   top: -10px;
   left: -28px;
   height: 13px;
@@ -171,20 +172,20 @@ input:checked + .slider:before {
   background-color: #eee;
 }
 
-.search-settings .checkmark:hover{
+.search-settings .checkmark:hover {
   background-color: #72a87b;
 }
 
-.search-settings input:checked ~ .checkmark {
+.search-settings input:checked~.checkmark {
   background-color: var(--main-active-color);
 }
 
-.checkmark:hover{
+.checkmark:hover {
   cursor: pointer;
   background-color: #81b9e8;
 }
 
-.settings input:checked ~ .checkmark {
+.settings input:checked~.checkmark {
   background-color: var(--settings-active-color);
 }
 
@@ -194,21 +195,35 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
-#maxTabsPerGroup{
+#maxTabsPerGroup {
   display: block;
   margin: auto;
   margin-top: 5px;
 }
 
-#maxTabsPerGroup:hover{
+#maxTabsPerGroup:hover {
   cursor: pointer;
 }
 
-#slider-value{
+#slider-value {
   padding: 0.25rem;
   color: white;
   background-color: var(--settings-active-color);
   font-size: 1.1rem;
+}
+
+#shortcut-btn {
+  outline: none;
+  text-decoration: none;
+  border: none;
+  background-color: white;
+  transition-duration: 0.2s;
+}
+
+#shortcut-btn:hover {
+  cursor: pointer;
+  background-color: var(--settings-active-color);
+  color: white;
 }
 
 .restore-defaults {

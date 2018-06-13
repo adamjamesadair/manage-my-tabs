@@ -3,7 +3,7 @@
 
   "name": "Manage My Tabs - Tab Manager",
   "description": "Manage My Tabs is an extension that gives the user a quick and simple way to manage their tabs.",
-  "version": "0.2.1",
+  "version": "0.3.0",
 
   "browser_action": {
    "default_icon": "images/icons/icon128.png"
@@ -15,31 +15,13 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "storage"
+    "storage",
+    "clipboardWrite"
    ],
    "background":{
     "scripts": ["scripts/src/bg.js"]
     },
   "commands": {
-    "undo": {
-      "suggested_key": {
-        "default": "Ctrl+Z",
-        "mac": "Command+Z"
-      },
-      "description": "Undo last tab close"
-    },
-    "selectWindowPrev": {
-      "suggested_key": {
-        "default": "Ctrl+Up"
-      },
-      "description": "Selects the previous window"
-    },
-    "selectWindowNext": {
-      "suggested_key": {
-        "default": "Ctrl+Down"
-      },
-      "description": "Selects the next window"
-    },
     "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Space",
