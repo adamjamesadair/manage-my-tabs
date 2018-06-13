@@ -60,17 +60,20 @@ function addListeners(tabManager) {
 
   // Add listner for tabs being removed
   chrome.tabs.onRemoved.addListener((tabID, removedInfo) => {
+    let tab;
     // If the manager tab is the last tab in all windows, close
     if (tabManager.windows.length == 1 && tabManager.windows[0].tabs.length <= 2 && tabManager.windows[0].tabs[0].id === tabManager.managerTab.id) {
       tabManager.close();
     }
     // Add the closed tab to closed tab list
-    for (tab of tabManager.openTabs) {
-      if (tab.id == tabID) {
-        tabManager.tryAddToClosedElements(tab);
+    for (openTab of tabManager.openTabs) {
+      if (openTab.id == tabID) {
+        tab = openTab;
+        tabManager.tryAddToClosedElements(openTab);
       }
     }
-    tabManager.reloadPage();
+    if (!tab.isGroup)
+      tabManager.reloadPage();
   });
 
   // Add listner for creating tabs
@@ -282,10 +285,6 @@ function addWindowOptionListeners(win, tabManager) {
   });
 }
 
-function moveTabGroupNewWin(tabGroup) {
-
-}
-
 function addSendTabModalListeners(element, windows) {
 
   $('#st-new').off();
@@ -337,12 +336,13 @@ function addSendTabModalListeners(element, windows) {
 function addTabGroupListeners(tabGroup, tabManager) {
   $('#tg-' + tabGroup.id + ' .closeGroupBtn').on('click', () => {
     for (let i = 0; i < tabGroup.tabs.length; i++) {
-      tabGroup.tabs[i].groupID = tabGroup.id;
+      tabGroup.tabs[i].isGroup = true;
       chrome.tabs.remove(tabGroup.tabs[i].id);
     }
     $(tabGroup.hostname).remove();
     tabManager.closedElements = _.difference(tabManager.closedElements, tabGroup.tabs);
     tabManager.closedElements.push(tabGroup);
+    tabManager.reloadPage();
   });
   addTabGroupOptionListeners(tabGroup, tabManager);
 }
