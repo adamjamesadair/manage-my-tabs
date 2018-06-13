@@ -1,6 +1,12 @@
 # Changelog
 All changes between releases of this project will be documented here.
 
+## [0.3.1](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.3.1) - 2018-06-13
+### Fixed
+- Page reloading too often causing slow load times and closing of tab groups.
+- Typing in the search bar triggering shortcuts.
+- Visibility of 'No search results' text.
+
 ## [0.3.0](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.3.0) - 2018-06-13
 ### Added
 - Option to copy the URL of a tab. Found in the tab options dropdown.
