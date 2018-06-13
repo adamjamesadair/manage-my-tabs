@@ -336,13 +336,13 @@ function addSendTabModalListeners(element, windows) {
 function addTabGroupListeners(tabGroup, tabManager) {
   $('#tg-' + tabGroup.id + ' .closeGroupBtn').on('click', () => {
     for (let i = 0; i < tabGroup.tabs.length; i++) {
-      tabGroup.tabs[i].isGroup = true;
+      if (i != tabGroup.tabs.length - 1)
+        tabGroup.tabs[i].isGroup = true;
       chrome.tabs.remove(tabGroup.tabs[i].id);
     }
     $(tabGroup.hostname).remove();
     tabManager.closedElements = _.difference(tabManager.closedElements, tabGroup.tabs);
     tabManager.closedElements.push(tabGroup);
-    tabManager.reloadPage();
   });
   addTabGroupOptionListeners(tabGroup, tabManager);
 }
