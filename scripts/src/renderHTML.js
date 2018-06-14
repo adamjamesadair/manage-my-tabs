@@ -153,9 +153,9 @@ function renderSendTabModal(windows) {
 function renderRestoreTabModal(closedElements) {
   let result = `<span id="modal-close" class="close">&times;</span>
                 <div class="restore-container">`;
-  if(closedElements.length == 0){
+  if (closedElements.length == 0)
     result = result.concat(`<h1 id="no-closed-elements">No recently closed elements</h1>`);
-  }
+
   for (let element of closedElements) {
     if (element instanceof TabGroup) {
       result = result.concat(renderClosedTabGroup(element));
@@ -163,7 +163,7 @@ function renderRestoreTabModal(closedElements) {
       result = result.concat(renderClosedWin(element));
     } else { // isTab
       let tg = new TabGroup(element.url.hostname, 1, [element], element.windowId);
-      result = result.concat(renderClosedTabGroup(tg));
+      result = result.concat(renderClosedTabGroup(tg, false, true));
     }
   }
   result = result.concat(`</div>`);
@@ -171,29 +171,35 @@ function renderRestoreTabModal(closedElements) {
 }
 
 function renderClosedWin(win) {
-  let result = `<div id="closedWindowWithTabGroups-${win.id}" class="row container window closed-win">`;
+  let result = `<div id="cwindowWithTabGroups-${win.id}" class="row container window closed-win">`;
   let tabGroups = groupTabs(win.tabs);
   for (let tabGroup of tabGroups) {
-    result = result.concat(renderClosedTabGroup(tabGroup));
+    result = result.concat(renderClosedTabGroup(tabGroup, false));
   }
   result = result.concat(`</div>`);
   return result;
 }
 
-function renderClosedTabGroup(tg) {
-  let result = `<div id="ctg-${tg.id}" class="tab-group closed-tg col-4">
+function renderClosedTabGroup(tg, closed = true, clickTab = false) {
+  let closedClass = "";
+  if (closed)
+    closedClass = " closed-tg";
+  let result = `<div id="ctg-${tg.id}" class="tab-group${closedClass} col-4">
     <h1 class="tab-title">${tg.title}
     <img class="icon" src=${tg.tabs[0].favIconUrl} />
     </h1>`;
   for (let tab of tg.tabs) {
-    result = result.concat(renderClosedTab(tab));
+    result = result.concat(renderClosedTab(tab, clickTab));
   }
   result = result.concat(`</div>`);
   return result;
 }
 
-function renderClosedTab(tab) {
-  return `<div id="ct-${tab.id}" class="tabContainer closed-t">
+function renderClosedTab(tab, closed = true) {
+  let closedClass = "s";
+  if (closed)
+    closedClass = " closed-t";
+  return `<div id="ct-${tab.id}" class="tabContainer${closedClass}">
                           <div class="tab" title=${tab.title}>
                             <p class="tabDescription">${tab.title}</p>
                           </div></div>`;
