@@ -1,21 +1,22 @@
-.arrangement-options {
+.right-side-bar {
   position: fixed;
   top: 25%;
   right: 0;
   padding-bottom: 25%;
 }
 
-#arrange-tabs-btn {
+#arrange-tabs-btn, #restore-tabs-btn {
   transition: 0.2s;
   opacity: 0.75;
+  padding-bottom: 1rem;
 }
 
-#arrange-tabs-btn:hover {
+#arrange-tabs-btn:hover, #restore-tabs-btn:hover {
   cursor: pointer;
   opacity: 1;
 }
 
-.arrange-tabs-container #arrange-tabs-tooltip {
+#arrange-tabs-tooltip, #restore-tabs-tooltip {
   transition: 0.5s;
   visibility: hidden;
   opacity: 0;
@@ -32,7 +33,15 @@
   right: 105%;
 }
 
-.arrange-tabs-container:hover #arrange-tabs-tooltip {
+#restore-tabs-tooltip {
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 3.5rem;
+  right: 105%;
+}
+
+.arrange-tabs-container:hover #arrange-tabs-tooltip, .restore-tabs-container:hover #restore-tabs-tooltip {
   visibility: visible;
   opacity: 1;
 }

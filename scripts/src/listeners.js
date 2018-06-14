@@ -1,7 +1,7 @@
 function addListeners(tabManager) {
   // shortcuts
   $(document).bind('keyup', function(e) {
-    if(e.target.id != 'search-input'){
+    if (e.target.id != 'search-input') {
       var key = e.which || e.keyCode;
       key = String.fromCharCode(key);
       let shortcuts = {
@@ -148,6 +148,15 @@ function addListeners(tabManager) {
   // Add listener for arrange tabs button
   $("#arrange-tabs-btn").on('click', () => {
     arrangeTabs();
+  });
+
+  // Add listener for restore tabs button
+  $("#restore-tabs-btn").on('click', () => {
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="view-closed-tabs"></div>`);
+    $('.view-closed-tabs').append(renderRestoreTabModal(tabManager.closedElements));
+    //addSendTabModalListeners(tab, tabManager.windows);
+    $('.modal-bg').show();
   });
 
   // Add listener for restore defaults button
