@@ -153,8 +153,11 @@ function renderSendTabModal(windows) {
 function renderRestoreTabModal(closedElements) {
   let result = `<span id="modal-close" class="close">&times;</span>
                 <div class="restore-container">`;
-  if (closedElements.length == 0)
+  if (closedElements.length == 0){
     result = result.concat(`<h1 id="no-closed-elements">No recently closed elements</h1>`);
+  } else {
+    result = result.concat(`<h1>Click to restore</h1>`);
+  }
 
   for (let element of closedElements) {
     if (element instanceof TabGroup) {

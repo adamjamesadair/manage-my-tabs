@@ -21,11 +21,23 @@
   width: 80%;
 }
 
+.restore-container {
+  padding: 3rem;
+  background-color: white;
+  border-radius: 1rem;
+  margin: auto;
+}
+
 .closed-win:hover, .closed-tg:hover, .closed-t:hover {
   background-color: var(--settings-active-color);
   cursor: pointer;
 }
-.closed-tg:hover{
+
+.closed-win{
+  margin: 0;
+}
+
+.closed-tg:hover {
   color: white;
 }
 
@@ -33,7 +45,7 @@
   background: : linear-gradient(to right, rgba(0, 0, 0, 0), var(--settings-active-color));
 }
 
-#no-closed-elements{
+#no-closed-elements {
   background-color: white;
 }
 
