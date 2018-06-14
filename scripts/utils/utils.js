@@ -31,6 +31,29 @@ function getSettingProperty(type) {
   }
 }
 
+function groupTabs(tabs) {
+  let tabGroups = [];
+  // let tabGroupIDs = [];
+  for (let tab of tabs) {
+    tab.url = strToURL(tab.url);
+    let tabInGroup = false;
+    let filteredTabGroups = tabGroups.filter((tg) => tg.hostname == tab.url.hostname);
+    for (let tabGroup of filteredTabGroups) {
+      if (tabGroup.hostname == tab.url.hostname) {
+        tabGroup.addTab(tab);
+        tabInGroup = true;
+        break
+      }
+    }
+
+    if (!tabInGroup) {
+      let tabGroup = new TabGroup(tab.url.hostname, false, [tab], tab.windowId);
+      tabGroups.push(tabGroup);
+    }
+  }
+  return tabGroups;
+}
+
 // Credit: Uli Köhler https://techoverflow.net/2018/03/30/copying-strings-to-the-clipboard-using-pure-javascript/
 function copyStringToClipboard(str) {
   // Create new element

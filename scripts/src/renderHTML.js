@@ -9,8 +9,9 @@ function renderWindowTitle(wid, customTitle = "") {
   return `<h2 class="window-title">${title}</h2>`;
 }
 
-function renderTabGroup(tabGroup, className, favIconUrl) {
-  options = [{
+function renderTabGroup(tabGroup, className) {
+  let favIconUrl = tabGroup.tabs[0].favIconUrl;
+  let options = [{
     id: 'tg-reload',
     text: 'Reload'
   }, {
@@ -56,7 +57,7 @@ function renderDropdownOptions(className, options) {
               <i class="fas fa-ellipsis-h"></i>
               <div class="dropdown-content">
                 <ul class="nav flex-column">`;
-  for (option of options) {
+  for (let option of options) {
     result = result.concat(`<li id="${option['id']}" class="nav-item">
       <a class="nav-link tab-option" href="#">${option['text']}</a>
     </li>`);
@@ -120,7 +121,7 @@ function renderShortcutModal() {
                       </tr>
                     </thead>
                     <tbody>`;
-  for (shortcut of shortcuts) {
+  for (let shortcut of shortcuts) {
     result = result.concat(`<tr>
                               <td>${shortcut['shortcut']}</td>
                               <td>${shortcut['description']}</td>
@@ -136,7 +137,7 @@ function renderSendTabModal(windows) {
                 <ul class="nav flex-column">`;
   let i = 1;
 
-  for (win of windows) {
+  for (let win of windows) {
     result = result.concat(`<li id="st-${win.id}" class="nav-item">
                     <a class="nav-link tab-option" href="#">Window ${i}</a>
                    </li>`);
@@ -147,6 +148,64 @@ function renderSendTabModal(windows) {
                  </li>`);
   result = result.concat(`</ul></div>`);
   return result;
+}
+
+function renderRestoreTabModal(closedElements) {
+  let result = `<span id="modal-close" class="close">&times;</span>
+                <div class="restore-container">`;
+  if (closedElements.length == 0){
+    result = result.concat(`<h1 id="no-closed-elements">No recently closed elements</h1>`);
+  } else {
+    result = result.concat(`<h1>Click to restore</h1>`);
+  }
+
+  for (let element of closedElements) {
+    if (element instanceof TabGroup) {
+      result = result.concat(renderClosedTabGroup(element));
+    } else if (element.type !== undefined) { //isWindow
+      result = result.concat(renderClosedWin(element));
+    } else { // isTab
+      let tg = new TabGroup(element.url.hostname, 1, [element], element.windowId);
+      result = result.concat(renderClosedTabGroup(tg, false, true));
+    }
+  }
+  result = result.concat(`</div>`);
+  return result;
+}
+
+function renderClosedWin(win) {
+  let result = `<div id="cwindowWithTabGroups-${win.id}" class="row container window closed-win">`;
+  let tabGroups = groupTabs(win.tabs);
+  for (let tabGroup of tabGroups) {
+    result = result.concat(renderClosedTabGroup(tabGroup, false));
+  }
+  result = result.concat(`</div>`);
+  return result;
+}
+
+function renderClosedTabGroup(tg, closed = true, clickTab = false) {
+  let closedClass = "";
+  if (closed)
+    closedClass = " closed-tg";
+  let result = `<div id="ctg-${tg.id}" class="tab-group${closedClass} col-4">
+    <h1 class="tab-title">${tg.title}
+    <img class="icon" src=${tg.tabs[0].favIconUrl} />
+    </h1>`;
+  for (let tab of tg.tabs) {
+    result = result.concat(renderClosedTab(tab, clickTab));
+  }
+  result = result.concat(`</div>`);
+  return result;
+}
+
+function renderClosedTab(tab, closed = true) {
+  let closedClass = "s";
+  if (closed)
+    closedClass = " closed-t";
+  return `<div id="ct-${tab.id}" class="tabContainer${closedClass}">
+                          <div class="tab" title=${tab.title}>
+                            <p class="tabDescription">${tab.title}</p>
+                          </div></div>`;
 }
 
 function generateWindows(tabGroups) {
@@ -184,7 +243,7 @@ function generateTabGroupsByWindow(windows, tabGroups, className, tabCount) {
         if (!$element.length) {
           reject();
         }
-        $element.append(renderTabGroup(tg, className, tg.tabs[0].favIconUrl));
+        $element.append(renderTabGroup(tg, className));
         resolve();
       });
     }
@@ -212,7 +271,7 @@ function generateTabGroups(tabGroups, className, tabCount, winSrc, addCloseBtn =
   let title = winSrc == 'all' ? 'All tabs' : "Window " + winSrc;
   $tabGroupContainer.append(renderWindowTitle(0, customTitle = title));
   for (let tabGroup of tabGroups) {
-    $tabGroupContainer.append(renderTabGroup(tabGroup, className, tabGroup.tabs[0].favIconUrl));
+    $tabGroupContainer.append(renderTabGroup(tabGroup, className));
   }
 }
 
