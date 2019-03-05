@@ -1,6 +1,19 @@
 # Changelog
 All changes between releases of this project will be documented here.
 
+## [0.4.0](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.4.0) - 2019-03-05
+### Added
+- An option to view and restore tabs closed during the current session.
+
+### Modified
+- Focus is set to the search bar when opening Manage My Tabs.
+- The shortcut to open MMT has been changed from Ctrl + space to Alt + M to avoid conflicts
+- Change in the default settings:
+    - Include manager tab default set to true
+    - Close manager on click default set to false
+
+
+
 ## [0.3.1](https://github.com/adamjamesadair/manage-my-tabs/releases/tag/v0.3.1) - 2018-06-13
 ### Fixed
 - Page reloading too often causing slow load times and closing of tab groups.
@@ -37,7 +50,7 @@ All changes between releases of this project will be documented here.
   - Close extension after navigating to a tab.
   - Allow scrolling beyond the end of the last window.
   - Toggle Classic mode.
-  
+
 ### Changed
 - Window select buttons scroll to selected window instead of changing pages.
 - Moved search options closer to the search bar.
