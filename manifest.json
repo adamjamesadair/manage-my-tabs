@@ -24,8 +24,8 @@
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
-        "default": "Ctrl+Space",
-        "mac": "Alt+Space"
+        "default": "Alt+M",
+        "mac": "Alt+M"
       }
     }
   },
