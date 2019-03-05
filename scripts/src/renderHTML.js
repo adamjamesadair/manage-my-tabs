@@ -91,6 +91,9 @@ function renderCloseAllBtn() {
 
 function renderShortcutModal() {
   let shortcuts = [{
+    shortcut: 'Alt + M',
+    description: 'Open Manage My Tabs.'
+  }, {
     shortcut: 'U',
     description: 'Undo.'
   }, {
