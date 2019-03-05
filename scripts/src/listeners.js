@@ -1,7 +1,7 @@
 function addListeners(tabManager) {
   // shortcuts
   $(document).bind('keyup', function(e) {
-    if(e.target.id != 'search-input'){
+    if (e.target.id != 'search-input') {
       var key = e.which || e.keyCode;
       key = String.fromCharCode(key);
       let shortcuts = {
@@ -148,6 +148,15 @@ function addListeners(tabManager) {
   // Add listener for arrange tabs button
   $("#arrange-tabs-btn").on('click', () => {
     arrangeTabs();
+  });
+
+  // Add listener for restore tabs button
+  $("#restore-tabs-btn").on('click', () => {
+    $('.modal-bg').empty();
+    $('.modal-bg').append(`<div class="view-closed-tabs"></div>`);
+    $('.view-closed-tabs').append(renderRestoreTabModal(tabManager.closedElements));
+    addRestoreTabModalListeners(tabManager);
+    $('.modal-bg').show();
   });
 
   // Add listener for restore defaults button
@@ -333,6 +342,45 @@ function addSendTabModalListeners(element, windows) {
       tabManager.reloadPage();
     });
   }
+}
+
+function addRestoreTabModalListeners(tabManager) {
+
+  function restore(clicked, tabManager) {
+    let id = clicked.id.substring(1).split('-')[1];
+    for (let element of tabManager.closedElements) {
+      if (element instanceof TabGroup) {
+        if (String(element.id) == id){
+          tabManager.closedElements = _.without(tabManager.closedElements, _.findWhere(tabManager.closedElements, element));
+          tabManager.reopenTabGroup(element);
+        }
+      } else if (element.type !== undefined) { //isWindow
+        if (String(element.id) == id){
+          tabManager.closedElements = _.without(tabManager.closedElements, _.findWhere(tabManager.closedElements, element));
+          for (tab of element.tabs){
+            tab.url = tab.url.href;
+          }
+          tabManager.reopenWindow(element);
+        }
+      } else { // isTab
+        if (String(element.id) == id){
+          tabManager.closedElements = _.without(tabManager.closedElements, _.findWhere(tabManager.closedElements, element));
+          tabManager.reopenTab(element);
+        }
+      }
+    }
+  }
+  $('.closed-win').on('click', function() {
+    restore(this, tabManager);
+  });
+
+  $('.closed-tg').on('click', function() {
+    restore(this, tabManager);
+  });
+
+  $('.closed-t').on('click', function() {
+    restore(this, tabManager);
+  });
 }
 
 function addTabGroupListeners(tabGroup, tabManager) {

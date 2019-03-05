@@ -395,9 +395,9 @@ var defaultSettings = {
   searchScope: "both",
   sortMethod: "alphabetically",
   winSrc: 'all',
-  includeManager: false,
+  includeManager: true,
   col: 3,
-  closeManagerWhenTabSelected: true,
+  closeManagerWhenTabSelected: false,
   tabCount: true,
   limitTabGroupSize: true
 };
